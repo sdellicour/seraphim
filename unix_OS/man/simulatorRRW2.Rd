@@ -43,8 +43,8 @@ In order to avoid null standard deviation values, all the raster cell values are
 \cr
 For a given raster cell \eqn{i} with environmental \eqn{v_i}, standard deviations (\eqn{SDx_i} and \eqn{SDy_i}) used to define the two normal distributions with mean = 0, in which longitudinal \eqn{d_x} and latitudinal \eqn{d_y} displacement values are randomly picked, are computed as follows: \cr
 \cr
-\eqn{SDx_i = (v_i/v_{max}) * cell_{width} * scalingValue} \cr
-\eqn{SDy_i = (v_i/v_{max}) * cell_{height} * scalingValue} \cr
+\eqn{SDx_i = (v_i/v_{max}) * cell_{width} * scalingValue}
+\eqn{SDy_i = (v_i/v_{max}) * cell_{height} * scalingValue}
 \cr
 with \eqn{v_{max}} being the highest value recorded in the environmental raster. Note that \eqn{cell_{width}} and \eqn{cell_{height}} are taken from the raster properties/parameters. }
 \cr
