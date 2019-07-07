@@ -1,4 +1,4 @@
-seraphim <img src="unix_OS/man/logo_seraphim.png" align="right" alt="" width="120" />
+seraphim <img src="unix_OS/man/logo_seraphim.png" align="right" alt="" width="200" />
 ===============
 
 `seraphim` is a R package for studying environmental rasters and phylogenetic informed movements
