@@ -260,7 +260,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     for (h in 1:length(envVariables)) {
         hullRasters[[h]] = crop(hullRasters[[h]], sps, snap = "out")
         bufferRaster = hullRasters[[h]]
-        hullRasters[[h]] = mask(hullRasters[[h]], sps, snap = "out")
+        hullRasters[[h]] = raster::mask(hullRasters[[h]], sps, 
+            snap = "out")
         hullRasters[[h]][!is.na(pointsRaster[])] = bufferRaster[!is.na(pointsRaster[])]
         names(hullRasters[[h]]) = gsub(".asc", "", names(envVariables[[h]]))
         names(hullRasters[[h]]) = gsub(".tif", "", names(envVariables[[h]]))

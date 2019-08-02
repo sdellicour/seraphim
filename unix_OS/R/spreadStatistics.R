@@ -141,7 +141,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         meanStatistics[t, 6] = sd(branchMeasures[, 2])/mean(branchMeasures[, 
             2])
     }
-    if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE)) {
+    if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
+        ((nberOfExtractionFiles/N) > 1)) {
         buffer = list()
         buffer = foreach(t = 1:(nberOfExtractionFiles/N)) %dopar% 
             {
@@ -235,7 +236,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         }
     }
     if ((onlyTipBranches == FALSE) & (dispersalVelocityGraph == 
-        TRUE)) {
+        TRUE) & ((nberOfExtractionFiles/N) > 1)) {
         startEndTimes = matrix(nrow = dispersalVelocitySlices, 
             ncol = 3)
         for (i in 1:dispersalVelocitySlices) {
@@ -504,7 +505,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         if (showingPlots == FALSE) 
             dev.off()
     }
-    if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE)) {
+    if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
+        ((nberOfExtractionFiles/N) > 1)) {
         cat("Building wavefront distance evolution graphs", "\n", 
             sep = "")
         wavefrontDistanceTimeInterval = (maxEndYear - minStartYear)/wavefrontDistanceSlices
@@ -737,7 +739,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             dev.off()
     }
     if ((onlyTipBranches == FALSE) & (dispersalVelocityGraph == 
-        TRUE)) {
+        TRUE) & ((nberOfExtractionFiles/N) > 1)) {
         cat("Building branch dispersal velocity evolution graphs", 
             "\n", sep = "")
         slicedTimes = matrix(nrow = 1, ncol = dispersalVelocitySlices)

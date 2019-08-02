@@ -46,7 +46,8 @@ For a given raster cell \eqn{i} with environmental \eqn{v_i}, standard deviation
 \eqn{SDx_i = (v_i/v_{max}) * cell_{width} * scalingValue} \cr
 \eqn{SDy_i = (v_i/v_{max}) * cell_{height} * scalingValue} \cr
 \cr
-with \eqn{v_{max}} being the highest value recorded in the environmental raster. Note that \eqn{cell_{width}} and \eqn{cell_{height}} are taken from the raster properties/parameters. Final note: in order to obtain to simulate trees with a realistic sampling pattern through time, tip branches that have not been sampled at the end of simulation are removed from the simulated tree topology.
+with \eqn{v_{max}} being the highest value recorded in the environmental raster. Note that \eqn{cell_{width}} and \eqn{cell_{height}} are taken from the raster properties/parameters.
+Final note: in order to obtain to simulate trees with a realistic sampling pattern through time, tip branches that have not been sampled at the end of simulation are removed from the simulated tree topology.}
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
 }
