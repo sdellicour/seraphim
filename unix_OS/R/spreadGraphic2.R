@@ -8,11 +8,13 @@ function (localTreesDirectory, nberOfExtractionFiles, prob = 0.95,
     for (i in 1:nberOfExtractionFiles) {
         tab = read.csv(paste0(localTreesDirectory, "/TreeExtractions_", 
             i, ".csv"), header = T)
-        startingNodes = tab[, c("startYear", "startLon", "startLat")]
-        colnames(startingNodes) = c("time", "lon", "lat")
+        startingNodeID = which(!tab[, "node1"] %in% tab[, "node2"])
+        startingNode = tab[startingNodeID, c("startYear", "startLon", 
+            "startLat")]
+        colnames(startingNode) = c("time", "lon", "lat")
         endingNodes = tab[, c("endYear", "endLon", "endLat")]
         colnames(endingNodes) = c("time", "lon", "lat")
-        nodes = rbind(nodes, startingNodes, endingNodes)
+        nodes = rbind(nodes, startingNode, endingNodes)
         if (i == 1) 
             endDatum = max(tab[, "endYear"])
     }
@@ -20,8 +22,8 @@ function (localTreesDirectory, nberOfExtractionFiles, prob = 0.95,
     spreads = list()
     c = 0
     for (i in 1:length(timeSlices)) {
-        startTime = timeSlices[i]
-        endTime = timeSlices[i] + timeInterval
+        startTime = timeSlices[i] - timeInterval/2
+        endTime = timeSlices[i] + timeInterval/2
         selectedNodes = nodes[which((nodes[, "time"] >= startTime) & 
             (nodes[, "time"] < endTime)), ]
         selectedNodes = unique(selectedNodes[, c("lon", "lat")])
