@@ -1045,17 +1045,23 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 ncol = length(envVariables))
             meanEnvValuesHigher = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
+            meanEnvValuesRandomisationPValues = matrix(0, nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
             meanEnvValuesRandomisationBFs = matrix(nrow = length(envVariables), 
                 ncol = nberOfRandomisations)
             rateOfPositiveDifferencesLower = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
             rateOfPositiveDifferencesHigher = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
+            rateOfPositiveDifferencesRandomisationPValues = matrix(nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
             rateOfPositiveDifferencesRandomisationBFs = matrix(nrow = length(envVariables), 
                 ncol = nberOfRandomisations)
             meanDifferencesLower = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
             meanDifferencesHigher = matrix(0, nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            meanDifferencesRandomisationPValues = matrix(nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
             meanDifferencesRandomisationBFs = matrix(nrow = length(envVariables), 
                 ncol = nberOfRandomisations)
@@ -2250,6 +2256,30 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
         }
+        if (impactOnDirection == TRUE) {
+            for (h in H:length(envVariables)) {
+                for (t in 1:nberOfExtractionFiles) {
+                  if (resistances[h] == TRUE) {
+                    meanEnvValuesRandomisationPValues[t, h] = (meanEnvValuesLower[t, 
+                      h])/nberOfRandomisations
+                    rateOfPositiveDifferencesRandomisationPValues[t, 
+                      h] = (rateOfPositiveDifferencesHigher[t, 
+                      h])/nberOfRandomisations
+                    meanDifferencesRandomisationPValues[t, h] = (meanDifferencesHigher[t, 
+                      h])/nberOfRandomisations
+                  }
+                  else {
+                    meanEnvValuesRandomisationPValues[t, h] = (meanEnvValuesHigher[t, 
+                      h])/nberOfRandomisations
+                    rateOfPositiveDifferencesRandomisationPValues[t, 
+                      h] = (rateOfPositiveDifferencesLower[t, 
+                      h])/nberOfRandomisations
+                    meanDifferencesRandomisationPValues[t, h] = (meanDifferencesLower[t, 
+                      h])/nberOfRandomisations
+                  }
+                }
+            }
+        }
         if (impactOnVelocity == TRUE) {
             uniLRmedianRsquaresLowerValues = matrix(0, nrow = 1, 
                 ncol = length(envVariables))
@@ -2656,6 +2686,34 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             write.table(mat, file = fileName, row.names = F, 
                 quote = F, sep = "\t")
         }
+        if ((nberOfRandomisations > 1) & (impactOnDirection == 
+            TRUE)) {
+            fileName = paste(outputName, "_randomisation_results.txt", 
+                sep = "")
+            mat = cbind(meanEnvValuesRandomisationPValues[, 2:dim(meanEnvValuesRandomisationPValues)[2]], 
+                rateOfPositiveDifferencesRandomisationPValues[, 
+                  2:dim(rateOfPositiveDifferencesRandomisationPValues)[2]])
+            if (nberOfExtractionFiles == 1) {
+                mat = t(c(meanEnvValuesRandomisationPValues[, 
+                  2:dim(meanEnvValuesRandomisationPValues)[2]], 
+                  rateOfPositiveDifferencesRandomisationPValues[, 
+                    2:dim(rateOfPositiveDifferencesRandomisationPValues)[2]]))
+            }
+            meanEnvValuesPValuesNames = c()
+            rateOfPositiveDifferencesPValuesNames = c()
+            for (h in 2:length(envVariables)) {
+                meanEnvValuesPValuesNames = cbind(meanEnvValuesPValuesNames, 
+                  paste("Direction_E_p-values_", names(envVariables[[h]]), 
+                    sep = ""))
+                rateOfPositiveDifferencesPValuesNames = cbind(rateOfPositiveDifferencesPValuesNames, 
+                  paste("Direction_R_p-values_", names(envVariables[[h]]), 
+                    sep = ""))
+            }
+            names = cbind(meanEnvValuesPValuesNames, rateOfPositiveDifferencesPValuesNames)
+            colnames(mat) = names
+            write.table(mat, file = fileName, row.names = F, 
+                quote = F, sep = "\t")
+        }
         if (nberOfExtractionFiles > 49) {
             envVariablesNames = c()
             for (h in 1:length(envVariables)) {
@@ -2692,13 +2750,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 if (pathModel == 0) {
                   row.names(meanEnvValuesRandomisationBFs) = envVariablesNames
                   colnames(meanEnvValuesRandomisationBFs) = colNames
-                  fileName = paste(outputName, "_direction1_Bayes_factors.txt", 
+                  fileName = paste(outputName, "_direction_E_Bayes_factors.txt", 
                     sep = "")
                   write.table(meanEnvValuesRandomisationBFs, 
                     fileName, quote = F, sep = "\t")
                   row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
                   colnames(rateOfPositiveDifferencesRandomisationBFs) = colNames
-                  fileName = paste(outputName, "_direction2_Bayes_factors.txt", 
+                  fileName = paste(outputName, "_direction_R_Bayes_factors.txt", 
                     sep = "")
                   write.table(rateOfPositiveDifferencesRandomisationBFs, 
                     fileName, quote = F, sep = "\t")
