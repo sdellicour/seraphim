@@ -1829,12 +1829,12 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                     simMeanDifferences[t, h] = mean(diffs, na.rm = T)
                     if ((!is.na(rateOfPositiveDifferences[t, 
                       h])) & (!is.na(sum(diffs > 0)))) {
-                      if (rateOfPositiveDifferences[t, h] < sum(diffs > 
-                        0)) 
+                      if (rateOfPositiveDifferences[t, h] < simRateOfPositiveDifferences[t, 
+                        h]) 
                         rateOfPositiveDifferencesHigher[t, h] = rateOfPositiveDifferencesHigher[t, 
                           h] + 1
-                      if (rateOfPositiveDifferences[t, h] > sum(diffs > 
-                        0)) 
+                      if (rateOfPositiveDifferences[t, h] > simRateOfPositiveDifferences[t, 
+                        h]) 
                         rateOfPositiveDifferencesLower[t, h] = rateOfPositiveDifferencesLower[t, 
                           h] + 1
                     }
@@ -1843,10 +1843,12 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       rateOfPositiveDifferencesHigher[t, h] = NA
                     }
                     if ((!is.na(meanDifferences[t, h])) & (!is.na(mean(diffs)))) {
-                      if (meanDifferences[t, h] < mean(diffs)) 
+                      if (meanDifferences[t, h] < simMeanDifferences[t, 
+                        h]) 
                         meanDifferencesHigher[t, h] = meanDifferencesHigher[t, 
                           h] + 1
-                      if (meanDifferences[t, h] > mean(diffs)) 
+                      if (meanDifferences[t, h] > simMeanDifferences[t, 
+                        h]) 
                         meanDifferencesLower[t, h] = meanDifferencesLower[t, 
                           h] + 1
                     }
