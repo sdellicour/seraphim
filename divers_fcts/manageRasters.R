@@ -1,7 +1,7 @@
-rasterIds <- c("elevation", "humanpop", "landcover", "inaccessibility", "meantemp", "annualprecipitation")
-rasterFiles <- c("Elevation_shuttle_radar_topography_mission.tif", "GRUMPv1_human_population_density_2000.tif", "IGBP_land_cover_raster_MCD12Q1_2010.tif", "Inaccessibility_raster2_Weiss_et_al_Nature.tif", "WorldClim2_bio1_annual_mean_temperature.tif", "WorldClim2_bio1_annual_precipitation.tif")
-availableRasters <- c("Elevation", "Human population", "Land cover", "Inaccessibility", "Annual mean temperature", "Annual precipitation")
-rasterDescriptions <- c(
+rasterIds = c("elevation", "humanpop", "landcover", "inaccessibility", "meantemp", "annualprecipitation")
+rasterFiles = c("Elevation_shuttle_radar_topography_mission.tif", "GRUMPv1_human_population_density_2000.tif", "IGBP_land_cover_raster_MCD12Q1_2010.tif", "Inaccessibility_raster2_Weiss_et_al_Nature.tif", "WorldClim2_bio1_annual_mean_temperature.tif", "WorldClim2_bio1_annual_precipitation.tif")
+availableRasters = c("Elevation", "Human population", "Land cover", "Inaccessibility", "Annual mean temperature", "Annual precipitation")
+rasterDescriptions = c(
     "Elevation raster from the Shuttle Radar Topography Mission (SRTM).\nSource: http://opentopo.sdsc.edu/raster?opentopoID=OTSRTM.042013.4326.1",
     "Human population density in 2000 (GRUMP v.1, persons/km2).\nSource: https://sedac.ciesin.columbia.edu/data/set/grump-v1-population-density/maps/services",
     "IGBP land cover raster (MCD12Q1, LC1).\nSource: https://lpdaac.usgs.gov/products/mcd12q1v006/",
@@ -10,54 +10,56 @@ rasterDescriptions <- c(
     "WorldClim 2.0 raster for annual precipitation.\nSource: http://worldclim.org/version2"
 )
 
-
 # List all available and recommended rasters
 listAvailableRasters = function() {
-    l <- mapply(function(id, raster, description){
-        sapply(1:length(raster), function(ind){
-            paste0("ID: ", id[ind], "\n", "Name: ", raster[ind], "\n", "Description: ", description[ind], "\n");
+    l = mapply(function(id, raster, description) {
+        sapply(1:length(raster), function(ind) {
+            paste0("ID: ", id[ind], "\n", "Name: ", raster[ind], "\n", "Description: ", description[ind], "\n")
         })
-    }, id = rasterIds, raster = availableRasters, description = rasterDescriptions);
-    writeLines(l);
+    }, id = rasterIds, raster = availableRasters, description = rasterDescriptions)
+    writeLines(l)
 }
 
-# Download rasters and crop to extent specified. Extent: xmin, xmax, ymin, ymax
-# Returns list of rasters.
+# Download rasters and crop to extent specified. Extent: xmin, xmax, ymin, ymax. Returns list of rasters.
 downloadRasters = function(ids=c(), cropExtent=c()) {
-    rasters <- c()
-    idCheck <- setdiff(ids, rasterIds);
-    if(length(idCheck) > 0){
-        writeLines(paste0(paste(idCheck, collapse=","), " not in available rasters.\nlistAvailableRasters() can be used to see list of available rasters and ids."));
-        return(rasters);
-    }
-    rasters <- sapply(ids, function(id){
-        writeLines(paste("Downloading", id,"...", sep = " "));
-        downloadURL <- paste0("https://storage.googleapis.com/seraphim-rasters/", rasterFiles[which(rasterIds == id)], ".gz");
-        temp <- tempfile(pattern = paste0(id),fileext=".gz");
-        r <- tempfile(pattern=id);
-        download.file(downloadURL, temp);
-        r <- gunzip(temp, r, remove=TRUE);
-        rast <- raster(r);
-        if(length(cropExtent) == 4){
-            if(cropExtent[2] < cropExtent[1] || cropExtent[4] < cropExtent[3]){ #Check if xmin < xmax and ymin < ymax
-                writeLines("Extent should be specified as c(xmin, xmax, ymin, ymax).\nSkipping crop...");
-                return(rast);
-            }
-            rastCrop <- crop(rast, extent(cropExtent));
-            return(rastCrop);
-        } else {
-            if(length(cropExtent) > 0){
-                writeLines("Extent should be specified as c(xmin, xmax, ymin, ymax).\nSkipping crop...");
-            }
-            return(rast);
-        }
+    rasters = c()
+    idCheck = setdiff(ids, rasterIds)
+    if (length(idCheck) > 0)
+    	{
+        	writeLines(paste0(paste(idCheck, collapse=","), " not in available rasters.\nlistAvailableRasters() can be used to see list of available rasters and ids."))
+        	return(rasters)
+    	}
+    rasters = sapply(ids, function(id) {
+        writeLines(paste("Downloading", id,"...", sep = " "))
+        downloadURL = paste0("https://storage.googleapis.com/seraphim-rasters/", rasterFiles[which(rasterIds == id)], ".gz")
+        temp = tempfile(pattern = paste0(id),fileext=".gz")
+        r = tempfile(pattern=id)
+        download.file(downloadURL, temp)
+        r = gunzip(temp, r, remove=TRUE)
+        rast = raster(r)
+        if (length(cropExtent) == 4)
+        	{
+				if ((cropExtent[2] < cropExtent[1])||(cropExtent[4] < cropExtent[3]))# check if xmin < xmax and ymin < ymax
+					{
+						writeLines("Extent should be specified as c(xmin, xmax, ymin, ymax).\nSkipping crop...")
+						return(rast)
+					}
+				rastCrop = crop(rast, extent(cropExtent))
+				return(rastCrop)
+			}	else	{
+				if (length(cropExtent) > 0)
+					{
+						writeLines("Extent should be specified as c(xmin, xmax, ymin, ymax).\nSkipping crop...")
+           			}
+            		return(rast)
+			}
     })
-    return(rasters);
+    return(rasters)
 }
 
 # Download the categorical IGBP land cover and crop to extent specified. Extent: xmin, xmax, ymin, ymax
 downloadLandCoverRaster=function(ids=c(), extent=c()) {
-    
+   
 }
 
 # Decrease rasters resolution by a factor 'R'
