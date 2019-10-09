@@ -15,7 +15,7 @@ function (rast, cols = NULL, colNA = "gray90", add = FALSE, new = TRUE,
                 par(mar = c(0, 0, 0, 0), oma = c(3.5, 3.5, 3.5, 
                   0.5), mgp = c(0, 0.4, 0), lwd = 0.1, bty = "o")
             plot(rast, col = cols, colNA = colNA, box = F, axes = F, 
-                legend = F)
+                legend = F, interpolate = F, useRaster = T)
             if (addAxes == TRUE) {
                 axis(1, c(ceiling(xmin(rast)), floor(xmax(rast))), 
                   pos = ymin(rast), mgp = c(0, 0.4, 0), cex.axis = 0.5, 
@@ -32,7 +32,7 @@ function (rast, cols = NULL, colNA = "gray90", add = FALSE, new = TRUE,
         }
         else {
             plot(rast, col = cols, colNA = colNA, box = F, axes = F, 
-                legend = F, add = T)
+                legend = F, interpolate = F, useRaster = T, add = T)
         }
     }
     if ((addLegend == TRUE) | (legendOnly == TRUE)) 

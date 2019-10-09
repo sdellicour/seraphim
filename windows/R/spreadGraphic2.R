@@ -1,6 +1,6 @@
 spreadGraphic2 <-
 function (localTreesDirectory, nberOfExtractionFiles, prob = 0.95, 
-    startDatum, precision = 1, includeRoot = T) 
+    startDatum, precision = 1) 
 {
     percentage = gsub("0\\.", "", as.character(prob))
     timeInterval = precision
@@ -8,16 +8,11 @@ function (localTreesDirectory, nberOfExtractionFiles, prob = 0.95,
     for (i in 1:nberOfExtractionFiles) {
         tab = read.csv(paste0(localTreesDirectory, "/TreeExtractions_", 
             i, ".csv"), header = T)
-        startingNodeID = which(!tab[, "node1"] %in% tab[, "node2"])[1]
-        startingNode = tab[startingNodeID, c("startYear", "startLon", 
-            "startLat")]
-        colnames(startingNode) = c("time", "lon", "lat")
+        startingNodes = tab[, c("startYear", "startLon", "startLat")]
+        colnames(startingNodes) = c("time", "lon", "lat")
         endingNodes = tab[, c("endYear", "endLon", "endLat")]
         colnames(endingNodes) = c("time", "lon", "lat")
-        if (includeRoot == TRUE) 
-            nodes = rbind(nodes, startingNode, endingNodes)
-        if (includeRoot == FALSE) 
-            nodes = rbind(nodes, endingNodes)
+        nodes = rbind(nodes, startingNodes, endingNodes)
         if (i == 1) 
             endDatum = max(tab[, "endYear"])
     }
@@ -25,10 +20,8 @@ function (localTreesDirectory, nberOfExtractionFiles, prob = 0.95,
     spreads = list()
     c = 0
     for (i in 1:length(timeSlices)) {
-        startTime = timeSlices[i] - timeInterval/2
-        endTime = timeSlices[i] + timeInterval/2
-        if (i == 1) 
-            startTime = -9999
+        startTime = timeSlices[i]
+        endTime = timeSlices[i] + timeInterval
         selectedNodes = nodes[which((nodes[, "time"] >= startTime) & 
             (nodes[, "time"] < endTime)), ]
         selectedNodes = unique(selectedNodes[, c("lon", "lat")])

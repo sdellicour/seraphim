@@ -176,7 +176,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 "node2"])
             indicesOfBranchesToRemove = c()
             for (i in 1:length(ancestralBranches)) {
-                if (is.na(extract(nullRaster, cbind(data[ancestralBranches[i], 
+                if (is.na(raster::extract(nullRaster, cbind(data[ancestralBranches[i], 
                   "startLon"], data[ancestralBranches[i], "startLat"])))) {
                   ancestralNodeNAonNullRaster = TRUE
                   indicesOfBranchesToRemove = c(indicesOfBranchesToRemove, 
@@ -349,7 +349,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                           i)
                       }
                       lines = SpatialLines(linesList)
-                      extractions = extract(hullRasters[[h]], 
+                      extractions = raster::extract(hullRasters[[h]], 
                         lines)
                       for (i in 1:length(fromCoor[[t]][, 1])) {
                         mat[i] = sum(extractions[[i]], na.rm = T)
@@ -363,8 +363,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       envVariableName = paste("CS_rasters/", 
                         names(hullRasters[[h]]), "_", outputName, 
                         "_cs", extensions[h], sep = "")
-                      branchesNotNA = which(!((is.na(extract(hullRasters[[h]], 
-                        fromCoor[[t]][]))) | (is.na(extract(hullRasters[[h]], 
+                      branchesNotNA = which(!((is.na(raster::extract(hullRasters[[h]], 
+                        fromCoor[[t]][]))) | (is.na(raster::extract(hullRasters[[h]], 
                         toCoor[[t]][])))))
                       fromCoor_temp = fromCoor[[t]][branchesNotNA, 
                         ]
@@ -439,7 +439,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                         linesList[[1]] = Lines(list(Line(points)), 
                           j)
                         lines = SpatialLines(linesList)
-                        extractions = extract(envVariables[[h]], 
+                        extractions = raster::extract(envVariables[[h]], 
                           lines)
                         distances[[t]][j, h] = sum(extractions[[1]], 
                           na.rm = T)
@@ -500,14 +500,15 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                     node2[[t]])])
                   for (i in 1:length(ancestralNodes)) {
                     ancestralBranch = which(node1[[t]] == ancestralNodes[i])[1]
-                    envValues = envValues + extract(envVariables[[h]], 
+                    envValues = envValues + raster::extract(envVariables[[h]], 
                       cbind(fromCoor[[t]][ancestralBranch, 1], 
                         fromCoor[[t]][ancestralBranch, 2]))
                   }
-                  meanEnvValues[t, h] = envValues + mean(extract(envVariables[[h]], 
+                  meanEnvValues[t, h] = envValues + mean(raster::extract(envVariables[[h]], 
                     toCoor[[t]]), na.rm = T)
-                  diffs = extract(envVariables[[h]], fromCoor[[t]]) - 
-                    extract(envVariables[[h]], toCoor[[t]])
+                  diffs = raster::extract(envVariables[[h]], 
+                    fromCoor[[t]]) - raster::extract(envVariables[[h]], 
+                    toCoor[[t]])
                   rateOfPositiveDifferences[t, h] = sum(diffs[!is.na(diffs)] > 
                     0)/length(diffs[!is.na(diffs)])
                   meanDifferences[t, h] = mean(diffs, na.rm = T)
@@ -1121,7 +1122,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       data[, "node2"])
                     indicesOfBranchesToRemove = c()
                     for (i in 1:length(ancestralBranches)) {
-                      if (is.na(extract(nullRaster, cbind(data[ancestralBranches[i], 
+                      if (is.na(raster::extract(nullRaster, cbind(data[ancestralBranches[i], 
                         "startLon"], data[ancestralBranches[i], 
                         "startLat"])))) {
                         ancestralNodeNAonNullRaster = TRUE
@@ -1317,7 +1318,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                               if (onTheGrid == TRUE) {
                                 NAarea = FALSE
                                 for (h in 1:length(hullRasters)) {
-                                  if (is.na(extract(hullRasters[[h]], 
+                                  if (is.na(raster::extract(hullRasters[[h]], 
                                     cbind(pt2_rotated[1], pt2_rotated[2])))) {
                                     NAarea = TRUE
                                   }
@@ -1440,7 +1441,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                         if (onTheGrid == TRUE) {
                           NAarea = FALSE
                           for (h in 1:length(hullRasters)) {
-                            if (is.na(extract(hullRasters[[h]], 
+                            if (is.na(raster::extract(hullRasters[[h]], 
                               cbind(pt2_rotated[1], pt2_rotated[2])))) {
                               NAarea = TRUE
                               twoPointsOnTheGrid = TRUE
@@ -1537,7 +1538,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                         }
                         NAarea = FALSE
                         for (h in 1:length(hullRasters)) {
-                          if (is.na(extract(hullRasters[[h]], 
+                          if (is.na(raster::extract(hullRasters[[h]], 
                             cbind(pt1_translated[1], pt1_translated[2])))) {
                             NAarea = TRUE
                           }
@@ -1596,7 +1597,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                         if (onTheGrid == TRUE) {
                           NAarea = FALSE
                           for (h in 1:length(hullRasters)) {
-                            if (is.na(extract(hullRasters[[h]], 
+                            if (is.na(raster::extract(hullRasters[[h]], 
                               cbind(pt2_rotated[1], pt2_rotated[2])))) {
                               NAarea = TRUE
                               twoPointsOnTheGrid = TRUE
@@ -1716,7 +1717,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                             i)
                         }
                         lines = SpatialLines(linesList)
-                        extractions = extract(simRasters[[h]], 
+                        extractions = raster::extract(simRasters[[h]], 
                           lines)
                         for (i in 1:length(fromCoorRand[[t]][, 
                           1])) {
@@ -1728,8 +1729,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                           fromCoorRand[[t]], toCoorRand[[t]]))
                       }
                       if (randomWalkDistance == TRUE) {
-                        branchesNotNA = which(!((is.na(extract(simRasters[[h]], 
-                          fromCoorRand[[t]][]))) | (is.na(extract(simRasters[[h]], 
+                        branchesNotNA = which(!((is.na(raster::extract(simRasters[[h]], 
+                          fromCoorRand[[t]][]))) | (is.na(raster::extract(simRasters[[h]], 
                           toCoorRand[[t]][])))))
                         simRasterName = paste("CS_rasters/", 
                           names(simRasters[[h]]), "_", outputName, 
@@ -1788,12 +1789,12 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       node2[[t]])])
                     for (i in 1:length(ancestralNodes)) {
                       ancestralBranch = which(node1[[t]] == ancestralNodes[i])[1]
-                      envValues = envValues + extract(envVariables[[h]], 
+                      envValues = envValues + raster::extract(envVariables[[h]], 
                         cbind(fromCoorRand[[t]][ancestralBranch, 
                           1], fromCoorRand[[t]][ancestralBranch, 
                           2]))
                     }
-                    simMeanExtractions[t, h] = envValues + mean(extract(envVariables[[h]], 
+                    simMeanExtractions[t, h] = envValues + mean(raster::extract(envVariables[[h]], 
                       cbind(toCoorRand[[t]][, 1], toCoorRand[[t]][, 
                         2])), na.rm = T)
                     if ((!is.na(meanEnvValues[t, h])) & (!is.na(simMeanExtractions[t, 
@@ -1811,8 +1812,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       meanEnvValuesHigher[t, h] = NA
                       meanEnvValuesLower[t, h] = NA
                     }
-                    diffs = extract(envVariables[[h]], fromCoorRand[[t]]) - 
-                      extract(envVariables[[h]], toCoorRand[[t]])
+                    diffs = raster::extract(envVariables[[h]], 
+                      fromCoorRand[[t]]) - raster::extract(envVariables[[h]], 
+                      toCoorRand[[t]])
                     simRateOfPositiveDifferences[t, h] = sum(diffs[!is.na(diffs)] > 
                       0)/length(diffs[!is.na(diffs)])
                     simMeanDifferences[t, h] = mean(diffs, na.rm = T)
