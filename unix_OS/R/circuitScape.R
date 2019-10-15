@@ -86,12 +86,12 @@ function (envVariable, envVariableName, resistance = TRUE, avgResistance = TRUE,
             sep = "/"), sep = " "), ignore.stdout = T, ignore.stderr = T)
     }
     if (OS == "Windows") {
-        system(paste("\"C:\\Program Files\\Circuitscape\\cs_run.exe\"", 
-            paste(folder, "CS_temporary.ini", sep = "/"), sep = " "), 
-            ignore.stdout = T, ignore.stderr = T)
+        system(paste0("\"C:\\Program Files\\Circuitscape\\cs_run.exe\"", 
+            paste(folder, "CS_temporary.ini", sep = "/")), ignore.stdout = T, 
+            ignore.stderr = T)
     }
-    tab = read.table(paste(folder, "/raster_file_temp_resistances.txt", 
-        sep = ""), header = F)
+    tab = read.table(paste0(folder, "/raster_file_temp_resistances.txt"), 
+        header = F)
     tab = tab[2:dim(tab)[1], 2:dim(tab)[2]]
     sameCoordinates = FALSE
     if (sum(fromCoor - toCoor) == 0) 
@@ -106,7 +106,7 @@ function (envVariable, envVariableName, resistance = TRUE, avgResistance = TRUE,
         mat = tab[1:dim(fromCoor)[1], 1:dim(fromCoor)[1]]
     }
     if (OS == "Unix") {
-        system(paste("rm -rf ", folder, sep = ""))
+        system(paste0("rm -rf ", folder))
     }
     if (OS == "Windows") {
         unlink(folder, recursive = T, force = T)

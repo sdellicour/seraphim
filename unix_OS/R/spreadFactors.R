@@ -1740,7 +1740,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                         }
                         if (randomWalkDistance == TRUE) {
                           branchesNotNA = which(!((is.na(raster::extract(simRasters[[h]], 
-                            fromCoorRand[[t]][]))) | (is.na(extract(simRasters[[h]], 
+                            fromCoorRand[[t]][]))) | (is.na(raster::extract(simRasters[[h]], 
                             toCoorRand[[t]][])))))
                           simRasterName = paste("CS_rasters/", 
                             names(simRasters[[h]]), "_", outputName, 
