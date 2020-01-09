@@ -6,10 +6,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
 {
     nberOfStatistics = 6
     registerDoMC(cores = nberOfCores)
-    meanStatistics = matrix(nrow = (nberOfExtractionFiles/N), 
-        ncol = nberOfStatistics)
+    meanStatistics = matrix(nrow = (nberOfExtractionFiles), ncol = nberOfStatistics)
     branchVelocities = c()
-    sd_var_velocity = matrix(nrow = (nberOfExtractionFiles/N), 
+    sd_var_velocity = matrix(nrow = (nberOfExtractionFiles), 
         ncol = 2)
     medianMeanStatistics = matrix(nrow = 1, ncol = nberOfStatistics)
     ciMeanStatistics = matrix(nrow = 2, ncol = nberOfStatistics)
@@ -148,7 +147,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             2])
     }
     if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
-        ((nberOfExtractionFiles/N) > 1)) {
+        (nberOfExtractionFiles > 1)) {
         buffer = list()
         buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% 
             {
@@ -235,7 +234,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         }
         maxDistance1 = 0
         maxDistance2 = 0
-        for (t in 1:(nberOfExtractionFiles/N)) {
+        for (t in 1:nberOfExtractionFiles) {
             if (max(waveFrontDistances1List[[t]][, 2]) > maxDistance1) 
                 maxDistance1 = max(waveFrontDistances1List[[t]][, 
                   2])
@@ -245,7 +244,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         }
     }
     if ((onlyTipBranches == FALSE) & (dispersalVelocityGraph == 
-        TRUE) & ((nberOfExtractionFiles/N) > 1)) {
+        TRUE) & (nberOfExtractionFiles > 1)) {
         startEndTimes = matrix(nrow = dispersalVelocitySlices, 
             ncol = 3)
         for (i in 1:dispersalVelocitySlices) {
@@ -377,7 +376,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     write.table(meanStatistics, file = paste(outputName, "_estimated_dispersal_statistics.txt", 
         sep = ""), quote = F, row.names = F, sep = "\t")
     LWD = 0.2
-    if ((nberOfExtractionFiles/N) > 1) {
+    if (nberOfExtractionFiles > 1) {
         if (showingPlots) 
             dev.new(width = 5, height = 5)
         if (showingPlots == FALSE) 
@@ -518,7 +517,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             dev.off()
     }
     if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
-        ((nberOfExtractionFiles/N) > 1)) {
+        (nberOfExtractionFiles > 1)) {
         cat("Building wavefront distance evolution graphs", "\n", 
             sep = "")
         wavefrontDistanceTimeInterval = (maxEndYear - minStartYear)/wavefrontDistanceSlices
@@ -532,13 +531,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             1))
         upper_l_2 = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
-        waveFrontDistances1Values = matrix(nrow = (nberOfExtractionFiles/N), 
+        waveFrontDistances1Values = matrix(nrow = nberOfExtractionFiles, 
             ncol = (wavefrontDistanceSlices + 1))
         waveFrontDistances1MeanValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
         waveFrontDistances1MedianValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
-        waveFrontDistances2Values = matrix(nrow = (nberOfExtractionFiles/N), 
+        waveFrontDistances2Values = matrix(nrow = nberOfExtractionFiles, 
             ncol = (wavefrontDistanceSlices + 1))
         waveFrontDistances2MeanValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
@@ -547,7 +546,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         for (i in 0:wavefrontDistanceSlices) {
             time = minStartYear + (i * wavefrontDistanceTimeInterval)
             slicedTimes[1, i + 1] = time
-            for (t in 1:(nberOfExtractionFiles/N)) {
+            for (t in 1:nberOfExtractionFiles) {
                 waveFrontDistances1Values[t, i + 1] = waveFrontDistances1List[[t]][i + 
                   1, 2]
                 waveFrontDistances2Values[t, i + 1] = waveFrontDistances2List[[t]][i + 
@@ -632,8 +631,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         plot(waveFrontDistances1List[[1]][, 1], waveFrontDistances1List[[1]][, 
             2], type = "l", lwd = 0.05, axes = F, ann = F, ylim = yLim1, 
             xlim = xLim)
-        if ((nberOfExtractionFiles/N) > 1) {
-            for (t in 2:(nberOfExtractionFiles/N)) {
+        if (nberOfExtractionFiles > 1) {
+            for (t in 2:nberOfExtractionFiles) {
                 lines(waveFrontDistances1List[[t]][, 1], waveFrontDistances1List[[t]][, 
                   2], lwd = 0.05)
             }
@@ -664,8 +663,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         plot(waveFrontDistances2List[[1]][, 1], waveFrontDistances2List[[1]][, 
             2], type = "l", lwd = 0.05, axes = F, ann = F, ylim = yLim2, 
             xlim = xLim)
-        if ((nberOfExtractionFiles/N) > 1) {
-            for (t in 2:(nberOfExtractionFiles/N)) {
+        if (nberOfExtractionFiles > 1) {
+            for (t in 2:nberOfExtractionFiles) {
                 lines(waveFrontDistances2List[[t]][, 1], waveFrontDistances2List[[t]][, 
                   2], lwd = 0.05)
             }
@@ -751,18 +750,18 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             dev.off()
     }
     if ((onlyTipBranches == FALSE) & (dispersalVelocityGraph == 
-        TRUE) & ((nberOfExtractionFiles/N) > 1)) {
+        TRUE) & (nberOfExtractionFiles > 1)) {
         cat("Building branch dispersal velocity evolution graphs", 
             "\n", sep = "")
         slicedTimes = matrix(nrow = 1, ncol = dispersalVelocitySlices)
         lower_l = matrix(nrow = 1, ncol = dispersalVelocitySlices)
         upper_l = matrix(nrow = 1, ncol = dispersalVelocitySlices)
-        meanDispersalVelocitiesValues = matrix(nrow = (nberOfExtractionFiles/N), 
+        meanDispersalVelocitiesValues = matrix(nrow = nberOfExtractionFiles, 
             ncol = dispersalVelocitySlices)
         meanDispersalVelocitiesMeanValue = matrix(nrow = 1, ncol = dispersalVelocitySlices)
         meanDispersalVelocitiesMedianValue = matrix(nrow = 1, 
             ncol = dispersalVelocitySlices)
-        meanDispersalVelocitiesValues = matrix(nrow = (nberOfExtractionFiles/N), 
+        meanDispersalVelocitiesValues = matrix(nrow = nberOfExtractionFiles, 
             ncol = dispersalVelocitySlices)
         meanDispersalVelocitiesMeanValue = matrix(nrow = 1, ncol = dispersalVelocitySlices)
         meanDispersalVelocitiesMedianValue = matrix(nrow = 1, 
@@ -770,7 +769,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         for (i in 1:dispersalVelocitySlices) {
             slicedTimes[1, i] = meanDispersalVelocityList[[1]][i, 
                 1]
-            for (t in 1:(nberOfExtractionFiles/N)) {
+            for (t in 1:nberOfExtractionFiles) {
                 meanDispersalVelocitiesValues[t, i] = meanDispersalVelocityList[[t]][i, 
                   2]
             }
@@ -816,8 +815,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         plot(meanDispersalVelocityList[[1]][, 1], meanDispersalVelocityList[[1]][, 
             2], type = "l", lwd = 0.05, axes = F, ann = F, ylim = yLim, 
             xlim = xLim)
-        if ((nberOfExtractionFiles/N) > 1) {
-            for (t in 2:(nberOfExtractionFiles/N)) {
+        if (nberOfExtractionFiles > 1) {
+            for (t in 2:nberOfExtractionFiles) {
                 lines(meanDispersalVelocityList[[t]][, 1], meanDispersalVelocityList[[t]][, 
                   2], lwd = LWD)
             }
@@ -873,13 +872,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         slicedTimes = matrix(nrow = 1, ncol = dispersalVelocitySlices)
         lower_l = matrix(nrow = 1, ncol = dispersalVelocitySlices)
         upper_l = matrix(nrow = 1, ncol = dispersalVelocitySlices)
-        weightedDispersalVelocitiesValues = matrix(nrow = (nberOfExtractionFiles/N), 
+        weightedDispersalVelocitiesValues = matrix(nrow = nberOfExtractionFiles, 
             ncol = dispersalVelocitySlices)
         weightedDispersalVelocitiesMeanValue = matrix(nrow = 1, 
             ncol = dispersalVelocitySlices)
         weightedDispersalVelocitiesMedianValue = matrix(nrow = 1, 
             ncol = dispersalVelocitySlices)
-        weightedDispersalVelocitiesValues = matrix(nrow = (nberOfExtractionFiles/N), 
+        weightedDispersalVelocitiesValues = matrix(nrow = nberOfExtractionFiles, 
             ncol = dispersalVelocitySlices)
         weightedDispersalVelocitiesMeanValue = matrix(nrow = 1, 
             ncol = dispersalVelocitySlices)
@@ -888,7 +887,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         for (i in 1:dispersalVelocitySlices) {
             slicedTimes[1, i] = weightedDispersalVelocityList[[1]][i, 
                 1]
-            for (t in 1:(nberOfExtractionFiles/N)) {
+            for (t in 1:nberOfExtractionFiles) {
                 weightedDispersalVelocitiesValues[t, i] = weightedDispersalVelocityList[[t]][i, 
                   2]
             }
@@ -934,8 +933,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         plot(weightedDispersalVelocityList[[1]][, 1], weightedDispersalVelocityList[[1]][, 
             2], type = "l", lwd = 0.05, axes = F, ann = F, ylim = yLim, 
             xlim = xLim)
-        if ((nberOfExtractionFiles/N) > 1) {
-            for (t in 2:(nberOfExtractionFiles/N)) {
+        if (nberOfExtractionFiles > 1) {
+            for (t in 2:nberOfExtractionFiles) {
                 lines(weightedDispersalVelocityList[[t]][, 1], 
                   weightedDispersalVelocityList[[t]][, 2], lwd = LWD)
             }
