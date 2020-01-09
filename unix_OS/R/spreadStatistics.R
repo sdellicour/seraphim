@@ -1,9 +1,9 @@
 spreadStatistics <-
 function (localTreesDirectory = "", nberOfExtractionFiles = 1, 
     timeSlices = 200, onlyTipBranches = F, showingPlots = TRUE, 
-    outputName = gsub(" ", "_", date()), nberOfCores = 1, slidingWindow = NA) 
+    outputName = gsub(" ", "_", date()), nberOfCores = 1, slidingWindow = NA, 
+    simulations = FALSE) 
 {
-    N = 1
     nberOfStatistics = 6
     registerDoMC(cores = nberOfCores)
     meanStatistics = matrix(nrow = (nberOfExtractionFiles/N), 
@@ -26,10 +26,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     dispersalVelocityGraph = FALSE
     if (!is.na(slidingWindow)) 
         dispersalVelocityGraph = TRUE
-    for (t in 1:(nberOfExtractionFiles/N)) {
-        T = t * N
-        fileName = paste(localTreesDirectory, "/TreeExtractions_", 
-            T, ".csv", sep = "")
+    for (t in 1:nberOfExtractionFiles) {
+        if (simulations == FALSE) 
+            fileName = paste(localTreesDirectory, "/TreeExtractions_", 
+                t, ".csv", sep = "")
+        if (simulations == TRUE) 
+            fileName = paste(localTreesDirectory, "/TreeSimulations_", 
+                t, ".csv", sep = "")
         data = read.csv(fileName, h = T)
         data = data[with(data, order(endYear, startYear)), ]
         if (sum(!data[, "node1"] %in% data[, "node2"]) > 2) 
@@ -86,10 +89,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     dispersalVelocitySlices = timeSlices
     dispersalVelocityTimeInterval = (maxEndYear - minStartYear)/dispersalVelocitySlices
     xLim = c(minStartYear, maxEndYear)
-    for (t in 1:(nberOfExtractionFiles/N)) {
-        T = t * N
-        fileName = paste(localTreesDirectory, "/TreeExtractions_", 
-            T, ".csv", sep = "")
+    for (t in 1:nberOfExtractionFiles) {
+        if (simulations == FALSE) 
+            fileName = paste(localTreesDirectory, "/TreeExtractions_", 
+                t, ".csv", sep = "")
+        if (simulations == TRUE) 
+            fileName = paste(localTreesDirectory, "/TreeSimulations_", 
+                t, ".csv", sep = "")
         data = read.csv(fileName, h = T)
         data = data[with(data, order(endYear, startYear)), ]
         nberOfConnections = dim(data)[1]
@@ -144,11 +150,14 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
         ((nberOfExtractionFiles/N) > 1)) {
         buffer = list()
-        buffer = foreach(t = 1:(nberOfExtractionFiles/N)) %dopar% 
+        buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% 
             {
-                T = t * N
-                fileName = paste(localTreesDirectory, "/TreeExtractions_", 
-                  T, ".csv", sep = "")
+                if (simulations == FALSE) 
+                  fileName = paste(localTreesDirectory, "/TreeExtractions_", 
+                    t, ".csv", sep = "")
+                if (simulations == TRUE) 
+                  fileName = paste(localTreesDirectory, "/TreeSimulations_", 
+                    t, ".csv", sep = "")
                 data = read.csv(fileName, h = T)
                 data = data[with(data, order(endYear, startYear)), 
                   ]
@@ -247,11 +256,14 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             startEndTimes[i, 1:3] = cbind(time, startTime, endTime)
         }
         buffer = list()
-        buffer = foreach(t = 1:(nberOfExtractionFiles/N)) %dopar% 
+        buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% 
             {
-                T = t * N
-                fileName = paste(localTreesDirectory, "/TreeExtractions_", 
-                  T, ".csv", sep = "")
+                if (simulations == FALSE) 
+                  fileName = paste(localTreesDirectory, "/TreeExtractions_", 
+                    t, ".csv", sep = "")
+                if (simulations == TRUE) 
+                  fileName = paste(localTreesDirectory, "/TreeSimulations_", 
+                    t, ".csv", sep = "")
                 data = read.csv(fileName, h = T)
                 data = data[with(data, order(endYear, startYear)), 
                   ]
