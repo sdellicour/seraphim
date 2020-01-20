@@ -4,7 +4,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     avgResistances = list(), fourCells = FALSE, nberOfRandomisations = 0, 
     randomProcedure = 3, outputName = "", showingPlots = FALSE, 
     nberOfCores = 1, OS = "Unix", simulations = FALSE, randomisations = FALSE, 
-    hull_polygons = list(), onlyTipBranches = FALSE, GLM = FALSE) 
+    hull_polygons = list(), onlyTipBranches = FALSE, GLM = FALSE, 
+    alternativeQstat = FALSE) 
 {
     CA = FALSE
     onlyTipBranches = FALSE
@@ -556,13 +557,19 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         }
     }
     if (impactOnVelocity == TRUE) {
-        realUniLRcoefficients = matrix(nrow = nberOfExtractionFiles, 
+        realUniLRcoefficients1 = matrix(nrow = nberOfExtractionFiles, 
             ncol = length(envVariables))
-        realUniLRRsquares = matrix(nrow = nberOfExtractionFiles, 
+        realUniLRcoefficients2 = matrix(nrow = nberOfExtractionFiles, 
+            ncol = length(envVariables))
+        realUniLRRsquares1 = matrix(nrow = nberOfExtractionFiles, 
+            ncol = length(envVariables))
+        realUniLRRsquares2 = matrix(nrow = nberOfExtractionFiles, 
             ncol = length(envVariables))
         realUniLRRsquarePValues = matrix(nrow = nberOfExtractionFiles, 
             ncol = length(envVariables))
-        realUniDeltaRsquares = matrix(nrow = nberOfExtractionFiles, 
+        realUniDeltaRsquares1 = matrix(nrow = nberOfExtractionFiles, 
+            ncol = length(envVariables))
+        realUniDeltaRsquares2 = matrix(nrow = nberOfExtractionFiles, 
             ncol = length(envVariables))
         if (GLM == TRUE) {
             realMultiGLMcoefficients = matrix(nrow = nberOfExtractionFiles, 
@@ -594,9 +601,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                   " ~ distances[[", t, "]][,", h, "]", sep = "")
                 form = as.formula(distVariables)
                 LM = lm(form)
-                realUniLRcoefficients[t, h] = summary(LM)$coefficients[2, 
+                realUniLRcoefficients1[t, h] = summary(LM)$coefficients[2, 
                   "Estimate"]
-                realUniLRRsquares[t, h] = summary(LM)$r.squared
+                realUniLRRsquares1[t, h] = summary(LM)$r.squared
                 f = summary(LM)$fstatistic
                 if (is.numeric(f)) {
                   p = pf(f[1], f[2], f[3], lower.tail = F)
@@ -606,6 +613,22 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 else {
                   realUniLRRsquarePValues[t, h] = NA
                 }
+                nonNaNdispersalTimes = dispersalTime[[t]][!is.na(distances[[t]][, 
+                  1])]
+                nonNaNdistances1 = distances[[t]][, 1][!is.na(distances[[t]][, 
+                  1])]
+                nonNaNdistances2 = distances[[t]][, h][!is.na(distances[[t]][, 
+                  1])]
+                distVariables = paste("nonNaNdistances2 ~ nonNaNdistances1", 
+                  sep = "")
+                LM1 = lm(as.formula(distVariables))
+                residuals_LM1 = studres(LM1)
+                distVariables = paste("nonNaNdispersalTimes ~ nonNaNdistances2 + residuals_LM1", 
+                  sep = "")
+                LM2 = lm(as.formula(distVariables))
+                realUniLRcoefficients2[t, h] = summary(LM2)$coefficients[2, 
+                  "Estimate"]
+                realUniLRRsquares2[t, h] = summary(LM2)$r.squared
             }
         }
         if (GLM == TRUE) {
@@ -690,12 +713,12 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 ncol = length(envVariables))
         }
         for (h in 1:length(envVariables)) {
-            uniLRmedianRsquares[1, h] = median(realUniLRRsquares[, 
+            uniLRmedianRsquares[1, h] = median(realUniLRRsquares1[, 
                 h], na.rm = T)
             uniLRmedianRsquarePValues[1, h] = median(realUniLRRsquarePValues[, 
                 h], na.rm = T)
-            uniLRmedianDeltaRsquares[1, h] = median(realUniLRRsquares[, 
-                h] - realUniLRRsquares[, 1], na.rm = T)
+            uniLRmedianDeltaRsquares[1, h] = median(realUniLRRsquares1[, 
+                h] - realUniLRRsquares1[, 1], na.rm = T)
             if (GLM == TRUE) {
                 multiGLMmedianCoefficients[1, h] = median(realMultiGLMcoefficients[, 
                   h], na.rm = T)
@@ -709,8 +732,10 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             if (h != 1) {
-                realUniDeltaRsquares[, h] = (realUniLRRsquares[, 
-                  h] - realUniLRRsquares[, 1])
+                realUniDeltaRsquares1[, h] = (realUniLRRsquares1[, 
+                  h] - realUniLRRsquares1[, 1])
+                realUniDeltaRsquares2[, h] = (realUniLRRsquares2[, 
+                  h] - realUniLRRsquares1[, 1])
             }
         }
         if ((plottingHistograms == TRUE) & (nberOfExtractionFiles > 
@@ -741,52 +766,52 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             breakList_1 = (0:50)/50
             breakList_2 = (0:50)/100
             for (h in 1:length(envVariables)) {
-                xMin = min(realUniLRcoefficients[, h])
-                xMax = max(realUniLRcoefficients[, h])
-                hist(realUniLRcoefficients[, h], freq = T, xlim = c(xMin, 
+                xMin = min(realUniLRcoefficients1[, h])
+                xMax = max(realUniLRcoefficients1[, h])
+                hist(realUniLRcoefficients1[, h], freq = T, xlim = c(xMin, 
                   xMax), breaks = seq(xMin, xMax, by = (xMax - 
                   xMin)/50), xlab = "Univariate LR coefficients", 
                   main = names(envVariables[[h]]), cex.main = 1.5, 
                   cex.axis = 1.2, cex = 1.2, cex.lab = 1.1)
             }
-            xMin = min(realUniLRRsquares[, 1], na.rm = T)
-            xMax = max(realUniLRRsquares[, 1], na.rm = T)
+            xMin = min(realUniLRRsquares1[, 1], na.rm = T)
+            xMax = max(realUniLRRsquares1[, 1], na.rm = T)
             for (h in 2:length(envVariables)) {
-                if (xMin > min(realUniLRRsquares[, h], na.rm = T)) {
-                  xMin = min(realUniLRRsquares[, h], na.rm = T)
+                if (xMin > min(realUniLRRsquares1[, h], na.rm = T)) {
+                  xMin = min(realUniLRRsquares1[, h], na.rm = T)
                 }
-                if (xMax < max(realUniLRRsquares[, h], na.rm = T)) {
-                  xMax = max(realUniLRRsquares[, h], na.rm = T)
+                if (xMax < max(realUniLRRsquares1[, h], na.rm = T)) {
+                  xMax = max(realUniLRRsquares1[, h], na.rm = T)
                 }
             }
             for (h in 1:length(envVariables)) {
-                min = min(realUniLRRsquares[, h])
-                max = max(realUniLRRsquares[, h])
-                hist(realUniLRRsquares[, h], freq = T, xlim = c(0, 
+                min = min(realUniLRRsquares1[, h])
+                max = max(realUniLRRsquares1[, h])
+                hist(realUniLRRsquares1[, h], freq = T, xlim = c(0, 
                   xMax), breaks = seq(0, xMax, by = (xMax - 0)/50), 
                   xlab = "Univariate LR R2's", main = names(envVariables[[h]]), 
                   cex.main = 1.5, cex.axis = 1.2, cex = 1.2, 
                   cex.lab = 1.1)
             }
             plot.new()
-            xMin = min(realUniLRRsquares[, 2] - realUniLRRsquares[, 
+            xMin = min(realUniLRRsquares1[, 2] - realUniLRRsquares1[, 
                 1], na.rm = T)
-            xMax = max(realUniLRRsquares[, 2] - realUniLRRsquares[, 
+            xMax = max(realUniLRRsquares1[, 2] - realUniLRRsquares1[, 
                 1], na.rm = T)
             for (h in 2:length(envVariables)) {
-                if (xMin > min(realUniLRRsquares[, h] - realUniLRRsquares[, 
+                if (xMin > min(realUniLRRsquares1[, h] - realUniLRRsquares1[, 
                   1], na.rm = T)) {
-                  xMin = min(realUniLRRsquares[, h] - realUniLRRsquares[, 
+                  xMin = min(realUniLRRsquares1[, h] - realUniLRRsquares1[, 
                     1], na.rm = T)
                 }
-                if (xMax < max(realUniLRRsquares[, h] - realUniLRRsquares[, 
+                if (xMax < max(realUniLRRsquares1[, h] - realUniLRRsquares1[, 
                   1], na.rm = T)) {
-                  xMax = max(realUniLRRsquares[, h] - realUniLRRsquares[, 
+                  xMax = max(realUniLRRsquares1[, h] - realUniLRRsquares1[, 
                     1], na.rm = T)
                 }
             }
             for (h in 2:length(envVariables)) {
-                hist(realUniDeltaRsquares[, h], freq = T, xlim = c(xMin, 
+                hist(realUniDeltaRsquares1[, h], freq = T, xlim = c(xMin, 
                   xMax), breaks = seq(xMin, xMax, by = (xMax - 
                   xMin)/50), xlab = "Univariate LR delta R2 (Q)", 
                   main = names(envVariables[[h]]), cex.main = 1.5, 
@@ -893,16 +918,19 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 fileName2 = paste(outputName, "_linear_regression_results.txt", 
                   sep = "")
             }
-            uniLRcoefficientsNames = c()
-            uniLRRsquaresNames = c()
-            uniLRdeltaRsquaresNames = c()
+            uniLRcoefficientsNames1 = c()
+            uniLRRsquaresNames1 = c()
+            uniLRdeltaRsquaresNames1 = c()
             uniLRpValuesNames = c()
+            uniLRcoefficientsNames2 = c()
+            uniLRRsquaresNames2 = c()
+            uniLRdeltaRsquaresNames2 = c()
             if (GLM == TRUE) {
                 multiGLMcoefficientsNames = c()
                 multiGLMpValuesNames = c()
-                mat = cbind(realUniLRcoefficients[, 1:dim(realUniLRcoefficients)[2]], 
-                  realUniLRRsquares[, 1:dim(realUniLRRsquares)[2]], 
-                  realUniDeltaRsquares[, 2:dim(realUniDeltaRsquares)[2]], 
+                mat = cbind(realUniLRcoefficients1[, 1:dim(realUniLRcoefficients1)[2]], 
+                  realUniLRRsquares1[, 1:dim(realUniLRRsquares1)[2]], 
+                  realUniDeltaRsquares1[, 2:dim(realUniDeltaRsquares1)[2]], 
                   realMultiGLMcoefficients[, 1:dim(realMultiGLMcoefficients)[2]])
                 if (commonalityAnalysis == TRUE) {
                   multiGLMCAuniqueContributionsNames = c()
@@ -913,21 +941,50 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             else {
-                mat = cbind(realUniLRcoefficients[, 1:dim(realUniLRcoefficients)[2]], 
-                  realUniLRRsquares[, 1:dim(realUniLRRsquares)[2]], 
-                  realUniDeltaRsquares[, 2:dim(realUniDeltaRsquares)[2]])
+                mat = cbind(realUniLRcoefficients1[, 1:dim(realUniLRcoefficients1)[2]], 
+                  realUniLRRsquares1[, 1:dim(realUniLRRsquares1)[2]], 
+                  realUniDeltaRsquares1[, 2:dim(realUniDeltaRsquares1)[2]])
+                if (alternativeQstat == TRUE) {
+                  mat = cbind(mat, realUniLRcoefficients2[, 1:dim(realUniLRcoefficients2)[2]], 
+                    realUniLRRsquares2[, 1:dim(realUniLRRsquares2)[2]], 
+                    realUniDeltaRsquares2[, 2:dim(realUniDeltaRsquares2)[2]])
+                }
             }
             for (h in 1:length(envVariables)) {
-                uniLRcoefficientsNames = cbind(uniLRcoefficientsNames, 
-                  paste("Univariate_LR_coefficients_", names(envVariables[[h]]), 
-                    sep = ""))
-                uniLRRsquaresNames = cbind(uniLRRsquaresNames, 
-                  paste("Univariate_LR_R2_", names(envVariables[[h]]), 
-                    sep = ""))
-                if (h > 1) 
-                  uniLRdeltaRsquaresNames = cbind(uniLRdeltaRsquaresNames, 
-                    paste("Univariate_LR_delta_R2_", names(envVariables[[h]]), 
+                if (alternativeQstat == TRUE) {
+                  uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, 
+                    paste("Univariate_LR1_coefficients_", names(envVariables[[h]]), 
                       sep = ""))
+                  uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, 
+                    paste("Univariate_LR1_R2_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRcoefficientsNames2 = cbind(uniLRcoefficientsNames2, 
+                    paste("Univariate_LR2_coefficients_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRRsquaresNames2 = cbind(uniLRRsquaresNames2, 
+                    paste("Univariate_LR2_R2_", names(envVariables[[h]]), 
+                      sep = ""))
+                  if (h > 1) 
+                    uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1, 
+                      paste("Univariate_LR1_delta_R2_", names(envVariables[[h]]), 
+                        sep = ""))
+                  if (h > 1) 
+                    uniLRdeltaRsquaresNames2 = cbind(uniLRdeltaRsquaresNames2, 
+                      paste("Univariate_LR2_delta_R2_", names(envVariables[[h]]), 
+                        sep = ""))
+                }
+                else {
+                  uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, 
+                    paste("Univariate_LR_coefficients_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, 
+                    paste("Univariate_LR_R2_", names(envVariables[[h]]), 
+                      sep = ""))
+                  if (h > 1) 
+                    uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1, 
+                      paste("Univariate_LR_delta_R2_", names(envVariables[[h]]), 
+                        sep = ""))
+                }
                 if (GLM == TRUE) {
                   multiGLMcoefficientsNames = cbind(multiGLMcoefficientsNames, 
                     paste("Multivariate_GLM_coefficients_", names(envVariables[[h]]), 
@@ -943,8 +1000,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             if (GLM == TRUE) {
-                names = cbind(uniLRcoefficientsNames, uniLRRsquaresNames, 
-                  uniLRpValuesNames, uniLRdeltaRsquaresNames, 
+                names = cbind(uniLRcoefficientsNames1, uniLRRsquaresNames1, 
+                  uniLRpValuesNames, uniLRdeltaRsquaresNames1, 
                   multiGLMcoefficientsNames, multiGLMpValuesNames)
                 if (commonalityAnalysis == TRUE) {
                   names = cbind(names, multiGLMCAuniqueContributionsNames, 
@@ -952,8 +1009,15 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             else {
-                names = cbind(uniLRcoefficientsNames, uniLRRsquaresNames, 
-                  uniLRpValuesNames, uniLRdeltaRsquaresNames)
+                if (alternativeQstat == TRUE) {
+                  names = cbind(uniLRcoefficientsNames1, uniLRRsquaresNames1, 
+                    uniLRdeltaRsquaresNames1, uniLRcoefficientsNames2, 
+                    uniLRRsquaresNames2, uniLRdeltaRsquaresNames2)
+                }
+                else {
+                  names = cbind(uniLRcoefficientsNames1, uniLRRsquaresNames1, 
+                    uniLRdeltaRsquaresNames1)
+                }
             }
             colnames(mat) = names
             write.table(mat, file = fileName2, row.names = F, 
@@ -962,19 +1026,19 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     }
     if (nberOfRandomisations > 0) {
         if (impactOnVelocity == TRUE) {
-            uniLRRsquaresLower = matrix(0, nrow = nberOfExtractionFiles, 
+            uniLRRsquaresLower1 = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
-            uniLRRsquaresHigher = matrix(0, nrow = nberOfExtractionFiles, 
+            uniLRRsquaresHigher1 = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
-            uniLRRsquaresRandomisationPValues = matrix(nrow = nberOfExtractionFiles, 
+            uniLRRsquaresRandomisationPValues1 = matrix(nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
-            uniLRdeltaRsquaresLower = matrix(0, nrow = nberOfExtractionFiles, 
+            uniLRdeltaRsquaresLower1 = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
-            uniLRdeltaRsquaresHigher = matrix(0, nrow = nberOfExtractionFiles, 
+            uniLRdeltaRsquaresHigher1 = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
-            uniLRdeltaRsquaresRandomisationPValues = matrix(nrow = nberOfExtractionFiles, 
+            uniLRdeltaRsquaresRandomisationPValues1 = matrix(nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
-            uniLRdeltaRsquaresRandomisationBFs = matrix(nrow = length(envVariables), 
+            uniLRdeltaRsquaresRandomisationBFs1 = matrix(nrow = length(envVariables), 
                 ncol = nberOfRandomisations)
             uniLRRsquarePValuesLower = matrix(0, nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
@@ -982,6 +1046,20 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 ncol = length(envVariables))
             uniLRRsquarePValuesRandomisationPValues = matrix(nrow = nberOfExtractionFiles, 
                 ncol = length(envVariables))
+            uniLRRsquaresLower2 = matrix(0, nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            uniLRRsquaresHigher2 = matrix(0, nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            uniLRRsquaresRandomisationPValues2 = matrix(nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            uniLRdeltaRsquaresLower2 = matrix(0, nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            uniLRdeltaRsquaresHigher2 = matrix(0, nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            uniLRdeltaRsquaresRandomisationPValues2 = matrix(nrow = nberOfExtractionFiles, 
+                ncol = length(envVariables))
+            uniLRdeltaRsquaresRandomisationBFs2 = matrix(nrow = length(envVariables), 
+                ncol = nberOfRandomisations)
             if (GLM == TRUE) {
                 multiGLMcoefficientsLower = matrix(0, nrow = nberOfExtractionFiles, 
                   ncol = length(envVariables))
@@ -1832,13 +1910,15 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                     if ((!is.na(rateOfPositiveDifferences[t, 
                       h])) & (!is.na(sum(diffs > 0)))) {
                       if (rateOfPositiveDifferences[t, h] < simRateOfPositiveDifferences[t, 
-                        h]) 
+                        h]) {
                         rateOfPositiveDifferencesHigher[t, h] = rateOfPositiveDifferencesHigher[t, 
                           h] + 1
+                      }
                       if (rateOfPositiveDifferences[t, h] > simRateOfPositiveDifferences[t, 
-                        h]) 
+                        h]) {
                         rateOfPositiveDifferencesLower[t, h] = rateOfPositiveDifferencesLower[t, 
                           h] + 1
+                      }
                     }
                     else {
                       rateOfPositiveDifferencesLower[t, h] = NA
@@ -1862,11 +1942,15 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             if (impactOnVelocity == TRUE) {
-                simUniLRRsquares = matrix(nrow = nberOfExtractionFiles, 
+                simUniLRRsquares1 = matrix(nrow = nberOfExtractionFiles, 
+                  ncol = length(envVariables))
+                simUniLRRsquares2 = matrix(nrow = nberOfExtractionFiles, 
                   ncol = length(envVariables))
                 simUniLRRsquarePValues = matrix(nrow = nberOfExtractionFiles, 
                   ncol = length(envVariables))
-                simUniLRDeltaRsquares = matrix(nrow = nberOfExtractionFiles, 
+                simUniLRDeltaRsquares1 = matrix(nrow = nberOfExtractionFiles, 
+                  ncol = length(envVariables))
+                simUniLRDeltaRsquares2 = matrix(nrow = nberOfExtractionFiles, 
                   ncol = length(envVariables))
                 if (GLM == TRUE) {
                   simMultiGLMcoefficients = matrix(nrow = nberOfExtractionFiles, 
@@ -1883,9 +1967,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                     distVariables = paste("dispersalTime[[", 
                       t, "]]", " ~ distancesSim[[", t, "]][,1]", 
                       sep = "")
-                    form = as.formula(distVariables)
-                    LM = lm(form)
-                    simUniLRRsquares[t, 1] = summary(LM)$r.squared
+                    LM = lm(as.formula(distVariables))
+                    simUniLRRsquares1[t, 1] = summary(LM)$r.squared
                     f = summary(LM)$fstatistic
                     if (is.numeric(f)) {
                       p = pf(f[1], f[2], f[3], lower.tail = F)
@@ -1902,15 +1985,30 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                     distVariables = paste("dispersalTime[[", 
                       t, "]]", " ~ distancesSim[[", t, "]][,", 
                       h, "]", sep = "")
-                    form = as.formula(distVariables)
-                    LM = lm(form)
-                    simUniLRRsquares[t, h] = summary(LM)$r.squared
+                    LM = lm(as.formula(distVariables))
+                    simUniLRRsquares1[t, h] = summary(LM)$r.squared
                     f = summary(LM)$fstatistic
                     p = pf(f[1], f[2], f[3], lower.tail = F)
                     attributes(p) = NULL
                     simUniLRRsquarePValues[t, h] = p
-                    simUniLRDeltaRsquares[t, h] = simUniLRRsquares[t, 
-                      h] - simUniLRRsquares[t, 1]
+                    simUniLRDeltaRsquares1[t, h] = simUniLRRsquares1[t, 
+                      h] - simUniLRRsquares1[t, 1]
+                    nonNaNdispersalTimes = dispersalTime[[t]][!is.na(distancesSim[[t]][, 
+                      1])]
+                    nonNaNdistancesSim1 = distancesSim[[t]][, 
+                      1][!is.na(distancesSim[[t]][, 1])]
+                    nonNaNdistancesSim2 = distancesSim[[t]][, 
+                      h][!is.na(distancesSim[[t]][, 1])]
+                    distVariables = paste("nonNaNdistancesSim2 ~ nonNaNdistancesSim1", 
+                      sep = "")
+                    LM1 = lm(as.formula(distVariables))
+                    residuals_LM1 = studres(LM1)
+                    distVariables = paste("nonNaNdispersalTimes ~ nonNaNdistancesSim2 + residuals_LM1", 
+                      sep = "")
+                    LM2 = lm(as.formula(distVariables))
+                    simUniLRRsquares2[t, h] = summary(LM2)$r.squared
+                    simUniLRDeltaRsquares2[t, h] = simUniLRRsquares2[t, 
+                      h] - simUniLRRsquares1[t, 1]
                   }
                 }
                 if (GLM == TRUE) {
@@ -2029,13 +2127,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             if (impactOnVelocity == TRUE) {
                 for (h in H:length(envVariables)) {
                   for (t in 1:nberOfExtractionFiles) {
-                    if (simUniLRRsquares[t, h] < realUniLRRsquares[t, 
+                    if (simUniLRRsquares1[t, h] < realUniLRRsquares1[t, 
                       h]) {
-                      uniLRRsquaresLower[t, h] = uniLRRsquaresLower[t, 
+                      uniLRRsquaresLower1[t, h] = uniLRRsquaresLower1[t, 
                         h] + 1
                     }
                     else {
-                      uniLRRsquaresHigher[t, h] = uniLRRsquaresHigher[t, 
+                      uniLRRsquaresHigher1[t, h] = uniLRRsquaresHigher1[t, 
                         h] + 1
                     }
                     if (simUniLRRsquarePValues[t, h] < realUniLRRsquarePValues[t, 
@@ -2047,13 +2145,31 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       uniLRRsquarePValuesHigher[t, h] = uniLRRsquarePValuesHigher[t, 
                         h] + 1
                     }
-                    if (simUniLRDeltaRsquares[t, h] < realUniDeltaRsquares[t, 
+                    if (simUniLRDeltaRsquares1[t, h] < realUniDeltaRsquares1[t, 
                       h]) {
-                      uniLRdeltaRsquaresLower[t, h] = uniLRdeltaRsquaresLower[t, 
+                      uniLRdeltaRsquaresLower1[t, h] = uniLRdeltaRsquaresLower1[t, 
                         h] + 1
                     }
                     else {
-                      uniLRdeltaRsquaresHigher[t, h] = uniLRdeltaRsquaresHigher[t, 
+                      uniLRdeltaRsquaresHigher1[t, h] = uniLRdeltaRsquaresHigher1[t, 
+                        h] + 1
+                    }
+                    if (simUniLRRsquares2[t, h] < realUniLRRsquares2[t, 
+                      h]) {
+                      uniLRRsquaresLower2[t, h] = uniLRRsquaresLower2[t, 
+                        h] + 1
+                    }
+                    else {
+                      uniLRRsquaresHigher2[t, h] = uniLRRsquaresHigher2[t, 
+                        h] + 1
+                    }
+                    if (simUniLRDeltaRsquares2[t, h] < realUniDeltaRsquares2[t, 
+                      h]) {
+                      uniLRdeltaRsquaresLower2[t, h] = uniLRdeltaRsquaresLower2[t, 
+                        h] + 1
+                    }
+                    else {
+                      uniLRdeltaRsquaresHigher2[t, h] = uniLRdeltaRsquaresHigher2[t, 
                         h] + 1
                     }
                     if (GLM == TRUE) {
@@ -2117,12 +2233,12 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             }
             if (impactOnVelocity == TRUE) {
                 for (h in H:length(envVariables)) {
-                  uniLRmedianRsquaresSim[s, h] = median(simUniLRRsquares[, 
+                  uniLRmedianRsquaresSim[s, h] = median(simUniLRRsquares1[, 
                     h])
                   uniLRmedianRsquarePValuesSim[s, h] = median(simUniLRRsquarePValues[, 
                     h])
-                  uniLRmedianDeltaRsquaresSim[s, h] = median(simUniLRRsquares[, 
-                    h] - simUniLRRsquares[, 1])
+                  uniLRmedianDeltaRsquaresSim[s, h] = median(simUniLRRsquares1[, 
+                    h] - simUniLRRsquares1[, 1])
                   if (GLM == TRUE) {
                     multiGLMmedianCoefficientsSim[s, h] = median(simMultiGLMcoefficients[, 
                       h])
@@ -2141,14 +2257,23 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 for (h in H:length(envVariables)) {
                   c = 0
                   for (t in 1:nberOfExtractionFiles) {
-                    if (simUniLRDeltaRsquares[t, h] < realUniDeltaRsquares[t, 
-                      h]) {
+                    if (simUniLRDeltaRsquares1[t, h] < realUniDeltaRsquares1[t, 
+                      h]) 
                       c = c + 1
-                    }
                   }
                   f = c/nberOfExtractionFiles
                   bf = f/(1 - f)
-                  uniLRdeltaRsquaresRandomisationBFs[h, s] = round(bf, 
+                  uniLRdeltaRsquaresRandomisationBFs1[h, s] = round(bf, 
+                    4)
+                  c = 0
+                  for (t in 1:nberOfExtractionFiles) {
+                    if (simUniLRDeltaRsquares2[t, h] < realUniDeltaRsquares2[t, 
+                      h]) 
+                      c = c + 1
+                  }
+                  f = c/nberOfExtractionFiles
+                  bf = f/(1 - f)
+                  uniLRdeltaRsquaresRandomisationBFs2[h, s] = round(bf, 
                     4)
                 }
                 if (showingPlots == TRUE) 
@@ -2235,12 +2360,18 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         if (impactOnVelocity == TRUE) {
             for (h in H:length(envVariables)) {
                 for (t in 1:nberOfExtractionFiles) {
-                  uniLRRsquaresRandomisationPValues[t, h] = (nberOfRandomisations - 
-                    uniLRRsquaresLower[t, h])/nberOfRandomisations
+                  uniLRRsquaresRandomisationPValues1[t, h] = (nberOfRandomisations - 
+                    uniLRRsquaresLower1[t, h])/nberOfRandomisations
                   uniLRRsquarePValuesRandomisationPValues[t, 
                     h] = (uniLRRsquarePValuesLower[t, h])/nberOfRandomisations
-                  uniLRdeltaRsquaresRandomisationPValues[t, h] = (nberOfRandomisations - 
-                    uniLRdeltaRsquaresLower[t, h])/nberOfRandomisations
+                  uniLRdeltaRsquaresRandomisationPValues1[t, 
+                    h] = (nberOfRandomisations - uniLRdeltaRsquaresLower1[t, 
+                    h])/nberOfRandomisations
+                  uniLRRsquaresRandomisationPValues2[t, h] = (nberOfRandomisations - 
+                    uniLRRsquaresLower2[t, h])/nberOfRandomisations
+                  uniLRdeltaRsquaresRandomisationPValues2[t, 
+                    h] = (nberOfRandomisations - uniLRdeltaRsquaresLower2[t, 
+                    h])/nberOfRandomisations
                   if (GLM == TRUE) {
                     multiGLMcoefficientsRandomisationPValues[t, 
                       h] = (nberOfRandomisations - multiGLMcoefficientsLower[t, 
@@ -2414,18 +2545,18 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                   par(mfrow = c(3, length(envVariables)))
                 }
                 breakList = (0:50)/50
-                xMin = min(realUniLRRsquares[, 1], na.rm = T)
-                xMax = max(realUniLRRsquares[, 1], na.rm = T)
+                xMin = min(realUniLRRsquares1[, 1], na.rm = T)
+                xMax = max(realUniLRRsquares1[, 1], na.rm = T)
                 for (h in 2:length(envVariables)) {
-                  if (xMin > min(realUniLRRsquares[, h], na.rm = T)) 
-                    xMin = min(realUniLRRsquares[, h], na.rm = T)
-                  if (xMax < max(realUniLRRsquares[, h], na.rm = T)) 
-                    xMax = max(realUniLRRsquares[, h], na.rm = T)
+                  if (xMin > min(realUniLRRsquares1[, h], na.rm = T)) 
+                    xMin = min(realUniLRRsquares1[, h], na.rm = T)
+                  if (xMax < max(realUniLRRsquares1[, h], na.rm = T)) 
+                    xMax = max(realUniLRRsquares1[, h], na.rm = T)
                 }
                 for (h in 1:length(envVariables)) {
-                  min = min(realUniLRRsquares[, h])
-                  max = max(realUniLRRsquares[, h])
-                  hist(realUniLRRsquares[, h], freq = T, xlim = c(0, 
+                  min = min(realUniLRRsquares1[, h])
+                  max = max(realUniLRRsquares1[, h])
+                  hist(realUniLRRsquares1[, h], freq = T, xlim = c(0, 
                     xMax), breaks = seq(0, xMax, by = (xMax - 
                     0)/50), xlab = "Univariate LR R2's", main = names(envVariables[[h]]), 
                     cex.main = 1.5, cex.axis = 1.2, cex = 1.2, 
@@ -2434,7 +2565,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 if (distPermutations == FALSE) {
                   yMax = 0
                   for (h in 2:length(envVariables)) {
-                    a = hist(uniLRRsquaresRandomisationPValues[, 
+                    a = hist(uniLRRsquaresRandomisationPValues1[, 
                       h], breaks = breakList, plot = F)
                     if (yMax < max(a$counts)) 
                       yMax = max(a$counts)
@@ -2444,19 +2575,19 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 else {
                   yMax = 0
                   for (h in 1:length(envVariables)) {
-                    a = hist(uniLRRsquaresRandomisationPValues[, 
+                    a = hist(uniLRRsquaresRandomisationPValues1[, 
                       h], breaks = breakList, plot = F)
                     if (yMax < max(a$counts)) 
                       yMax = max(a$counts)
                   }
-                  hist(uniLRRsquaresRandomisationPValues[, 1], 
+                  hist(uniLRRsquaresRandomisationPValues1[, 1], 
                     freq = T, breaks = breakList, xlim = c(0, 
                       1), ylim = c(0, yMax), xlab = "Univariate LR R2 p-values (randomisations)", 
                     main = "geographical distance", cex.main = 1.5, 
                     cex.axis = 1.2, cex = 1.2, cex.lab = 1.1)
                 }
                 for (h in 2:length(envVariables)) {
-                  hist(uniLRRsquaresRandomisationPValues[, h], 
+                  hist(uniLRRsquaresRandomisationPValues1[, h], 
                     freq = T, breaks = breakList, xlim = c(0, 
                       1), ylim = c(0, yMax), xlab = "Univariate LR R2 p-values (randomisations)", 
                     main = names(envVariables[[h]]), cex.main = 1.5, 
@@ -2464,14 +2595,14 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
                 yMax = 0
                 for (h in 2:length(envVariables)) {
-                  a = hist(uniLRdeltaRsquaresRandomisationPValues[, 
+                  a = hist(uniLRdeltaRsquaresRandomisationPValues1[, 
                     h], breaks = breakList, plot = F)
                   if (yMax < max(a$counts)) 
                     yMax = max(a$counts)
                 }
                 plot.new()
                 for (h in 2:length(envVariables)) {
-                  hist(uniLRdeltaRsquaresRandomisationPValues[, 
+                  hist(uniLRdeltaRsquaresRandomisationPValues1[, 
                     h], freq = T, breaks = breakList, xlim = c(0, 
                     1), ylim = c(0, yMax), xlab = "Univariate LR delta R2 (Q) p-values (randomisations)", 
                     main = names(envVariables[[h]]), cex.main = 1.5, 
@@ -2612,16 +2743,16 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             fileName = paste(outputName, "_randomisation_results.txt", 
                 sep = "")
             if (GLM == TRUE) {
-                mat = cbind(uniLRRsquaresRandomisationPValues[, 
-                  2:dim(uniLRRsquaresRandomisationPValues)[2]], 
-                  uniLRdeltaRsquaresRandomisationPValues[, 2:dim(uniLRdeltaRsquaresRandomisationPValues)[2]], 
+                mat = cbind(uniLRRsquaresRandomisationPValues1[, 
+                  2:dim(uniLRRsquaresRandomisationPValues1)[2]], 
+                  uniLRdeltaRsquaresRandomisationPValues1[, 2:dim(uniLRdeltaRsquaresRandomisationPValues1)[2]], 
                   multiGLMcoefficientsRandomisationPValues[, 
                     2:dim(multiGLMcoefficientsRandomisationPValues)[2]])
                 if (nberOfExtractionFiles == 1) {
-                  mat = t(c(uniLRRsquaresRandomisationPValues[, 
-                    2:dim(uniLRRsquaresRandomisationPValues)[2]], 
-                    uniLRdeltaRsquaresRandomisationPValues[, 
-                      2:dim(uniLRdeltaRsquaresRandomisationPValues)[2]], 
+                  mat = t(c(uniLRRsquaresRandomisationPValues1[, 
+                    2:dim(uniLRRsquaresRandomisationPValues1)[2]], 
+                    uniLRdeltaRsquaresRandomisationPValues1[, 
+                      2:dim(uniLRdeltaRsquaresRandomisationPValues1)[2]], 
                     multiGLMcoefficientsRandomisationPValues[, 
                       2:dim(multiGLMcoefficientsRandomisationPValues)[2]]))
                 }
@@ -2633,19 +2764,36 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             else {
-                mat = cbind(uniLRRsquaresRandomisationPValues[, 
-                  2:dim(uniLRRsquaresRandomisationPValues)[2]], 
-                  uniLRdeltaRsquaresRandomisationPValues[, 2:dim(uniLRdeltaRsquaresRandomisationPValues)[2]])
+                mat = cbind(uniLRRsquaresRandomisationPValues1[, 
+                  2:dim(uniLRRsquaresRandomisationPValues1)[2]], 
+                  uniLRdeltaRsquaresRandomisationPValues1[, 2:dim(uniLRdeltaRsquaresRandomisationPValues1)[2]])
+                if (alternativeQstat == TRUE) {
+                  mat = cbind(mat, uniLRRsquaresRandomisationPValues2[, 
+                    2:dim(uniLRRsquaresRandomisationPValues2)[2]], 
+                    uniLRdeltaRsquaresRandomisationPValues2[, 
+                      2:dim(uniLRdeltaRsquaresRandomisationPValues2)[2]])
+                }
                 if (nberOfExtractionFiles == 1) {
-                  mat = t(c(uniLRRsquaresRandomisationPValues[, 
-                    2:dim(uniLRRsquaresRandomisationPValues)[2]], 
-                    uniLRdeltaRsquaresRandomisationPValues[, 
-                      2:dim(uniLRdeltaRsquaresRandomisationPValues)[2]]))
+                  mat = t(c(uniLRRsquaresRandomisationPValues1[, 
+                    2:dim(uniLRRsquaresRandomisationPValues1)[2]], 
+                    uniLRdeltaRsquaresRandomisationPValues1[, 
+                      2:dim(uniLRdeltaRsquaresRandomisationPValues1)[2]]))
+                  if (alternativeQstat == TRUE) {
+                    mat = t(c(uniLRRsquaresRandomisationPValues1[, 
+                      2:dim(uniLRRsquaresRandomisationPValues1)[2]], 
+                      uniLRdeltaRsquaresRandomisationPValues1[, 
+                        2:dim(uniLRdeltaRsquaresRandomisationPValues1)[2]], 
+                      uniLRRsquaresRandomisationPValues2[, 2:dim(uniLRRsquaresRandomisationPValues2)[2]], 
+                      uniLRdeltaRsquaresRandomisationPValues2[, 
+                        2:dim(uniLRdeltaRsquaresRandomisationPValues2)[2]]))
+                  }
                 }
             }
-            uniLRRsquarePValuesNames = c()
-            uniLRdeltaRsquarePValuesNames = c()
+            uniLRRsquarePValuesNames1 = c()
+            uniLRdeltaRsquarePValuesNames1 = c()
             uniLRRsquarePValuePValuesNames = c()
+            uniLRRsquarePValuesNames2 = c()
+            uniLRdeltaRsquarePValuesNames2 = c()
             if (GLM == TRUE) {
                 multiGLMcoefficientPValuesNames = c()
                 multiGLMRsquarePValuePValuesNames = c()
@@ -2653,12 +2801,28 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 multiGLMCAcommonContributionsPValuesNames = c()
             }
             for (h in 2:length(envVariables)) {
-                uniLRRsquarePValuesNames = cbind(uniLRRsquarePValuesNames, 
-                  paste("Uni_LR_R2_p-values_", names(envVariables[[h]]), 
-                    sep = ""))
-                uniLRdeltaRsquarePValuesNames = cbind(uniLRdeltaRsquarePValuesNames, 
-                  paste("Uni_LR_delta_R2_p-values_", names(envVariables[[h]]), 
-                    sep = ""))
+                if (alternativeQstat == TRUE) {
+                  uniLRRsquarePValuesNames1 = cbind(uniLRRsquarePValuesNames1, 
+                    paste("Uni_LR1_R2_p-values_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRdeltaRsquarePValuesNames1 = cbind(uniLRdeltaRsquarePValuesNames1, 
+                    paste("Uni_LR1_delta_R2_p-values_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRRsquarePValuesNames2 = cbind(uniLRRsquarePValuesNames2, 
+                    paste("Uni_LR2_R2_p-values_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRdeltaRsquarePValuesNames2 = cbind(uniLRdeltaRsquarePValuesNames2, 
+                    paste("Uni_LR2_delta_R2_p-values_", names(envVariables[[h]]), 
+                      sep = ""))
+                }
+                else {
+                  uniLRRsquarePValuesNames1 = cbind(uniLRRsquarePValuesNames1, 
+                    paste("Uni_LR_R2_p-values_", names(envVariables[[h]]), 
+                      sep = ""))
+                  uniLRdeltaRsquarePValuesNames1 = cbind(uniLRdeltaRsquarePValuesNames1, 
+                    paste("Uni_LR_delta_R2_p-values_", names(envVariables[[h]]), 
+                      sep = ""))
+                }
                 if (GLM == TRUE) {
                   multiGLMcoefficientPValuesNames = cbind(multiGLMcoefficientPValuesNames, 
                     paste("Multivariate_GLM_coefficient_p-values_", 
@@ -2683,8 +2847,10 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 }
             }
             else {
-                names = cbind(uniLRRsquarePValuesNames, uniLRdeltaRsquarePValuesNames, 
-                  uniLRRsquarePValuePValuesNames)
+                names = cbind(uniLRRsquarePValuesNames1, uniLRdeltaRsquarePValuesNames1)
+                if (alternativeQstat == TRUE) 
+                  names = cbind(names, uniLRRsquarePValuesNames2, 
+                    uniLRdeltaRsquarePValuesNames2)
             }
             colnames(mat) = names
             write.table(mat, file = fileName, row.names = F, 
@@ -2723,18 +2889,35 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             for (h in 1:length(envVariables)) {
                 envVariablesNames = c(envVariablesNames, names(envVariables[[h]]))
             }
-            colNames = c()
+            colNames1 = c()
+            colNames2 = c()
             for (s in 1:nberOfRandomisations) {
-                colNames = c(colNames, paste("BFs_randomisation_", 
-                  s, sep = ""))
+                if (alternativeQstat == TRUE) {
+                  colNames1 = c(colNames1, paste("BFs_deltaR2_LR1_randomisation_", 
+                    s, sep = ""))
+                  colNames2 = c(colNames2, paste("BFs_deltaR2_LR2_randomisation_", 
+                    s, sep = ""))
+                }
+                else {
+                  colNames1 = c(colNames1, paste("BFs_deltaR2_randomisation_", 
+                    s, sep = ""))
+                }
             }
             if (impactOnVelocity == TRUE) {
-                row.names(uniLRdeltaRsquaresRandomisationBFs) = envVariablesNames
-                colnames(uniLRdeltaRsquaresRandomisationBFs) = colNames
+                row.names(uniLRdeltaRsquaresRandomisationBFs1) = envVariablesNames
+                colnames(uniLRdeltaRsquaresRandomisationBFs1) = colNames1
+                row.names(uniLRdeltaRsquaresRandomisationBFs2) = envVariablesNames
+                colnames(uniLRdeltaRsquaresRandomisationBFs2) = colNames2
                 fileName = paste(outputName, "_randomisation_Bayes_factors.txt", 
                   sep = "")
-                write.table(uniLRdeltaRsquaresRandomisationBFs, 
-                  fileName, quote = F, sep = "\t")
+                if (alternativeQstat == TRUE) {
+                  buffer = cbind(uniLRdeltaRsquaresRandomisationBFs1, 
+                    uniLRdeltaRsquaresRandomisationBFs2)
+                }
+                else {
+                  buffer = uniLRdeltaRsquaresRandomisationBFs1
+                }
+                write.table(buffer, fileName, quote = F, sep = "\t")
             }
             if (impactOnDirection == TRUE) {
                 if (pathModel == -1) {
