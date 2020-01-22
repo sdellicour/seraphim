@@ -622,8 +622,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 distVariables = paste("nonNaNdistances2 ~ nonNaNdistances1", 
                   sep = "")
                 LM1 = lm(as.formula(distVariables))
-                residuals_LM1 = studres(LM1)
-                indices = as.numeric(names(residuals_LM1))
+                residuals_LM1 = LM1$residuals
+                indices = which(!is.na(residuals_LM1))
                 distVariables = paste("nonNaNdispersalTimes[indices] ~ nonNaNdistances2[indices] + residuals_LM1", 
                   sep = "")
                 LM2 = lm(as.formula(distVariables))
@@ -2003,8 +2003,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                     distVariables = paste("nonNaNdistancesSim2 ~ nonNaNdistancesSim1", 
                       sep = "")
                     LM1 = lm(as.formula(distVariables))
-                    residuals_LM1 = studres(LM1)
-                    indices = as.numeric(names(residuals_LM1))
+                    residuals_LM1 = LM1$residuals
+                    indices = which(!is.na(residuals_LM1))
                     distVariables = paste("nonNaNdispersalTimes[indices] ~ nonNaNdistancesSim2[indices] + residuals_LM1", 
                       sep = "")
                     LM2 = lm(as.formula(distVariables))
