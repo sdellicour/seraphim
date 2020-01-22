@@ -351,9 +351,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     }
     for (i in 1:nberOfStatistics) {
         medianMeanStatistics[1, i] = median(meanStatistics[, 
-            i])
+            i], na.rm = T)
         quantiles = quantile(meanStatistics[, i], probs = c(0.025, 
-            0.975))
+            0.975), na.rm = T)
         ciMeanStatistics[1, i] = as.numeric(quantiles[1])
         ciMeanStatistics[2, i] = as.numeric(quantiles[2])
     }

@@ -623,12 +623,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                   sep = "")
                 LM1 = lm(as.formula(distVariables))
                 residuals_LM1 = studres(LM1)
-                distVariables = paste("nonNaNdispersalTimes ~ nonNaNdistances2 + residuals_LM1", 
+                indices = as.numeric(names(residuals_LM1))
+                distVariables = paste("nonNaNdispersalTimes[indices] ~ nonNaNdistances2[indices] + residuals_LM1", 
                   sep = "")
                 LM2 = lm(as.formula(distVariables))
+                realUniLRRsquares2[t, h] = summary(LM2)$r.squared
                 realUniLRcoefficients2[t, h] = summary(LM2)$coefficients[2, 
                   "Estimate"]
-                realUniLRRsquares2[t, h] = summary(LM2)$r.squared
             }
         }
         if (GLM == TRUE) {
@@ -2003,7 +2004,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                       sep = "")
                     LM1 = lm(as.formula(distVariables))
                     residuals_LM1 = studres(LM1)
-                    distVariables = paste("nonNaNdispersalTimes ~ nonNaNdistancesSim2 + residuals_LM1", 
+                    indices = as.numeric(names(residuals_LM1))
+                    distVariables = paste("nonNaNdispersalTimes[indices] ~ nonNaNdistancesSim2[indices] + residuals_LM1", 
                       sep = "")
                     LM2 = lm(as.formula(distVariables))
                     simUniLRRsquares2[t, h] = summary(LM2)$r.squared
