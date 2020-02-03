@@ -2,9 +2,10 @@ spreadStatistics <-
 function (localTreesDirectory = "", nberOfExtractionFiles = 1, 
     timeSlices = 200, onlyTipBranches = F, showingPlots = TRUE, 
     outputName = gsub(" ", "_", date()), nberOfCores = 1, slidingWindow = NA, 
-    simulations = FALSE) 
+    simulations = FALSE, discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot = FALSE) 
 {
     nberOfStatistics = 6
+    treeIDs = c()
     registerDoMC(cores = nberOfCores)
     meanStatistics = matrix(nrow = (nberOfExtractionFiles), ncol = nberOfStatistics)
     branchVelocities = c()
@@ -17,9 +18,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
     meanDispersalVelocityList = list()
     weightedDispersalVelocityList = list()
     dispersalOrientationList = list()
-    treeIDs = c()
     cat("Estimation of summary statistics", "\n", sep = "")
     onlyOneAncestor = TRUE
+    extractionsWithMoreThanOneAncestors = c()
     if ((timeSlices == 0) | is.na(timeSlices) | is.null(timeSlices)) 
         onlyOneAncestor = FALSE
     dispersalVelocityGraph = FALSE
@@ -34,8 +35,11 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 t, ".csv", sep = "")
         data = read.csv(fileName, h = T)
         data = data[with(data, order(endYear, startYear)), ]
-        if (sum(!data[, "node1"] %in% data[, "node2"]) > 2) 
+        if (sum(!data[, "node1"] %in% data[, "node2"]) > 2) {
             onlyOneAncestor = FALSE
+            extractionsWithMoreThanOneAncestors = c(extractionsWithMoreThanOneAncestors, 
+                t)
+        }
         treeIDs = c(treeIDs, data[1, "treeID"])
         if (onlyTipBranches == TRUE) {
             indices = c()
@@ -82,6 +86,13 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             if (maxEndYear < max(data[, "endYear"])) 
                 maxEndYear = max(data[, "endYear"])
         }
+    }
+    if ((onlyOneAncestor == FALSE) & (discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == 
+        TRUE)) {
+        cat("Discarding", length(extractionsWithMoreThanOneAncestors), 
+            "extraction tables with more without a single", "\n")
+        cat("\t", "common ancestor for generating wavefront plots", 
+            "\n")
     }
     wavefrontDistanceSlices = timeSlices
     wavefrontDistanceTimeInterval = (maxEndYear - minStartYear)/wavefrontDistanceSlices
@@ -146,101 +157,112 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         meanStatistics[t, 6] = sd(branchMeasures[, 2])/mean(branchMeasures[, 
             2])
     }
-    if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
-        (nberOfExtractionFiles > 1)) {
+    if ((nberOfExtractionFiles > 1) & (onlyTipBranches == FALSE) & 
+        ((onlyOneAncestor == TRUE) | (discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == 
+            TRUE))) {
         buffer = list()
         buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% 
             {
-                if (simulations == FALSE) 
-                  fileName = paste(localTreesDirectory, "/TreeExtractions_", 
-                    t, ".csv", sep = "")
-                if (simulations == TRUE) 
-                  fileName = paste(localTreesDirectory, "/TreeSimulations_", 
-                    t, ".csv", sep = "")
-                data = read.csv(fileName, h = T)
-                data = data[with(data, order(endYear, startYear)), 
-                  ]
-                nberOfConnections = dim(data)[1]
-                waveFrontDistances1 = matrix(nrow = wavefrontDistanceSlices + 
-                  1, ncol = 2)
-                waveFrontDistances2 = matrix(nrow = wavefrontDistanceSlices + 
-                  1, ncol = 2)
-                waveFrontDistances1[, 1] = seq(minStartYear, 
-                  maxEndYear, wavefrontDistanceTimeInterval)
-                waveFrontDistances2[, 1] = seq(minStartYear, 
-                  maxEndYear, wavefrontDistanceTimeInterval)
-                data = data[order(data[, "endYear"]), ]
-                ancestralIndex = which(data[, "startYear"] == 
-                  min(data[, "startYear"]))[1]
-                ancestralNode = data[ancestralIndex, "node1"]
-                startingYear = data[ancestralIndex, "startYear"]
-                originLocationX = data[ancestralIndex, "startLon"]
-                originLocationY = data[ancestralIndex, "startLat"]
-                originLocation = cbind(originLocationX, originLocationY)
-                maxDistance1 = 0
-                maxDistance2 = 0
-                for (i in 0:wavefrontDistanceSlices) {
-                  time = minStartYear + (i * wavefrontDistanceTimeInterval)
-                  for (j in 1:nberOfConnections) {
-                    if ((data[j, "startYear"] < time) & (time < 
-                      data[j, "endYear"])) {
-                      timeProportion = (time - data[j, "startYear"])/(data[j, 
-                        "endYear"] - data[j, "startYear"])
-                      pointLocationX = data[j, "startLon"] + 
-                        ((data[j, "endLon"] - data[j, "startLon"]) * 
-                          timeProportion)
-                      pointLocationY = data[j, "startLat"] + 
-                        ((data[j, "endLat"] - data[j, "startLat"]) * 
-                          timeProportion)
-                      pointLocation = cbind(pointLocationX, pointLocationY)
-                      distance1 = rdist.earth(originLocation, 
-                        pointLocation, miles = F, R = NULL)
-                      coordinatesOfStartNode = cbind(data[j, 
-                        "startLon"], data[j, "startLat"])
-                      distance2 = rdist.earth(coordinatesOfStartNode, 
-                        pointLocation, miles = F, R = NULL)
-                      originNode = data[j, "node1"]
-                      while (originNode != ancestralNode) {
-                        index = which(data[, "node2"] == originNode)[1]
-                        coordinatesOfEndNode = cbind(data[index, 
-                          "endLon"], data[index, "endLat"])
-                        coordinatesOfStartNode = cbind(data[index, 
-                          "startLon"], data[index, "startLat"])
-                        distance2 = distance2 + rdist.earth(coordinatesOfStartNode, 
-                          coordinatesOfEndNode, miles = F, R = NULL)
-                        originNode = data[index, "node1"]
+                if (!t %in% extractionsWithMoreThanOneAncestors) {
+                  if (simulations == FALSE) 
+                    fileName = paste(localTreesDirectory, "/TreeExtractions_", 
+                      t, ".csv", sep = "")
+                  if (simulations == TRUE) 
+                    fileName = paste(localTreesDirectory, "/TreeSimulations_", 
+                      t, ".csv", sep = "")
+                  data = read.csv(fileName, h = T)
+                  data = data[with(data, order(endYear, startYear)), 
+                    ]
+                  nberOfConnections = dim(data)[1]
+                  waveFrontDistances1 = matrix(nrow = wavefrontDistanceSlices + 
+                    1, ncol = 2)
+                  waveFrontDistances2 = matrix(nrow = wavefrontDistanceSlices + 
+                    1, ncol = 2)
+                  waveFrontDistances1[, 1] = seq(minStartYear, 
+                    maxEndYear, wavefrontDistanceTimeInterval)
+                  waveFrontDistances2[, 1] = seq(minStartYear, 
+                    maxEndYear, wavefrontDistanceTimeInterval)
+                  data = data[order(data[, "endYear"]), ]
+                  ancestralIndex = which(data[, "startYear"] == 
+                    min(data[, "startYear"]))[1]
+                  ancestralNode = data[ancestralIndex, "node1"]
+                  startingYear = data[ancestralIndex, "startYear"]
+                  originLocationX = data[ancestralIndex, "startLon"]
+                  originLocationY = data[ancestralIndex, "startLat"]
+                  originLocation = cbind(originLocationX, originLocationY)
+                  maxDistance1 = 0
+                  maxDistance2 = 0
+                  for (i in 0:wavefrontDistanceSlices) {
+                    time = minStartYear + (i * wavefrontDistanceTimeInterval)
+                    for (j in 1:nberOfConnections) {
+                      if ((data[j, "startYear"] < time) & (time < 
+                        data[j, "endYear"])) {
+                        timeProportion = (time - data[j, "startYear"])/(data[j, 
+                          "endYear"] - data[j, "startYear"])
+                        pointLocationX = data[j, "startLon"] + 
+                          ((data[j, "endLon"] - data[j, "startLon"]) * 
+                            timeProportion)
+                        pointLocationY = data[j, "startLat"] + 
+                          ((data[j, "endLat"] - data[j, "startLat"]) * 
+                            timeProportion)
+                        pointLocation = cbind(pointLocationX, 
+                          pointLocationY)
+                        distance1 = rdist.earth(originLocation, 
+                          pointLocation, miles = F, R = NULL)
+                        coordinatesOfStartNode = cbind(data[j, 
+                          "startLon"], data[j, "startLat"])
+                        distance2 = rdist.earth(coordinatesOfStartNode, 
+                          pointLocation, miles = F, R = NULL)
+                        originNode = data[j, "node1"]
+                        while (originNode != ancestralNode) {
+                          index = which(data[, "node2"] == originNode)[1]
+                          coordinatesOfEndNode = cbind(data[index, 
+                            "endLon"], data[index, "endLat"])
+                          coordinatesOfStartNode = cbind(data[index, 
+                            "startLon"], data[index, "startLat"])
+                          distance2 = distance2 + rdist.earth(coordinatesOfStartNode, 
+                            coordinatesOfEndNode, miles = F, 
+                            R = NULL)
+                          originNode = data[index, "node1"]
+                        }
+                        if (distance1 > maxDistance1) 
+                          maxDistance1 = distance1
+                        if (distance2 > maxDistance2) 
+                          maxDistance2 = distance2
                       }
-                      if (distance1 > maxDistance1) 
-                        maxDistance1 = distance1
-                      if (distance2 > maxDistance2) 
-                        maxDistance2 = distance2
                     }
+                    waveFrontDistances1[i + 1, 2] = maxDistance1
+                    waveFrontDistances2[i + 1, 2] = maxDistance2
                   }
-                  waveFrontDistances1[i + 1, 2] = maxDistance1
-                  waveFrontDistances2[i + 1, 2] = maxDistance2
+                  colnames(waveFrontDistances1) = c("endYear", 
+                    "waveFrontDistances1")
+                  colnames(waveFrontDistances2) = c("endYear", 
+                    "waveFrontDistances2")
+                  waveFrontDistances = list()
+                  waveFrontDistances[[1]] = waveFrontDistances1
+                  waveFrontDistances[[2]] = waveFrontDistances2
+                  waveFrontDistances
                 }
-                colnames(waveFrontDistances1) = c("endYear", 
-                  "waveFrontDistances1")
-                colnames(waveFrontDistances2) = c("endYear", 
-                  "waveFrontDistances2")
-                waveFrontDistances = list()
-                waveFrontDistances[[1]] = waveFrontDistances1
-                waveFrontDistances[[2]] = waveFrontDistances2
-                waveFrontDistances
             }
         for (t in 1:length(buffer)) {
-            waveFrontDistances1List[[t]] = buffer[[t]][[1]]
-            waveFrontDistances2List[[t]] = buffer[[t]][[2]]
+            if (!t %in% extractionsWithMoreThanOneAncestors) {
+                waveFrontDistances1List[[t]] = buffer[[t]][[1]]
+                waveFrontDistances2List[[t]] = buffer[[t]][[2]]
+            }
         }
         maxDistance1 = 0
         maxDistance2 = 0
         for (t in 1:nberOfExtractionFiles) {
-            if (max(waveFrontDistances1List[[t]][, 2]) > maxDistance1) 
-                maxDistance1 = max(waveFrontDistances1List[[t]][, 
-                  2])
-            if (max(waveFrontDistances2List[[t]][, 2]) > maxDistance2) 
-                maxDistance2 = max(waveFrontDistances2List[[t]][, 
-                  2])
+            if (!t %in% extractionsWithMoreThanOneAncestors) {
+                if (max(waveFrontDistances1List[[t]][, 2]) > 
+                  maxDistance1) 
+                  maxDistance1 = max(waveFrontDistances1List[[t]][, 
+                    2])
+                if (max(waveFrontDistances2List[[t]][, 2]) > 
+                  maxDistance2) 
+                  maxDistance2 = max(waveFrontDistances2List[[t]][, 
+                    2])
+            }
         }
     }
     if ((onlyTipBranches == FALSE) & (dispersalVelocityGraph == 
@@ -516,8 +538,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         if (showingPlots == FALSE) 
             dev.off()
     }
-    if ((onlyTipBranches == FALSE) & (onlyOneAncestor == TRUE) & 
-        (nberOfExtractionFiles > 1)) {
+    if ((nberOfExtractionFiles > 1) & (onlyTipBranches == FALSE) & 
+        ((onlyOneAncestor == TRUE) | (discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == 
+            TRUE))) {
         cat("Building wavefront distance evolution graphs", "\n", 
             sep = "")
         wavefrontDistanceTimeInterval = (maxEndYear - minStartYear)/wavefrontDistanceSlices
@@ -531,14 +554,16 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             1))
         upper_l_2 = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
-        waveFrontDistances1Values = matrix(nrow = nberOfExtractionFiles, 
-            ncol = (wavefrontDistanceSlices + 1))
+        waveFrontDistances1Values = matrix(nrow = nberOfExtractionFiles - 
+            length(extractionsWithMoreThanOneAncestors), ncol = (wavefrontDistanceSlices + 
+            1))
         waveFrontDistances1MeanValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
         waveFrontDistances1MedianValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
-        waveFrontDistances2Values = matrix(nrow = nberOfExtractionFiles, 
-            ncol = (wavefrontDistanceSlices + 1))
+        waveFrontDistances2Values = matrix(nrow = nberOfExtractionFiles - 
+            length(extractionsWithMoreThanOneAncestors), ncol = (wavefrontDistanceSlices + 
+            1))
         waveFrontDistances2MeanValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
             1))
         waveFrontDistances2MedianValue = matrix(nrow = 1, ncol = (wavefrontDistanceSlices + 
@@ -546,11 +571,15 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         for (i in 0:wavefrontDistanceSlices) {
             time = minStartYear + (i * wavefrontDistanceTimeInterval)
             slicedTimes[1, i + 1] = time
+            n = 0
             for (t in 1:nberOfExtractionFiles) {
-                waveFrontDistances1Values[t, i + 1] = waveFrontDistances1List[[t]][i + 
-                  1, 2]
-                waveFrontDistances2Values[t, i + 1] = waveFrontDistances2List[[t]][i + 
-                  1, 2]
+                if (!t %in% extractionsWithMoreThanOneAncestors) {
+                  n = n + 1
+                  waveFrontDistances1Values[n, i + 1] = waveFrontDistances1List[[t]][i + 
+                    1, 2]
+                  waveFrontDistances2Values[n, i + 1] = waveFrontDistances2List[[t]][i + 
+                    1, 2]
+                }
             }
             quantiles = quantile(waveFrontDistances1Values[, 
                 i], probs = c(0.025, 0.975))
@@ -608,14 +637,16 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             sep = ""), row.names = F, quote = F, sep = "\t")
         tab = matrix(nrow = length(slicedTimes), ncol = (1 + 
             dim(waveFrontDistances1Values)[1]))
+        selectedTreeIDs = treeIDs[which(!seq(1, nberOfExtractionFiles, 
+            1) %in% extractionsWithMoreThanOneAncestors)]
         tab[, 1] = slicedTimes
         tab[, 2:(1 + dim(waveFrontDistances1Values)[1])] = t(waveFrontDistances1Values)
-        colnames(tab) = c("time", treeIDs)
+        colnames(tab) = c("time", selectedTreeIDs)
         write.table(tab, file = paste(outputName, "_spatial_wavefront_distances.txt", 
             sep = ""), row.names = F, quote = F, sep = "\t")
         tab[, 1] = slicedTimes
         tab[, 2:(1 + dim(waveFrontDistances2Values)[1])] = t(waveFrontDistances2Values)
-        colnames(tab) = c("time", treeIDs)
+        colnames(tab) = c("time", selectedTreeIDs)
         write.table(tab, file = paste(outputName, "_patristic_wavefront_distances.txt", 
             sep = ""), row.names = F, quote = F, sep = "\t")
         xLab = "time"
@@ -633,8 +664,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             xlim = xLim)
         if (nberOfExtractionFiles > 1) {
             for (t in 2:nberOfExtractionFiles) {
-                lines(waveFrontDistances1List[[t]][, 1], waveFrontDistances1List[[t]][, 
-                  2], lwd = 0.05)
+                if (!t %in% extractionsWithMoreThanOneAncestors) 
+                  lines(waveFrontDistances1List[[t]][, 1], waveFrontDistances1List[[t]][, 
+                    2], lwd = 0.05)
             }
         }
         axis(side = 1, lwd.tick = LWD, cex.axis = 0.6, lwd = 0, 
@@ -665,8 +697,9 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
             xlim = xLim)
         if (nberOfExtractionFiles > 1) {
             for (t in 2:nberOfExtractionFiles) {
-                lines(waveFrontDistances2List[[t]][, 1], waveFrontDistances2List[[t]][, 
-                  2], lwd = 0.05)
+                if (!t %in% extractionsWithMoreThanOneAncestors) 
+                  lines(waveFrontDistances2List[[t]][, 1], waveFrontDistances2List[[t]][, 
+                    2], lwd = 0.05)
             }
         }
         axis(side = 1, lwd.tick = LWD, cex.axis = 0.6, lwd = 0, 
@@ -749,8 +782,8 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         if (showingPlots == FALSE) 
             dev.off()
     }
-    if ((onlyTipBranches == FALSE) & (dispersalVelocityGraph == 
-        TRUE) & (nberOfExtractionFiles > 1)) {
+    if ((nberOfExtractionFiles > 1) & (onlyTipBranches == FALSE) & 
+        (dispersalVelocityGraph == TRUE)) {
         cat("Building branch dispersal velocity evolution graphs", 
             "\n", sep = "")
         slicedTimes = matrix(nrow = 1, ncol = dispersalVelocitySlices)
