@@ -842,7 +842,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         if (showingPlots == FALSE) 
             pdf(paste(outputName, "_mean_branch_dispersal_velocity_1.pdf", 
                 sep = ""), width = 5, height = 5)
-        text = "Evolution of weighted branch dispersal velocity"
+        text = "Evolution of mean branch dispersal velocity"
         par(mgp = c(1, 0.35, 0), oma = c(1, 1, 1.5, 3), mar = c(3.3, 
             3.3, 2, 0))
         plot(meanDispersalVelocityList[[1]][, 1], meanDispersalVelocityList[[1]][, 
@@ -874,7 +874,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
         if (showingPlots == FALSE) 
             pdf(paste(outputName, "_mean_branch_dispersal_velocity_2.pdf", 
                 sep = ""), width = 5, height = 5)
-        text = "Evolution of weighted branch dispersal velocity"
+        text = "Evolution of mean branch dispersal velocity"
         par(mgp = c(1, 0.35, 0), oma = c(1, 1, 1.5, 3), mar = c(3.3, 
             3.3, 2, 0))
         plot(slicedTimes, meanDispersalVelocitiesMedianValue, 

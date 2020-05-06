@@ -72,8 +72,8 @@ function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(),
                   if (length(envVariables) > 0) {
                     onTheArea = TRUE
                     for (k in 1:length(envVariables)) {
-                      if (is.na(extract(envVariables[[k]], cbind(new_t2, 
-                        new_t1)))) {
+                      if (is.na(raster::extract(envVariables[[k]], 
+                        cbind(new_t2, new_t1)))) {
                         onTheArea = FALSE
                       }
                     }
@@ -93,7 +93,7 @@ function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(),
                         pt2_rotated = rotation(pt1, pt2, angle)
                         onTheArea = TRUE
                         for (k in 1:length(envVariables)) {
-                          if (is.na(extract(envVariables[[k]], 
+                          if (is.na(raster::extract(envVariables[[k]], 
                             cbind(pt2_rotated[1], pt2_rotated[2])))) {
                             onTheArea = FALSE
                           }
@@ -120,7 +120,7 @@ function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(),
                           new_t2 = t2[parent_node] + increment2
                           onTheArea = TRUE
                           for (k in 1:length(envVariables)) {
-                            if (is.na(extract(envVariables[[k]], 
+                            if (is.na(raster::extract(envVariables[[k]], 
                               cbind(new_t2, new_t1)))) {
                               onTheArea = FALSE
                             }

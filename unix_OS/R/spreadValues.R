@@ -84,7 +84,7 @@ function (localTreesDirectory, nberOfExtractionFiles, envVariables,
                   spatialLines = SpatialLines(lines)
                   for (k in 1:length(envVariables)) {
                     if (dim(envVariables[[k]])[3] == 1) {
-                      extractions = extract(envVariables[[k]], 
+                      extractions = raster::extract(envVariables[[k]], 
                         spatialLines)
                     }
                     else {
@@ -102,7 +102,7 @@ function (localTreesDirectory, nberOfExtractionFiles, envVariables,
                       index = which((raster_time_intervals[[k]][, 
                         1] < time) & (raster_time_intervals[[k]][, 
                         2] > time))
-                      extractions = extract(envVariables[[k]][[index]], 
+                      extractions = raster::extract(envVariables[[k]][[index]], 
                         spatialLines)
                     }
                     if (firstExtraction == TRUE) {

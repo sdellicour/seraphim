@@ -59,7 +59,7 @@ function (envVariable = raster(matrix(c(runif(600, 5, 10), runif(1000,
     }
     else {
         extractValueOnRaster = function(coords) {
-            return(extract(envVariable, coords))
+            return(raster::extract(envVariable, coords))
         }
     }
     particules = list()

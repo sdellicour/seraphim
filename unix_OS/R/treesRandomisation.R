@@ -84,7 +84,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                 "node2"])
             indicesOfBranchesToRemove = c()
             for (i in 1:length(ancestralBranches)) {
-                if (is.na(extract(nullRaster, cbind(data[ancestralBranches[i], 
+                if (is.na(raster::extract(nullRaster, cbind(data[ancestralBranches[i], 
                   "startLon"], data[ancestralBranches[i], "startLat"])))) {
                   ancestralNodeNAonNullRaster = TRUE
                   indicesOfBranchesToRemove = c(indicesOfBranchesToRemove, 
@@ -280,7 +280,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                                   if (onTheGrid == TRUE) {
                                     NAarea = FALSE
                                     for (h in 1:length(hullRasters)) {
-                                      if (is.na(extract(hullRasters[[h]], 
+                                      if (is.na(raster::extract(hullRasters[[h]], 
                                         cbind(pt2_rotated[1], 
                                           pt2_rotated[2])))) {
                                         NAarea = TRUE
@@ -418,7 +418,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                             if (onTheGrid == TRUE) {
                               NAarea = FALSE
                               for (h in 1:length(hullRasters)) {
-                                if (is.na(extract(hullRasters[[h]], 
+                                if (is.na(raster::extract(hullRasters[[h]], 
                                   cbind(pt2_rotated[1], pt2_rotated[2])))) {
                                   NAarea = TRUE
                                   twoPointsOnTheGrid = TRUE
@@ -529,7 +529,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                             }
                             NAarea = FALSE
                             for (h in 1:length(hullRasters)) {
-                              if (is.na(extract(hullRasters[[h]], 
+                              if (is.na(raster::extract(hullRasters[[h]], 
                                 cbind(pt1_translated[1], pt1_translated[2])))) {
                                 NAarea = TRUE
                               }
@@ -590,7 +590,7 @@ function (localTreesDirectory = "", nberOfExtractionFiles = 1,
                             if (onTheGrid == TRUE) {
                               NAarea = FALSE
                               for (h in 1:length(hullRasters)) {
-                                if (is.na(extract(hullRasters[[h]], 
+                                if (is.na(raster::extract(hullRasters[[h]], 
                                   cbind(pt2_rotated[1], pt2_rotated[2])))) {
                                   NAarea = TRUE
                                   twoPointsOnTheGrid = TRUE

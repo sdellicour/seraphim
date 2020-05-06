@@ -43,7 +43,7 @@ function (rast, fromCoor, toCoor, showingPlots = FALSE)
                   pt1_translated[1] = pt1[1] + xRand
                   pt1_translated[2] = pt1[2] + yRand
                   NAarea = FALSE
-                  if (!is.na(extract(rast, cbind(pt1_translated[1], 
+                  if (!is.na(raster::extract(rast, cbind(pt1_translated[1], 
                     pt1_translated[2])))) {
                     pt1NAarea = FALSE
                     pt1 = pt1_translated
@@ -73,7 +73,7 @@ function (rast, fromCoor, toCoor, showingPlots = FALSE)
                 }
                 if (onTheGrid == TRUE) {
                   NAarea = FALSE
-                  if (is.na(extract(rast, cbind(pt2_rotated[1], 
+                  if (is.na(raster::extract(rast, cbind(pt2_rotated[1], 
                     pt2_rotated[2])))) {
                     NAarea = TRUE
                   }
