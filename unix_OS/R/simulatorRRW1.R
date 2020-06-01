@@ -1,7 +1,7 @@
 simulatorRRW1 <-
 function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(), 
     mostRecentSamplingDatum, ancestPosition, reciprocalRates = TRUE, 
-    n1 = 100, n2 = 0, showingPlots = FALSE, newPlot = TRUE, fixingRootBranches = FALSE) 
+    n1 = 100, n2 = 0, showingPlots = FALSE, newPlot = TRUE, fixedNodes = c()) 
 {
     rotation = function(pt1, pt2, angle) {
         s = sin(angle)
@@ -26,9 +26,6 @@ function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(),
         sd_BM = sqrt(tree$edge.length * phi_b)
     if (reciprocalRates == TRUE) 
         sd_BM = sqrt(tree$edge.length/phi_b)
-    if (fixingRootBranches == TRUE) 
-        rootBranches = tree$edge[which(!tree$edge[, 1] %in% tree$edge[, 
-            2]), 2]
     nd = node.depth(tree)
     nd_max = max(nd)
     t1 = rep(ancestPosition[2], length(tree$tip.label) + tree$Nnode)
@@ -51,13 +48,11 @@ function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(),
                 parent_branch = match(my_node, tree$edge[, 2])
                 parent_node = tree$edge[parent_branch, 1]
                 simulatingNode = TRUE
-                if (fixingRootBranches == TRUE) {
-                  if (my_node %in% rootBranches) {
-                    simulatingNode = FALSE
-                    index = which(tree$edge[, 2] == my_node)
-                    new_t1 = tree$annotations[[index]]$location[[1]]
-                    new_t2 = tree$annotations[[index]]$location[[2]]
-                  }
+                if (my_node %in% fixedNodes) {
+                  simulatingNode = FALSE
+                  index = which(tree$edge[, 2] == my_node)
+                  new_t1 = tree$annotations[[index]]$location[[1]]
+                  new_t2 = tree$annotations[[index]]$location[[2]]
                 }
                 if (simulatingNode == TRUE) {
                   onTheArea = FALSE
@@ -132,21 +127,21 @@ function (tree, rates, sigmas = c(0.1, 0.1), cor = 0, envVariables = list(),
                 }
                 t1[my_node] = new_t1
                 t2[my_node] = new_t2
-                if (showingPlots == TRUE) {
-                  if (nodesOnly == FALSE) {
-                    segments(t2[parent_node], t1[parent_node], 
-                      new_t2, new_t1, col = pointCol, lwd = 0.2)
-                    points(cbind(new_t2, new_t1), pch = 16, col = pointCol, 
-                      cex = 0.25)
-                  }
-                  else {
-                    points(cbind(new_t2, new_t1), pch = 16, col = pointCol, 
-                      cex = 0.25)
-                  }
+            }
+            if (showingPlots == TRUE) {
+                if (nodesOnly == FALSE) {
+                  segments(t2[parent_node], t1[parent_node], 
+                    new_t2, new_t1, col = pointCol, lwd = 0.2)
+                  points(cbind(new_t2, new_t1), pch = 16, col = pointCol, 
+                    cex = 0.25)
+                }
+                else {
+                  points(cbind(new_t2, new_t1), pch = 16, col = pointCol, 
+                    cex = 0.25)
                 }
             }
             if (i == 0) {
-                print(paste0("...re-starting the simulation"))
+                cat(paste0("...re-starting the simulation\n"))
                 t1 = rep(ancestPosition[2], length(tree$tip.label) + 
                   tree$Nnode)
                 t2 = rep(ancestPosition[1], length(tree$tip.label) + 
