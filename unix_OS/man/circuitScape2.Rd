@@ -1,23 +1,23 @@
-\name{circuitScape}
-\alias{circuitScape}
+\name{circuitScape2}
+\alias{circuitScape2}
 \title{
 A function to launch Circuitscape analyses
 }
 \description{
-The function calls the external Python library "circuitscape" to compute resistance or conductance environmental distance associated with each phylogenetic branch.
+The function calls the external Julia library "circuitscape" to compute resistance or conductance environmental distance associated with each phylogenetic branch.
 }
 \usage{
-circuitScape(envVariable,
-             envVariableName,
-             resistance = TRUE,
-             avgResistance = TRUE,
-             fourCells = FALSE,
-             fromCoor,
-             toCoor,
-             OS = "Unix",
-             prefix = "",
-             ID = "",
-             nberOfCores_CS=1)
+circuitScape1(envVariable,
+              envVariableName,
+              resistance = TRUE,
+              avgResistance = TRUE,
+              fourCells = FALSE,
+              fromCoor,
+              toCoor,
+              OS = "Unix",
+              prefix = "",
+              ID = "",
+              nberOfCores_CS=1)
 }
 \arguments{
 \item{envVariable}{ raster file on which the resistance or conductance has to be computed. }
