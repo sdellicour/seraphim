@@ -1,59 +1,59 @@
 rasterSimulation <-
 function(rast, variogramModel) {
-\t
-\tnscore = function(x)
-\t\t{
-\t\t\t# Function created by Ashton Shortridge (May/June 2008).\t
-   \t\t\t# Takes a vector of values x and calculates their normal scores. Returns a list with the scores
-   \t\t\t# and an ordered table of original values and scores, which is useful as a back-transform table.
-  \t\t\tnscore = qqnorm(x, plot.it = F)$x  # normal score 
-   \t\t\ttrn.table = data.frame(x = sort(x), nscore = sort(nscore))
-   \t\t\treturn(list(nscore=nscore, trn.table = trn.table))
-\t\t}
-\tnscoreBack = function(scores, nscore)
-\t\t{
-\t\t\t# Function created by Ashton Shortridge (May/June 2008).\t\t
-   \t\t\t# Given a vector of normal scores and a normal score object (from nscore), the function returns
-   \t\t\t# a vector of back-transformed values.
-\t\t\tmin.x = min(nscore$trn.table$x, na.rm=T)
-   \t\t\tmax.x = max(nscore$trn.table$x, na.rm=T)
-   \t\t\tmin.sc = min(scores, na.rm=T)
-   \t\t\tmax.sc = max(scores, na.rm=T)
-   \t\t\tx = c(min.x, nscore$trn.table$x, max.x)
-   \t\t\tnsc = c(min.sc, nscore$trn.table$nscore, max.sc)
-\t\t\tback.xf = approxfun(nsc,x) # Develop the back transform function
-   \t\t\tval = back.xf(scores)
-\t\t\treturn(val)
-\t\t}\t
-\tnScoreTransformation = TRUE
-\tquantileTransformation = FALSE
-\tif (nScoreTransformation == TRUE)
-\t\t{
-\t\t\trastScore = nscore(rast[])
-\t\t\tenvVariableNscore = rast
-\t\t\tenvVariableNscore[] = rastScore$nscore
-\t\t\tmask = envVariableNscore*0+1; mask.grid = as(mask, 'SpatialGridDataFrame')
-\t\t\tsimulation = predict(variogramModel, newdata=mask.grid, nsim=1)
-\t\t\tsimRaster = raster(simulation)*mask
-\t\t\tsimRaster = nscoreBack(simRaster[],rastScore)
-\t\t}\t\t\t\t\t\t\t\t
-\tif (quantileTransformation == TRUE)
-\t\t{
-\t\t\tmask = rast*0+1; mask.grid = as(mask, 'SpatialGridDataFrame')
-\t\t\tsimulation = predict(variogramModel, newdata=mask.grid, nsim=1)
-\t\t\tsimRaster = raster(simulation)*mask
-\t\t\tenvVariableData = as.data.frame(rast)
-\t\t\tnames(envVariableData) = "value"
-\t\t\tenvVariableData = envVariableData[with(envVariableData, order(value)),]
-\t\t\tsimRasterData = as.data.frame(simRaster)
-\t\t\tnames(simRasterData) = "value"
-\t\t\tindexes = 1:dim(simRasterData)[1]
-\t\t\tsimRasterData$indexes = indexes
-\t\t\tsimRasterData = simRasterData[with(simRasterData, order(value)),]
-\t\t\tsimRasterData$value = envVariableData
-\t\t\tsimRasterData = simRasterData[with(simRasterData, order(indexes)),]
-\t\t\tsimRaster = simRasterData[,"value"]
-\t\t}
-\trast[] = simRaster\t
-\treturn(rast)\t
+	
+	nscore = function(x)
+		{
+			# Function created by Ashton Shortridge (May/June 2008).	
+   			# Takes a vector of values x and calculates their normal scores. Returns a list with the scores
+   			# and an ordered table of original values and scores, which is useful as a back-transform table.
+  			nscore = qqnorm(x, plot.it = F)$x  # normal score 
+   			trn.table = data.frame(x = sort(x), nscore = sort(nscore))
+   			return(list(nscore=nscore, trn.table = trn.table))
+		}
+	nscoreBack = function(scores, nscore)
+		{
+			# Function created by Ashton Shortridge (May/June 2008).		
+   			# Given a vector of normal scores and a normal score object (from nscore), the function returns
+   			# a vector of back-transformed values.
+			min.x = min(nscore$trn.table$x, na.rm=T)
+   			max.x = max(nscore$trn.table$x, na.rm=T)
+   			min.sc = min(scores, na.rm=T)
+   			max.sc = max(scores, na.rm=T)
+   			x = c(min.x, nscore$trn.table$x, max.x)
+   			nsc = c(min.sc, nscore$trn.table$nscore, max.sc)
+			back.xf = approxfun(nsc,x) # Develop the back transform function
+   			val = back.xf(scores)
+			return(val)
+		}	
+	nScoreTransformation = TRUE
+	quantileTransformation = FALSE
+	if (nScoreTransformation == TRUE)
+		{
+			rastScore = nscore(rast[])
+			envVariableNscore = rast
+			envVariableNscore[] = rastScore$nscore
+			mask = envVariableNscore*0+1; mask.grid = as(mask, 'SpatialGridDataFrame')
+			simulation = predict(variogramModel, newdata=mask.grid, nsim=1)
+			simRaster = raster(simulation)*mask
+			simRaster = nscoreBack(simRaster[],rastScore)
+		}								
+	if (quantileTransformation == TRUE)
+		{
+			mask = rast*0+1; mask.grid = as(mask, 'SpatialGridDataFrame')
+			simulation = predict(variogramModel, newdata=mask.grid, nsim=1)
+			simRaster = raster(simulation)*mask
+			envVariableData = as.data.frame(rast)
+			names(envVariableData) = "value"
+			envVariableData = envVariableData[with(envVariableData, order(value)),]
+			simRasterData = as.data.frame(simRaster)
+			names(simRasterData) = "value"
+			indexes = 1:dim(simRasterData)[1]
+			simRasterData$indexes = indexes
+			simRasterData = simRasterData[with(simRasterData, order(value)),]
+			simRasterData$value = envVariableData
+			simRasterData = simRasterData[with(simRasterData, order(indexes)),]
+			simRaster = simRasterData[,"value"]
+		}
+	rast[] = simRaster	
+	return(rast)	
 }
