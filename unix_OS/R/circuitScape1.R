@@ -73,7 +73,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 		}
 	if (OS == "Windows")
 		{
-			system(paste0("\"C:\\\\Program Files\\\\Circuitscape\\\\cs_run.exe\"",paste(folder,"CS_temporary.ini",sep="/")), ignore.stdout=T, ignore.stderr=T)
+			system(paste0("\"C:\\Program Files\\Circuitscape\\cs_run.exe\"",paste(folder,"CS_temporary.ini",sep="/")), ignore.stdout=T, ignore.stderr=T)
 		}		
 	tab = read.table(paste0(folder,"/raster_file_temp_resistances.txt"), header=F)
 	tab = tab[2:dim(tab)[1], 2:dim(tab)[2]]
