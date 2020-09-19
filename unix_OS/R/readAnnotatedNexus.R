@@ -5,9 +5,9 @@ function(file, tree.names=NULL) {
 		annotations = list()
 		end = 1
 		# Merge node and branch annotations:
-		text = gsub("\\\\[&(.*?)\\\\]:\\\\[&(.*?)\\\\]", ":\\\\[&\\\\1,\\\\2\\\\]", text)
-		text = gsub("\\\\[&(.*?)\\\\]:", ":\\\\[&\\\\1]", text)
-		pattern = "\\\\[&.*?\\\\]"
+		text = gsub("\\[&(.*?)\\]:\\[&(.*?)\\]", ":\\[&\\1,\\2\\]", text)
+		text = gsub("\\[&(.*?)\\]:", ":\\[&\\1]", text)
+		pattern = "\\[&.*?\\]"
 		repeat
 			{
 				match = regexpr(pattern=pattern,text=text)
@@ -23,14 +23,14 @@ function(file, tree.names=NULL) {
 	}
 	
 	split_tree_names = function(text) {   
-		text = gsub(pattern="\\\\[.*?\\\\]=", x=text, replacement="")
+		text = gsub(pattern="\\[.*?\\]=", x=text, replacement="")
 		text = gsub(pattern="^tree", x=text, replacement="")
 		return(text)
 	}
 	
 	split_tree_traits = function(text) {
 		# Pull out annotation:
-		text = regmatches(text,regexpr(pattern="\\\\[.*?\\\\]",text))
+		text = regmatches(text,regexpr(pattern="\\[.*?\\]",text))
 		# Remove leading and trailing delimitors:
 		text = substring(text,3,nchar(text)-1)
 		return(text)
@@ -38,19 +38,19 @@ function(file, tree.names=NULL) {
 	
 	parse_value = function(text) {
 		value = text
-		if (length(grep("^\\\\{",value)))
+		if (length(grep("^\\{",value)))
 			{
 				save = value
 				value = substring(value, 2, nchar(value)-1)
 				depth = 0
-				r = regexpr(pattern="\\\\{+",value,perl=TRUE)
+				r = regexpr(pattern="\\{+",value,perl=TRUE)
 				match.length = attr(r, "match.length")
 				if (match.length > 0) depth = match.length
 				if (depth == 0)
 					{
 						split = ","
 					}	else	{
-			    		split = paste("(?<=",rep("\\\\}",depth),")",",","(?=" ,rep("\\\\{",depth),")",sep="")
+			    		split = paste("(?<=",rep("\\}",depth),")",",","(?=" ,rep("\\{",depth),")",sep="")
 					}
 				if (depth >= 1)
 					{
@@ -67,7 +67,7 @@ function(file, tree.names=NULL) {
 					{
 						value = as.numeric(value)
 					}	else	{
-		    	 		value = gsub("\\\\\"","", value)
+		    	 		value = gsub("\\\"","", value)
 		    		}
 			}
 		return(value)
@@ -75,7 +75,7 @@ function(file, tree.names=NULL) {
 	
 	parse_traits = function(text, header=F) {
 		if (header == TRUE) text = substring(text,3,nchar(text)-1)
-		pattern = "(\"[^\"]*\"+|[^,=\\\\s]+)\\\\s*(=\\\\s*(\\\\{[^=]*\\\\}|\"[^\"]*\"+|[^,]+))?"
+		pattern = "(\"[^\"]*\"+|[^,=\\s]+)\\s*(=\\s*(\\{[^=]*\\}|\"[^\"]*\"+|[^,]+))?"
 		rgx = gregexpr(pattern,text,perl=TRUE)
 		traits = list()
 		n = length(attr(rgx[[1]],"match.length"))
@@ -138,7 +138,7 @@ function(file, tree.names=NULL) {
 			}
 		if (!length(grep(",", tp))) {
 				obj = list(edge = matrix(c(2L, 1L), 1, 2))
-				tp = unlist(strsplit(tp, "[\\\\(\\\\):;]"))
+				tp = unlist(strsplit(tp, "[\\(\\):;]"))
 				obj$edge.length = as.numeric(tp[3])
 				obj$Nnode = 1L
 				obj$tip.label = tp[2]
@@ -150,20 +150,20 @@ function(file, tree.names=NULL) {
 		annotations = result$annotations
 		new.tp.stripped = result$tree
 			# patched for 0.0 root branch length from BEAST2 (not confirmed)
-		new.tp.stripped = gsub("\\\\]0.0;", "\\\\];", new.tp.stripped)
+		new.tp.stripped = gsub("\\]0.0;", "\\];", new.tp.stripped)
 		root.annotation.number = NULL
-		m = regexpr("\\\\[\\\\d+\\\\];", new.tp.stripped)
+		m = regexpr("\\[\\d+\\];", new.tp.stripped)
 		if (m != -1)
 			{
-				root.annotation.number = as.numeric(gsub("\\\\[(\\\\d+)\\\\];", "\\\\1", regmatches(new.tp.stripped, m)))
+				root.annotation.number = as.numeric(gsub("\\[(\\d+)\\];", "\\1", regmatches(new.tp.stripped, m)))
 			}
 		annotations = lapply(annotations, parse_traits, header=T)
-		tp.stripped = gsub("\\\\[.*?\\\\]","",tp)
-		tpc = unlist(strsplit(tp.stripped, "[\\\\(\\\\),;]"))
+		tp.stripped = gsub("\\[.*?\\]","",tp)
+		tpc = unlist(strsplit(tp.stripped, "[\\(\\),;]"))
 		tpc = tpc[nzchar(tpc)]
-		new.tp.stripped = gsub("\\\\[\\\\d+\\\\];", ";", new.tp.stripped)
-		new.tp.stripped = gsub("\\\\[(\\\\d+)\\\\]","\\\\1:", new.tp.stripped)
-		new.tpc = unlist(strsplit(new.tp.stripped, "[\\\\(\\\\),;]"))
+		new.tp.stripped = gsub("\\[\\d+\\];", ";", new.tp.stripped)
+		new.tp.stripped = gsub("\\[(\\d+)\\]","\\1:", new.tp.stripped)
+		new.tpc = unlist(strsplit(new.tp.stripped, "[\\(\\),;]"))
 		new.tpc = new.tpc[nzchar(new.tpc)]	
 		tsp = unlist(strsplit(tp.stripped, NULL))
 		skeleton = tsp[tsp %in% c("(", ")", ",", ";")]
@@ -247,7 +247,7 @@ function(file, tree.names=NULL) {
 				return(NULL)
 			}
 		tree = gsub("[ \n\t]", "", tree)
-		tree = gsub("\\\\[&R\\\\]", "", tree)
+		tree = gsub("\\[&R\\]", "", tree)
 		tree = unlist(strsplit(tree, NULL))
 		y = which(tree == ";")
 		Ntree = length(y)
@@ -298,8 +298,8 @@ function(file, tree.names=NULL) {
 	}
 
 	X = scan(file=file, what="", sep="\n", quiet=T)
-	LEFT = grep("\\\\[", X)
-	RIGHT = grep("\\\\]", X)
+	LEFT = grep("\\[", X)
+	RIGHT = grep("\\]", X)
 	endblock = grep("END;|ENDBLOCK;", X, ignore.case=T)
 	semico = grep(";", X)
 	i1 = grep("BEGIN TREES;", X, ignore.case=T)
@@ -347,19 +347,19 @@ function(file, tree.names=NULL) {
 	rm(tree)
 	STRING = STRING[grep("^[[:blank:]]*tree.*= *", STRING, ignore.case=T)]
 	Ntree = length(STRING)
-	STRING = gsub("\\\\[&R\\\\]", "", STRING)
+	STRING = gsub("\\[&R\\]", "", STRING)
 	nms.annontations.trees = sub(" * = *.*", "", STRING)
 	nms.annontations.trees = sub("^ *tree *", "", nms.annontations.trees, ignore.case=T)
-	nms.trees = sub("\\\\s+\\\\[&.*?\\\\]", "", nms.annontations.trees)
+	nms.trees = sub("\\s+\\[&.*?\\]", "", nms.annontations.trees)
 	if (any(nms.trees != nms.annontations.trees))
 		{
-			annotations.trees = sub(".*\\\\[&", "\\\\[&", nms.annontations.trees)
+			annotations.trees = sub(".*\\[&", "\\[&", nms.annontations.trees)
 			annotations.trees = lapply(annotations.trees, parse_traits, header=TRUE)
 		}	else	{
 			annotations.trees = NULL
 		}
 	STRING = sub("^.*? = *", "", STRING)
-	STRING = gsub("\\\\s", "", STRING)
+	STRING = gsub("\\s", "", STRING)
 	colon = grep(":", STRING)
 	if (!length(colon))
 		{
