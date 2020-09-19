@@ -28,7 +28,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 		}	else	{
 			cs1.ini[index] = paste("habitat_file = ",getwd(),"/",envVariableName,".asc",sep="")
 		}
-	if (OS == "Windows") cs1.ini = gsub("/", "\\\", cs1.ini, fixed=T)
+	if (OS == "Windows") cs1.ini = gsub("/", "\\", cs1.ini, fixed=T)
 	index = which(grepl("habitat_map_is_resistances = ",cs1.ini))
 	if (resistance == TRUE)
 		{
