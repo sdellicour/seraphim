@@ -15,7 +15,7 @@ cartogramTransformation(input,
 \arguments{
   \item{input}{ list of sequences in a fasta format or data frame only containing the sampling coordinates to transform. In the first case, the fasta object has to be obtained by reading a fasta file withe the "read.dna" function of the "ape" package: read.dna ("file_name.fasta", format="fasta"). Important requirement: in the fasta file, the sequence names have to contain the following details in a specific order and separated by underscores: (1) sequence ID (e.g. GenBank accession number), (2) sampling date in a decimal format (e.g. 2015.47), (3) latitude coordinate and (4) longitude coordinate in a decimal format. Here is an example: ">hOH10_1997.2_41.053_-80.706". See the example files for further details. In the second case, the text file has to contain only two columns, one with the latitude and one with the longitude coordinates of each sampled sequence. }
   \item{envVariables}{ list of environmental rasters to that will be used to perform distinct cartogram transformations. }
-  \item{resistances}{ list of boolean variables corresponding to the "envVariables" list. These boolean variables specify if the rasters of the "envVariables" list have to be treated as resistance or conductance factors (only useful for the least-cost and random walk path models). }
+  \item{resistances}{ list of boolean variables corresponding to the "envVariables" list. These boolean variables specify if the rasters of the "envVariables" list have to be treated as resistance or conductance factors (only useful for the least-cost and Circuitscape path models). }
   \item{outputName}{ name (prefix) to give to the different output files. }
 }
 \value{
