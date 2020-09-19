@@ -180,9 +180,9 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), r
 													twoPointsOnTheGrid = TRUE; counter1 = counter1+1
 													if (counter1 == 1)
 														{
-															cat("Randomising tree ",t,"\\n",sep="")
+															cat("Randomising tree ",t,"\n",sep="")
 														}	else		{
-															cat("Randomising tree ",t,", again","\\n",sep="")
+															cat("Randomising tree ",t,", again","\n",sep="")
 														}
 													fromCoorRand[[t]][,] = NA; toCoorRand[[t]][,] = NA
 													if (showingPlots == TRUE)
@@ -348,7 +348,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), r
 					if (branchRandomisation2 == TRUE)
 						{
 							simRasters = list(); simRasters = hullRasters
-							cat("Analysis of randomised branch positions ", s, "\\n", sep="")
+							cat("Analysis of randomised branch positions ", s, "\n", sep="")
 							fromCoorRand = fromCoor; toCoorRand = toCoor
 							buffer = list()
 							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
@@ -451,7 +451,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), r
 					if (branchRandomisation1 == TRUE)
 						{
 							simRasters = list(); simRasters = hullRasters
-							cat("Analysis of randomised branch positions ", s, "\\n", sep="")
+							cat("Analysis of randomised branch positions ", s, "\n", sep="")
 							fromCoorRand = fromCoor; toCoorRand = toCoor
 							buffer = list()
 							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {

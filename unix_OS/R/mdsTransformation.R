@@ -170,10 +170,10 @@ function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistanc
 				}
 			if (length(lines_to_remove) > 0)
 				{
-					cat(paste("Removed sequences:","\\n",sep=""))
+					cat(paste("Removed sequences:","\n",sep=""))
 					for (j in 1:length(lines_to_remove))
 						{
-							cat(paste("   ", buffer1[j,1],"\\n",sep=""))	
+							cat(paste("   ", buffer1[j,1],"\n",sep=""))	
 						}
 					dist = dist[-lines_to_remove,]; dist = dist[,-lines_to_remove]
 					buffer2 = buffer1[-lines_to_remove,]
@@ -229,10 +229,10 @@ function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistanc
 									dist = dist[-lines_to_remove[1:J],]; dist = dist[,-lines_to_remove[1:J]]
 									buffer3 = buffer2[-lines_to_remove[1:J],]
 									sequences_to_keep = sequences_to_keep[-lines_to_remove]
-									cat(paste("Removed sequences:","\\n",sep=""))
+									cat(paste("Removed sequences:","\n",sep=""))
 									for (j in 1:length(lines_to_remove[1:J]))
 										{
-											cat(paste("   ", buffer1[lines_to_remove[j],1],"\\n",sep=""))	
+											cat(paste("   ", buffer1[lines_to_remove[j],1],"\n",sep=""))	
 										}
 									stillNA = FALSE
 								}
@@ -325,7 +325,7 @@ function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistanc
 					sink(file=paste(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,sep=""),".txt",sep=""))
 					for (j in 1:dim(input)[1])
 						{
-							cat(paste(tab[j,4],tab[j,3],sep="	")); cat("\\n")
+							cat(paste(tab[j,4],tab[j,3],sep="	")); cat("\n")
 						}
 					sink(NULL)
 				}
@@ -353,8 +353,8 @@ function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistanc
 					sink(file=paste(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,sep=""),".fasta",sep=""))
 					for (j in 1:length(row.names(fasta)))
 						{
-							cat(paste(">",row.names(fasta)[j],sep="")); cat("\\n")
-							cat(sequences[j]); cat("\\n")
+							cat(paste(">",row.names(fasta)[j],sep="")); cat("\n")
+							cat(sequences[j]); cat("\n")
 						}
 					sink(NULL)
 				}
@@ -369,8 +369,8 @@ function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistanc
 						}
 					new_tree$tip.label = new.labels
 					write.tree(new_tree, paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""))
-					newickTree = scan(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""), what="", sep="\\n", quiet=TRUE)
-					xmlTemplate = scan("Xml_template.xml", what="", sep="\\n", quiet=TRUE)
+					newickTree = scan(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""), what="", sep="\n", quiet=TRUE)
+					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)
 					xmlBlock = c()
 					for (j in 1:dim(tab)[1])
 						{
@@ -391,25 +391,25 @@ function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistanc
 							xmlBlock = c(xmlBlock, paste("\t</taxon>",sep=""))
 						}
 					sink(file=paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".xml",sep=""))
-					cat("<beast>"); cat("\\n")
-					cat("\t<taxa id=\"taxa\">"); cat("\\n")
+					cat("<beast>"); cat("\n")
+					cat("\t<taxa id=\"taxa\">"); cat("\n")
 					for (j in 1:length(xmlBlock))
 						{
-							cat(xmlBlock[j]); cat("\\n")
+							cat(xmlBlock[j]); cat("\n")
 						}
-					cat("\t</taxa>"); cat("\\n")
-					cat("\\n")
-					cat("\t<newick id=\"startingTree.sim\">"); cat("\\n")
-					cat(newickTree); cat("\\n")
-					cat("\t</newick>"); cat("\\n")
-					cat("\\n")
+					cat("\t</taxa>"); cat("\n")
+					cat("\n")
+					cat("\t<newick id=\"startingTree.sim\">"); cat("\n")
+					cat(newickTree); cat("\n")
+					cat("\t</newick>"); cat("\n")
+					cat("\n")
 					xmlTemplate = gsub("TEMPLATE_NAME",paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,sep=""),xmlTemplate)
 					for (j in 1:length(xmlTemplate))
 						{
-							cat(xmlTemplate[j]); cat("\\n")
+							cat(xmlTemplate[j]); cat("\n")
 						}
-					cat("\\n")
-					cat("<beast>"); cat("\\n")
+					cat("\n")
+					cat("<beast>"); cat("\n")
 					sink(NULL)
 				}
 		}

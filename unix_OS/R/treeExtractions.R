@@ -41,7 +41,7 @@ function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSam
 					treeID = gsub(pattern="\\\\[.+\\\\];", replacement="", tree)
 					treeID = gsub(pattern=" ", replacement="", treeID)
 					treeID = unlist(strsplit(treeID, "_"))[2]
-					cat("Exctracting information from sampled tree n°", treeID, "\\n", sep="");
+					cat("Exctracting information from sampled tree n°", treeID, "\n", sep="");
 				}	else		{
 					treeID = "MCC_tree"
 				}

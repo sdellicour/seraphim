@@ -78,7 +78,7 @@ function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,nc
 	for (t in seq(startingYear,samplingWindow[2],timeSlice))
 		{
 			statut = cbind(length(particules), t)
-			colnames(statut) = c(); cat(statut); cat("\\n")
+			colnames(statut) = c(); cat(statut); cat("\n")
 			L = length(particules)
 			for (i in 1:L)
 				{

@@ -123,7 +123,7 @@ function(input, envVariables=list(), resistances=c(T), outputName="")	{
 					sink(file=paste(paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,sep=""),".txt",sep=""))
 					for (j in 1:dim(input)[1])
 						{
-							cat(paste(coords3[j,2],coords3[j,1],sep="	")); cat("\\n")
+							cat(paste(coords3[j,2],coords3[j,1],sep="	")); cat("\n")
 						}
 					sink(NULL)
 				}
@@ -147,8 +147,8 @@ function(input, envVariables=list(), resistances=c(T), outputName="")	{
 					sink(file=paste(paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,sep=""),".fasta",sep=""))
 					for (j in 1:length(row.names(fasta)))
 						{
-							cat(paste(">",row.names(fasta)[j],sep="")); cat("\\n")
-							cat(sequences[j]); cat("\\n")
+							cat(paste(">",row.names(fasta)[j],sep="")); cat("\n")
+							cat(sequences[j]); cat("\n")
 						}
 					sink(NULL)
 				}
@@ -162,8 +162,8 @@ function(input, envVariables=list(), resistances=c(T), outputName="")	{
 					newTree = tree
 					newTree$tip.label = new.labels
 					write.tree(newTree, paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".tree",sep=""))
-					newickTree = scan(paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".tree",sep=""), what="", sep="\\n", quiet=TRUE)
-					xmlTemplate = scan("Xml_template.xml", what="", sep="\\n", quiet=TRUE)
+					newickTree = scan(paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".tree",sep=""), what="", sep="\n", quiet=TRUE)
+					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)
 					xmlBlock = c()
 					for (j in 1:length(IDs))
 						{
@@ -184,32 +184,32 @@ function(input, envVariables=list(), resistances=c(T), outputName="")	{
 							xmlBlock = c(xmlBlock, paste("\t</taxon>",sep=""))
 						}
 					sink(file=paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".xml",sep=""))
-					cat("<beast>"); cat("\\n")
-					cat("\t<taxa id=\"taxa\">"); cat("\\n")
+					cat("<beast>"); cat("\n")
+					cat("\t<taxa id=\"taxa\">"); cat("\n")
 					for (j in 1:length(xmlBlock))
 						{
-							cat(xmlBlock[j]); cat("\\n")
+							cat(xmlBlock[j]); cat("\n")
 						}
-					cat("\t</taxa>"); cat("\\n")
-					cat("\\n")
-					cat("\t<newick id=\"startingTree.sim\">"); cat("\\n")
-					cat(newickTree); cat("\\n")
-					cat("\t</newick>"); cat("\\n")
-					cat("\\n")
+					cat("\t</taxa>"); cat("\n")
+					cat("\n")
+					cat("\t<newick id=\"startingTree.sim\">"); cat("\n")
+					cat(newickTree); cat("\n")
+					cat("\t</newick>"); cat("\n")
+					cat("\n")
 					for (j in 1:length(xmlTemplate))
 						{
-							cat(xmlTemplate[j]); cat("\\n")
+							cat(xmlTemplate[j]); cat("\n")
 						}
-					cat("\\n")
-					cat("<beast>"); cat("\\n")
+					cat("\n")
+					cat("<beast>"); cat("\n")
 					sink(NULL)
 				}
 		}
 	if (treeFile == TRUE)
 		{
 			write.tree(tree, paste(outputName,"_original.tree",sep=""))
-			newickTree = scan(paste(outputName,"_original.tree",sep=""), what="", sep="\\n", quiet=TRUE)
-			xmlTemplate = scan("Xml_template.xml", what="", sep="\\n", quiet=TRUE)
+			newickTree = scan(paste(outputName,"_original.tree",sep=""), what="", sep="\n", quiet=TRUE)
+			xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)
 			xmlBlock = c()
 			for (j in 1:length(IDs))
 				{
@@ -230,24 +230,24 @@ function(input, envVariables=list(), resistances=c(T), outputName="")	{
 					xmlBlock = c(xmlBlock, paste("\t</taxon>",sep=""))
 				}
 			sink(file=paste(outputName,"_noTransformation.xml",sep=""))
-			cat("<beast>"); cat("\\n")
-			cat("\t<taxa id=\"taxa\">"); cat("\\n")
+			cat("<beast>"); cat("\n")
+			cat("\t<taxa id=\"taxa\">"); cat("\n")
 			for (j in 1:length(xmlBlock))
 				{
-					cat(xmlBlock[j]); cat("\\n")
+					cat(xmlBlock[j]); cat("\n")
 				}
-			cat("\t</taxa>"); cat("\\n")
-			cat("\\n")
-			cat("\t<newick id=\"startingTree.sim\">"); cat("\\n")
-			cat(newickTree); cat("\\n")
-			cat("\t</newick>"); cat("\\n")
-			cat("\\n")
+			cat("\t</taxa>"); cat("\n")
+			cat("\n")
+			cat("\t<newick id=\"startingTree.sim\">"); cat("\n")
+			cat(newickTree); cat("\n")
+			cat("\t</newick>"); cat("\n")
+			cat("\n")
 			for (j in 1:length(xmlTemplate))
 				{
-					cat(xmlTemplate[j]); cat("\\n")
+					cat(xmlTemplate[j]); cat("\n")
 				}
-			cat("\\n")
-			cat("<beast>"); cat("\\n")
+			cat("\n")
+			cat("<beast>"); cat("\n")
 			sink(NULL)
 		}	
 }

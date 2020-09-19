@@ -97,7 +97,7 @@ function(file, tree.names=NULL) {
 	}
 	
 	annotated_clado_build = function(tp) {
-	    stop(paste("Annotated clado.build is not yet implemented.\\n"))
+	    stop(paste("Annotated clado.build is not yet implemented.\n"))
 	}
 	
 	annotated_tree_build = function(tp) {
@@ -239,14 +239,14 @@ function(file, tree.names=NULL) {
 		    	if (!is.character(text)) stop("argument `text' must be of mode character")
 		    	tree = text
 			}	else	{
-				tree = scan(file=file, what="", sep="\\n", quiet=T, skip=skip, comment.char=comment.char, ...)
+				tree = scan(file=file, what="", sep="\n", quiet=T, skip=skip, comment.char=comment.char, ...)
 			}
 		if (identical(tree, character(0)))
 			{
 				warning("empty character string.")
 				return(NULL)
 			}
-		tree = gsub("[ \\n\t]", "", tree)
+		tree = gsub("[ \n\t]", "", tree)
 		tree = gsub("\\\\[&R\\\\]", "", tree)
 		tree = unlist(strsplit(tree, NULL))
 		y = which(tree == ";")
@@ -268,7 +268,7 @@ function(file, tree.names=NULL) {
 			}
 		if (!length(colon))
 			{
-		    	stop(paste("Annotated clado.build is not yet implemented.\\n"))
+		    	stop(paste("Annotated clado.build is not yet implemented.\n"))
 				obj = lapply(STRING, annotated_clado_build)
 			}	else if (length(colon) == Ntree)	{
 		    	obj = lapply(STRING, annotated_tree_build)
@@ -282,7 +282,7 @@ function(file, tree.names=NULL) {
 			{
 		    	ROOT = length(obj[[i]]$tip.label) + 1
 			    if (sum(obj[[i]]$edge[, 1] == ROOT) == 1 && dim(obj[[i]]$edge)[1] > 1)
-		        stop(paste("The tree has apparently singleton node(s): cannot read tree file.\\n  Reading Newick file aborted at tree no.",i))
+		        stop(paste("The tree has apparently singleton node(s): cannot read tree file.\n  Reading Newick file aborted at tree no.",i))
 			}
 		if (Ntree == 1 && !keep.multi)
 			{
@@ -297,7 +297,7 @@ function(file, tree.names=NULL) {
 		obj
 	}
 
-	X = scan(file=file, what="", sep="\\n", quiet=T)
+	X = scan(file=file, what="", sep="\n", quiet=T)
 	LEFT = grep("\\\\[", X)
 	RIGHT = grep("\\\\]", X)
 	endblock = grep("END;|ENDBLOCK;", X, ignore.case=T)
@@ -363,12 +363,12 @@ function(file, tree.names=NULL) {
 	colon = grep(":", STRING)
 	if (!length(colon))
 		{
-	    	stop("annotated_clado_build is not yet implemented.\\n")
+	    	stop("annotated_clado_build is not yet implemented.\n")
 		    trees = lapply(STRING, annotated_clado_build)
 		}	else if (length(colon) == Ntree)	{
 			trees = lapply(STRING, annotated_tree_build)
 		}	else	{
-			stop("Unknown error in readAnnotatedNexus.\\n")
+			stop("Unknown error in readAnnotatedNexus.\n")
 		}
 	for (i in 1:Ntree)
 		{
@@ -377,7 +377,7 @@ function(file, tree.names=NULL) {
 			ROOT = n + 1
 	    	if (sum(tr$edge[, 1] == ROOT) == 1 && dim(tr$edge)[1] > 1)
 	    		{
-			        stop(paste("The tree has apparently singleton node(s): cannot read tree file.\\n  Reading NEXUS file aborted at tree no.",i,sep=""))
+			        stop(paste("The tree has apparently singleton node(s): cannot read tree file.\n  Reading NEXUS file aborted at tree no.",i,sep=""))
 				}
 		}
 	if (Ntree == 1)

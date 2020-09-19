@@ -27,7 +27,7 @@ function(localTreesDirectory, nberOfExtractionFiles, envVariables, startTime, en
 	environmentalValuesList = list(); buffer = list()
 	buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
 	# for (t in 1:nberOfExtractionFiles) {
-			cat(paste0("Analysing tree ",t,"\\n"))
+			cat(paste0("Analysing tree ",t,"\n"))
 			if (simulations == FALSE)
 				{
 					fileName = paste(localTreesDirectory,"/TreeExtractions_",t,".csv",sep="")

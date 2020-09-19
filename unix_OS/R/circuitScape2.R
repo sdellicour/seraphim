@@ -8,7 +8,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 	line1 = "using Circuitscape"; line2 = paste0("compute(\"",folder,"/CS_temporary.ini\")")
 	writeLines(c(line1, line2), cs.text)
 	close(cs.text)
-	data(cs2) # cs2.ini = scan(file="CS_template2.ini",what="",sep="\\n",quiet=T)
+	data(cs2) # cs2.ini = scan(file="CS_template2.ini",what="",sep="\n",quiet=T)
 	index = which(grepl("point_file = ",cs2.ini))
 	cs2.ini[index] = paste("point_file = ", getwd(),paste("/",folder,"/focal_points_temp.txt",sep=""),sep="")
 	index = which(grepl("output_file = ",cs2.ini))

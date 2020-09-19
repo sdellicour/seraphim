@@ -20,7 +20,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 	weightedDispersalVelocityList = list()
 	numberOfBranchesList = list()
 	dispersalOrientationList = list()
-	cat("Estimation of summary statistics", "\\n", sep="")
+	cat("Estimation of summary statistics", "\n", sep="")
 	onlyOneAncestor = TRUE; extractionsWithMoreThanOneAncestors = c()
 	if ((timeSlices==0)|is.na(timeSlices)|is.null(timeSlices)) onlyOneAncestor = FALSE
 	dispersalVelocityGraph = FALSE
@@ -71,8 +71,8 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 		}
 	if ((onlyOneAncestor == FALSE)&(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE))
 		{
-			cat("Discarding",length(extractionsWithMoreThanOneAncestors),"extraction tables with more without a single","\\n")
-			cat("\t","common ancestor for generating wavefront plots","\\n")
+			cat("Discarding",length(extractionsWithMoreThanOneAncestors),"extraction tables with more without a single","\n")
+			cat("\t","common ancestor for generating wavefront plots","\n")
 		}
 	wavefrontDistanceSlices = timeSlices
 	wavefrontDistanceTimeInterval = (maxEndYear-minStartYear)/wavefrontDistanceSlices
@@ -290,10 +290,10 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 			ciMeanStatistics[1,i] = as.numeric(quantiles[1])
 			ciMeanStatistics[2,i] = as.numeric(quantiles[2])
 		}
-	cat("Median value of mean branch dispersal velocity = ",medianMeanStatistics[1,1],"\\n	95% HPD = [",ciMeanStatistics[1,1],", ",ciMeanStatistics[2,1],"]","\\n",sep="")
-	cat("Median value of weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\\n",sep="")	
-	cat("Median value of original diffusion coefficient = ",medianMeanStatistics[1,4],"\\n	95% HPD = [",ciMeanStatistics[1,4],", ",ciMeanStatistics[2,4],"]","\\n",sep="")	
-	cat("Median value of weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\\n",sep="")	
+	cat("Median value of mean branch dispersal velocity = ",medianMeanStatistics[1,1],"\n	95% HPD = [",ciMeanStatistics[1,1],", ",ciMeanStatistics[2,1],"]","\n",sep="")
+	cat("Median value of weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\n",sep="")	
+	cat("Median value of original diffusion coefficient = ",medianMeanStatistics[1,4],"\n	95% HPD = [",ciMeanStatistics[1,4],", ",ciMeanStatistics[2,4],"]","\n",sep="")	
+	cat("Median value of weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\n",sep="")	
 	colnames(meanStatistics) = c("mean_branch_dispersal_velocity", "weighted_branch_dispersal_velocity", "branch_dispersal_velocity_variation_among_branches", 
 	"original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches")
 	write.table(meanStatistics, file=paste(outputName,"_estimated_dispersal_statistics.txt",sep=""), quote=F, row.names=F, sep="\t")
@@ -388,7 +388,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
-			cat("Building wavefront distance evolution graphs", "\\n", sep="")
+			cat("Building wavefront distance evolution graphs", "\n", sep="")
 			wavefrontDistanceTimeInterval = (maxEndYear-minStartYear)/wavefrontDistanceSlices
 			slicedTimes = matrix(nrow=1, ncol=(wavefrontDistanceSlices+1))
 			lower_l_1 = matrix(nrow=1, ncol=(wavefrontDistanceSlices+1))
@@ -527,7 +527,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 		}
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&(dispersalVelocityGraph == TRUE))
 		{
-			cat("Building branch dispersal velocity evolution graphs", "\\n", sep="")
+			cat("Building branch dispersal velocity evolution graphs", "\n", sep="")
 			slicedTimes = matrix(nrow=1, ncol=dispersalVelocitySlices)
 			lower_l = matrix(nrow=1, ncol=dispersalVelocitySlices); upper_l = matrix(nrow=1, ncol=dispersalVelocitySlices)
 			numberOfBranchesValues = matrix(nrow=nberOfExtractionFiles, ncol=dispersalVelocitySlices)

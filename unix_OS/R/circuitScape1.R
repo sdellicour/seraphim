@@ -10,7 +10,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 	line3 = "result = cs.compute()"
 	writeLines(c(line1, line2, line3), cs.text)
 	close(cs.text)
-	data(cs1) # cs1.ini = scan(file="CS_template1.ini",what="",sep="\\n",quiet=T)
+	data(cs1) # cs1.ini = scan(file="CS_template1.ini",what="",sep="\n",quiet=T)
 	index = which(grepl("point_file = ",cs1.ini))
 	cs1.ini[index] = paste("point_file = ", getwd(),paste("/",folder,"/focal_points_temp.txt",sep=""),sep="")
 	index = which(grepl("output_file = ",cs1.ini))

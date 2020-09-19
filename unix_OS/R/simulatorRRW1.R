@@ -145,7 +145,7 @@ function(tree, rates, sigmas=c(0.1,0.1), cor=0, envVariables=list(), mostRecentS
 						}
 					if (i == 0)
 						{
-							cat(paste0("...re-starting the simulation\\n"))
+							cat(paste0("...re-starting the simulation\n"))
 							t1 = rep(ancestPosition[2], length(tree$tip.label)+tree$Nnode)
 							t2 = rep(ancestPosition[1], length(tree$tip.label)+tree$Nnode)
 							if (showingPlots == TRUE)

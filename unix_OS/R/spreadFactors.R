@@ -280,9 +280,9 @@ if (distanceMatrix == F)
 			{
 				if (impactOnVelocity == TRUE)
 					{
-						if (straightLineDistance == TRUE) cat("Computing environmental distances (straight-line path model) for ", names(envVariables[[h]])[1], "\\n", sep="")
-						if (leastCostDistance == TRUE) cat("Computing environmental distances (least-cost path model) for ", names(envVariables[[h]])[1], "\\n", sep="")
-						if (randomWalkDistance == TRUE) cat("Computing environmental distances (Circuitscape path model) for ", names(envVariables[[h]])[1], "\\n", sep="")	
+						if (straightLineDistance == TRUE) cat("Computing environmental distances (straight-line path model) for ", names(envVariables[[h]])[1], "\n", sep="")
+						if (leastCostDistance == TRUE) cat("Computing environmental distances (least-cost path model) for ", names(envVariables[[h]])[1], "\n", sep="")
+						if (randomWalkDistance == TRUE) cat("Computing environmental distances (Circuitscape path model) for ", names(envVariables[[h]])[1], "\n", sep="")	
 						if (fourCells == TRUE) directions = 4
 						if (fourCells == FALSE) directions = 8
 						if (resistances[h] == FALSE)
@@ -1024,12 +1024,12 @@ if (nberOfRandomisations > 0)
 						simRasters = list(); simRasters = hullRasters
 						if (externalRandomisations == TRUE)
 							{
-								cat("Analysis on external randomisation ",s,"\\n",sep="")
+								cat("Analysis on external randomisation ",s,"\n",sep="")
 								extractionFileName = "TreeRandomisation"
 							}
 						if (externalSimulations == TRUE)
 							{
-								cat("Analysis on external simulation ",s,"\\n",sep="")
+								cat("Analysis on external simulation ",s,"\n",sep="")
 								extractionFileName = "TreeSimulations"
 							}
 						if (nchar(localTreesDirectory) == 0)
@@ -1115,7 +1115,7 @@ if (nberOfRandomisations > 0)
 				if (torusRandomisations == TRUE)
 					{
 						simRasters = list()
-						cat("Analysis on torus translation randomisation ",s,"\\n",sep="")	
+						cat("Analysis on torus translation randomisation ",s,"\n",sep="")	
 						for (h in 2:length(hullRasters))
 							{
 								simRasters[[h]] = torusRandomisation(hullRasters[[h]])
@@ -1132,7 +1132,7 @@ if (nberOfRandomisations > 0)
 				if (rastersSimulations == TRUE)
 					{	
 						simRasters = list()
-						cat("Analysis on raster simulation ", s, "\\n", sep="")
+						cat("Analysis on raster simulation ", s, "\n", sep="")
 						for (h in 2:length(hullRasters))
 							{
 								simRasters[[h]] = rasterSimulation(hullRasters[[h]], variogramModels[[h-1]]) 
@@ -1150,7 +1150,7 @@ if (nberOfRandomisations > 0)
 					{
 						simRasters = list()
 						simRasters = hullRasters
-						cat("Analysis of randomised branch positions ",s,"\\n",sep="")
+						cat("Analysis of randomised branch positions ",s,"\n",sep="")
 						fromCoorRand = fromCoor; toCoorRand = toCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -1319,7 +1319,7 @@ if (nberOfRandomisations > 0)
 					{
 						simRasters = list()
 						simRasters = hullRasters
-						cat("Analysis of randomised branch positions ", s, "\\n", sep="")
+						cat("Analysis of randomised branch positions ", s, "\n", sep="")
 						fromCoorRand = fromCoor; toCoorRand = toCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -1415,7 +1415,7 @@ if (nberOfRandomisations > 0)
 					{
 						simRasters = list()
 						simRasters = hullRasters
-						cat("Analysis of randomised branch positions ", s, "\\n", sep="")
+						cat("Analysis of randomised branch positions ", s, "\n", sep="")
 						fromCoorRand = fromCoor; toCoorRand = toCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -1558,7 +1558,7 @@ if (nberOfRandomisations > 0)
 					{
 						if (distPermutations == TRUE)
 							{
-								cat("Analysis on environmental distances permutation ", s, "\\n", sep="")
+								cat("Analysis on environmental distances permutation ", s, "\n", sep="")
 								for (h in 1:length(envVariables))
 									{
 										for (t in 1:nberOfExtractionFiles)
