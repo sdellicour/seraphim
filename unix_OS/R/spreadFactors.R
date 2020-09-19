@@ -525,7 +525,7 @@ if ((nberOfExtractionFiles == 1) & (impactOnVelocity == TRUE))
 				columnNames = cbind(columnNames, names(envVariables[[h]]))
 			}
 		colnames(mat) = columnNames
-		write.table(mat, file=fileName, row.names=F, quote=F, sep="\	")
+		write.table(mat, file=fileName, row.names=F, quote=F, sep="\t")
 	}
 if ((file.exists(outputName)) & (impactOnVelocity == TRUE))
 	{	
@@ -539,7 +539,7 @@ if ((file.exists(outputName)) & (impactOnVelocity == TRUE))
 						columnNames = cbind(columnNames, names(envVariables[[h]]))
 					}
 				colnames(mat) = columnNames
-				write.table(mat, file=fileName, row.names=F, quote=F, sep="\	")
+				write.table(mat, file=fileName, row.names=F, quote=F, sep="\t")
 			}
 	}
 
@@ -921,7 +921,7 @@ if (impactOnVelocity == TRUE)
 								names = cbind(uniLRcoefficientsNames1, uniLRRsquaresNames1, uniLRdeltaRsquaresNames1)
 							}
 					}
-				colnames(mat) = names; write.table(mat, file=fileName2, row.names=F, quote=F, sep="\	")
+				colnames(mat) = names; write.table(mat, file=fileName2, row.names=F, quote=F, sep="\t")
 			}
 	}
 
@@ -2460,7 +2460,7 @@ if (nberOfRandomisations > 0)
 						names = cbind(uniLRRsquarePValuesNames1, uniLRdeltaRsquarePValuesNames1)
 						if (alternativeQstat == TRUE) names = cbind(names, uniLRRsquarePValuesNames2, uniLRdeltaRsquarePValuesNames2)
 					}
-				colnames(mat) = names; write.table(mat, file=fileName, row.names=F, quote=F, sep="\	")
+				colnames(mat) = names; write.table(mat, file=fileName, row.names=F, quote=F, sep="\t")
 			}
 		if ((nberOfRandomisations > 1) & (impactOnDirection == TRUE))
 			{
@@ -2479,7 +2479,7 @@ if (nberOfRandomisations > 0)
 						rateOfPositiveDifferencesPValuesNames = cbind(rateOfPositiveDifferencesPValuesNames, paste("Direction_R_p-values_", names(envVariables[[h]]), sep=""))
 					}
 				names = cbind(meanEnvValuesPValuesNames, rateOfPositiveDifferencesPValuesNames)
-				colnames(mat) = names; write.table(mat, file=fileName, row.names=F, quote=F, sep="\	")
+				colnames(mat) = names; write.table(mat, file=fileName, row.names=F, quote=F, sep="\t")
 			}
 		if (nberOfExtractionFiles > 49)
 			{
@@ -2512,7 +2512,7 @@ if (nberOfRandomisations > 0)
 							}	else		{
 								buffer = uniLRdeltaRsquaresRandomisationBFs1
 							}
-						write.table(buffer, fileName, quote=F,sep="\	")
+						write.table(buffer, fileName, quote=F,sep="\t")
 					}
 				if (impactOnDirection == TRUE)
 					{
@@ -2521,22 +2521,22 @@ if (nberOfRandomisations > 0)
 								row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
 								colnames(rateOfPositiveDifferencesRandomisationBFs) = colNames
 								fileName = paste(outputName,"_positiveDiffs_Bayes_factors.txt",sep="")
-								write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\	")
+								write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 								row.names(meanDifferencesRandomisationBFs) = envVariablesNames
 								colnames(meanDifferencesRandomisationBFs) = colNames
 								fileName = paste(outputName,"_meanDifferences_Bayes_factors.txt",sep="")
-								write.table(meanDifferencesRandomisationBFs, fileName, quote=F, sep="\	")
+								write.table(meanDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 							}
 						if (pathModel == 0)
 							{
 								row.names(meanEnvValuesRandomisationBFs) = envVariablesNames
 								colnames(meanEnvValuesRandomisationBFs) = colNames
 								fileName = paste(outputName,"_direction_E_Bayes_factors.txt",sep="")
-								write.table(meanEnvValuesRandomisationBFs, fileName, quote=F, sep="\	")
+								write.table(meanEnvValuesRandomisationBFs, fileName, quote=F, sep="\t")
 								row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
 								colnames(rateOfPositiveDifferencesRandomisationBFs) = colNames
 								fileName = paste(outputName,"_direction_R_Bayes_factors.txt",sep="")
-								write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\	")
+								write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 							}
 					}
 			}

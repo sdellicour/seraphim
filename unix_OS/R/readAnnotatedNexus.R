@@ -246,7 +246,7 @@ function(file, tree.names=NULL) {
 				warning("empty character string.")
 				return(NULL)
 			}
-		tree = gsub("[ \\n\	]", "", tree)
+		tree = gsub("[ \\n\t]", "", tree)
 		tree = gsub("\\\\[&R\\\\]", "", tree)
 		tree = unlist(strsplit(tree, NULL))
 		y = which(tree == ";")
@@ -311,7 +311,7 @@ function(file, tree.names=NULL) {
 		{
 	    	end = semico[semico > i2][1]
 		    x = X[(i2 + 1):end]
-		    x = unlist(strsplit(x, "[,; \	]"))
+		    x = unlist(strsplit(x, "[,; \t]"))
 	    	x = x[nzchar(x)]
 		    TRANS = matrix(x, ncol = 2, byrow=TRUE)
 		    TRANS[, 2] = gsub("['\\"]", "", TRANS[, 2])

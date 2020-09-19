@@ -11,7 +11,7 @@ function(rast)	{
 		}
 	reflectColumns = FALSE; random = runif(1)
 	if (random < 0.5)
-		{
+		{	
 			reflectColumns = TRUE
 		}						
 	mat = matrix(0, nrow=dim(rast)[1], ncol=dim(rast)[2])

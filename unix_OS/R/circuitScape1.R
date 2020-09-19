@@ -65,7 +65,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 	colnames(tab) = c("mode","include")
 	tab[,1] = 1:dim(mat)[1]
 	tab[,2] = (dim(mat)[1]+1):(2*dim(mat)[1])
-	write.table(tab, pairs_to_include, row.names=F, col.names=T, sep="\	", quote=F)
+	write.table(tab, pairs_to_include, row.names=F, col.names=T, sep="\t", quote=F)
 	if (OS == "Unix")
 		{
 			system(paste("python",paste(folder,"CS_script.sh", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)

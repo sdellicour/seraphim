@@ -72,7 +72,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 	if ((onlyOneAncestor == FALSE)&(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE))
 		{
 			cat("Discarding",length(extractionsWithMoreThanOneAncestors),"extraction tables with more without a single","\\n")
-			cat("\	","common ancestor for generating wavefront plots","\\n")
+			cat("\t","common ancestor for generating wavefront plots","\\n")
 		}
 	wavefrontDistanceSlices = timeSlices
 	wavefrontDistanceTimeInterval = (maxEndYear-minStartYear)/wavefrontDistanceSlices
@@ -296,7 +296,7 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 	cat("Median value of weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\\n",sep="")	
 	colnames(meanStatistics) = c("mean_branch_dispersal_velocity", "weighted_branch_dispersal_velocity", "branch_dispersal_velocity_variation_among_branches", 
 	"original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches")
-	write.table(meanStatistics, file=paste(outputName,"_estimated_dispersal_statistics.txt",sep=""), quote=F, row.names=F, sep="\	")
+	write.table(meanStatistics, file=paste(outputName,"_estimated_dispersal_statistics.txt",sep=""), quote=F, row.names=F, sep="\t")
 
 	LWD = 0.2
 	if (nberOfExtractionFiles > 1)
@@ -430,24 +430,24 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 			treeIDs = paste("distance_tree", treeIDs, sep="")
 			tab = matrix(nrow=length(slicedTimes), ncol=2)
 			tab[,1] = slicedTimes; tab[,2] = waveFrontDistances1MeanValue; colnames(tab) = c("time","distance")	
-			write.table(tab, file=paste(outputName,"_mean_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_mean_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2] = waveFrontDistances1MedianValue; colnames(tab) = c("time","distance")	
-			write.table(tab, file=paste(outputName,"_median_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_median_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2] = waveFrontDistances2MeanValue; colnames(tab) = c("time","distance")	
-			write.table(tab, file=paste(outputName,"_mean_patristic_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_mean_patristic_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2] = waveFrontDistances2MedianValue; colnames(tab) = c("time","distance")	
-			write.table(tab, file=paste(outputName,"_median_patristic_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_median_patristic_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = lower_l_1; tab[,3] = upper_l_1; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
-			write.table(tab, file=paste(outputName,"_95%HPD_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_95%HPD_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2] = lower_l_2; tab[,3] = upper_l_2; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")
-			write.table(tab, file=paste(outputName,"_95%HPD_patristic_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_95%HPD_patristic_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab = matrix(nrow=length(slicedTimes), ncol=(1+dim(waveFrontDistances1Values)[1]))
 			selectedTreeIDs = treeIDs[which(!seq(1,nberOfExtractionFiles,1)%in%extractionsWithMoreThanOneAncestors)]
 			tab[,1] = slicedTimes; tab[,2:(1+dim(waveFrontDistances1Values)[1])] = t(waveFrontDistances1Values); colnames(tab) = c("time",selectedTreeIDs)	
-			write.table(tab, file=paste(outputName,"_spatial_wavefront_distances.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_spatial_wavefront_distances.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2:(1+dim(waveFrontDistances2Values)[1])] = t(waveFrontDistances2Values); colnames(tab) = c("time",selectedTreeIDs)	
-			write.table(tab, file=paste(outputName,"_patristic_wavefront_distances.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_patristic_wavefront_distances.txt",sep=""), row.names=F, quote=F, sep="\t")
 			
 			xLab="time"; yLab = "wavefront distance (km)"
 			
@@ -559,13 +559,13 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = meanDispersalVelocitiesMeanValue
 			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_mean_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_mean_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2] = meanDispersalVelocitiesMedianValue
 			tab[,3] = numberOfBranchesMedianValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_median_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_median_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = lower_l; tab[,3] = upper_l; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
-			write.table(tab, file=paste(outputName,"_95%HPD_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_95%HPD_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 
 			xLab = "time"; yLab = "weighted branch dispersal velocity"
 			if (showingPlots) dev.new(width=5, height=5)
@@ -632,13 +632,13 @@ function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTi
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = weightedDispersalVelocitiesMeanValue
 			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_mean_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_mean_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab[,1] = slicedTimes; tab[,2] = weightedDispersalVelocitiesMedianValue
 			tab[,3] = numberOfBranchesMedianValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_median_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_median_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = lower_l; tab[,3] = upper_l; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
-			write.table(tab, file=paste(outputName,"_95%HPD_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\	")
+			write.table(tab, file=paste(outputName,"_95%HPD_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 
 			xLab = "time"; yLab = "weighted branch dispersal velocity"
 			if (showingPlots) dev.new(width=5, height=5)
