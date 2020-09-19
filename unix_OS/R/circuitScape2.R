@@ -5,7 +5,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 	folder = paste(prefix, "_CStemp_", ID, sep="")
 	if (folder%in%dir(getwd())==FALSE) dir.create(file.path(getwd(), folder))
 	cs.text = file(paste(folder, "CS_script.jl", sep="/"))
-	line1 = "using Circuitscape"; line2 = paste0("compute(\\"",folder,"/CS_temporary.ini\\")")
+	line1 = "using Circuitscape"; line2 = paste0("compute(\"",folder,"/CS_temporary.ini\")")
 	writeLines(c(line1, line2), cs.text)
 	close(cs.text)
 	data(cs2) # cs2.ini = scan(file="CS_template2.ini",what="",sep="\\n",quiet=T)
@@ -26,7 +26,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 		}	else	{
 			cs2.ini[index] = paste("habitat_file = ",getwd(),"/",envVariableName,".asc",sep="")
 		}
-	if (OS == "Windows") cs2.ini = gsub("/", "\\\\", cs2.ini, fixed=T)
+	if (OS == "Windows") cs2.ini = gsub("/", "\\\", cs2.ini, fixed=T)
 	index = which(grepl("habitat_map_is_resistances = ",cs2.ini))
 	if (resistance == TRUE)
 		{

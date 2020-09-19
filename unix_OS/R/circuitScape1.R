@@ -28,7 +28,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 		}	else	{
 			cs1.ini[index] = paste("habitat_file = ",getwd(),"/",envVariableName,".asc",sep="")
 		}
-	if (OS == "Windows") cs1.ini = gsub("/", "\\\\", cs1.ini, fixed=T)
+	if (OS == "Windows") cs1.ini = gsub("/", "\\\", cs1.ini, fixed=T)
 	index = which(grepl("habitat_map_is_resistances = ",cs1.ini))
 	if (resistance == TRUE)
 		{
@@ -73,7 +73,7 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 		}
 	if (OS == "Windows")
 		{
-			system(paste0("\\"C:\\\\Program Files\\\\Circuitscape\\\\cs_run.exe\\"",paste(folder,"CS_temporary.ini",sep="/")), ignore.stdout=T, ignore.stderr=T)
+			system(paste0("\"C:\\\\Program Files\\\\Circuitscape\\\\cs_run.exe\"",paste(folder,"CS_temporary.ini",sep="/")), ignore.stdout=T, ignore.stderr=T)
 		}		
 	tab = read.table(paste0(folder,"/raster_file_temp_resistances.txt"), header=F)
 	tab = tab[2:dim(tab)[1], 2:dim(tab)[2]]

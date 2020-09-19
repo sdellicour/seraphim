@@ -67,7 +67,7 @@ function(file, tree.names=NULL) {
 					{
 						value = as.numeric(value)
 					}	else	{
-		    	 		value = gsub("\\\\\\"","", value)
+		    	 		value = gsub("\\\\\"","", value)
 		    		}
 			}
 		return(value)
@@ -75,7 +75,7 @@ function(file, tree.names=NULL) {
 	
 	parse_traits = function(text, header=F) {
 		if (header == TRUE) text = substring(text,3,nchar(text)-1)
-		pattern = "(\\"[^\\"]*\\"+|[^,=\\\\s]+)\\\\s*(=\\\\s*(\\\\{[^=]*\\\\}|\\"[^\\"]*\\"+|[^,]+))?"
+		pattern = "(\"[^\"]*\"+|[^,=\\\\s]+)\\\\s*(=\\\\s*(\\\\{[^=]*\\\\}|\"[^\"]*\"+|[^,]+))?"
 		rgx = gregexpr(pattern,text,perl=TRUE)
 		traits = list()
 		n = length(attr(rgx[[1]],"match.length"))
@@ -314,7 +314,7 @@ function(file, tree.names=NULL) {
 		    x = unlist(strsplit(x, "[,; \t]"))
 	    	x = x[nzchar(x)]
 		    TRANS = matrix(x, ncol = 2, byrow=TRUE)
-		    TRANS[, 2] = gsub("['\\"]", "", TRANS[, 2])
+		    TRANS[, 2] = gsub("['\"]", "", TRANS[, 2])
 			n = dim(TRANS)[1]
 		}
 	start = if (translation)
