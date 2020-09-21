@@ -1,5 +1,4 @@
-torusRandomisation <-
-function(rast)	{
+torusRandomisation = function(rast)	{
 
 	nberOfRows = dim(rast)[1]; nberOfColumns = dim(rast)[2]
 	jumpOfRows = as.integer(runif (1, min = 1, nberOfRows))
@@ -167,4 +166,4 @@ function(rast)	{
 		}
 	rast[,] = mat
 	return(rast)
-}
+}	

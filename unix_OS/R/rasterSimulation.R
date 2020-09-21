@@ -1,5 +1,4 @@
-rasterSimulation <-
-function(rast, variogramModel) {
+rasterSimulation = function(rast, variogramModel) {
 	
 	nscore = function(x)
 		{
@@ -56,4 +55,4 @@ function(rast, variogramModel) {
 		}
 	rast[] = simRaster	
 	return(rast)	
-}
+}		

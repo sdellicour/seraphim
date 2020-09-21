@@ -1,5 +1,4 @@
-simulatorRRW2 <-
-function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
+simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
 						 resistance=TRUE, scalingValue=1, ancestPosition=c(0.4,0.5), birthRate=0.2,
 						 samplingRate=0.2, startingYear=0, samplingWindow=c(10,50), timeSlice=0.1,
 						 timeIntervale=1, showingPlots=FALSE, extractionOfValuesOnMatrix=FALSE) {

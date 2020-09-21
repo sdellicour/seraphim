@@ -1,5 +1,4 @@
-vectorRandomisation <-
-function(rast, fromCoor, toCoor, showingPlots=FALSE)	{
+vectorRandomisation = function(rast, fromCoor, toCoor, showingPlots=FALSE)	{
 
 		fromCoorRand = fromCoor; toCoorRand = toCoor
 		fixedStartLocation = TRUE

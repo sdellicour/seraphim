@@ -1,5 +1,4 @@
-treeExtractions <-
-function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSample, mostRecentSamplingDatum, coordinateAttributeName, nberOfCores=1) {
+treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSample, mostRecentSamplingDatum, coordinateAttributeName, nberOfCores=1) {
 
 	registerDoMC(cores=nberOfCores)
 	dir.create(file.path(localTreesDirectory), showWarnings=F)
@@ -38,7 +37,7 @@ function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSam
 			tree = sampledNewTreeListMinusBurnIn[i]
 			if (MCCtree == FALSE)
 				{
-					treeID = gsub(pattern="\\\\[.+\\\\];", replacement="", tree)
+					treeID = gsub(pattern="\\[.+\\];", replacement="", tree)
 					treeID = gsub(pattern=" ", replacement="", treeID)
 					treeID = unlist(strsplit(treeID, "_"))[2]
 					cat("Exctracting information from sampled tree n°", treeID, "\n", sep="");
@@ -46,14 +45,14 @@ function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSam
 					treeID = "MCC_tree"
 				}
 			# (1) Creation of "tab", a data frame containing coordinates of each node:
-			tab = gsub(pattern="tree.+\\\\[&R\\\\]", replacement="", tree)	
-			tab = gsub(pattern="\\\\}\\\\]:\\\\[&rate=", replacement="\\\\},rate=", tab) 
-			tab = gsub(pattern="\\\\}\\\\]:\\\\[&+[[:alnum:]]+[[:punct:]]+rate=", replacement="\\\\},rate=", tab)
-			tab = gsub("\\\\[&CO", "\\\\&&CO", tab)
-			tab = unlist(strsplit(tab, "\\\\["))[-1]
+			tab = gsub(pattern="tree.+\\[&R\\]", replacement="", tree)	
+			tab = gsub(pattern="\\}\\]:\\[&rate=", replacement="\\},rate=", tab) 
+			tab = gsub(pattern="\\}\\]:\\[&+[[:alnum:]]+[[:punct:]]+rate=", replacement="\\},rate=", tab)
+			tab = gsub("\\[&CO", "\\&&CO", tab)
+			tab = unlist(strsplit(tab, "\\["))[-1]
 			tab = gsub("&", "", tab)
-			tab = gsub("\\\\}.+$", "", tab)		
-			tab = gsub("\\\\{", "", tab)
+			tab = gsub("\\}.+$", "", tab)		
+			tab = gsub("\\{", "", tab)
 			tab = gsub(paste(".*",coordinateAttributeName,"=",sep=""), "location1=", tab)
 			tab = gsub(",", ",location2=", tab)
 	    	foo = function(x) {x = unlist(strsplit(x, ",")); x}
@@ -78,15 +77,15 @@ function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSam
 	    	all = which(!is.na(tab[,1]))
 	    	 
 			# (2) Removing of all the spatial & mutation rate information:
-			tree = gsub("\\\\[[^]]*\\\\]", "", tree) # remove all the "[...]"
+			tree = gsub("\\[[^]]*\\]", "", tree) # remove all the "[...]"
 			tree = gsub("tree STATE_.+[[:space:]]+=[[:space:]]+", "", tree)
 			write(tree, file=properTreeName)
 			
 			# (3) Creation of "mat", a matrix containing coordinates of each node:
 				# tree1 will contain node names (if tip nodes) and branch lengths
-			tree1 = unlist(strsplit(tree, "\\\\("))
+			tree1 = unlist(strsplit(tree, "\\("))
 	   		tree1 = unlist(strsplit(tree1, ","))
-	   		tree1 = unlist(strsplit(tree1, "\\\\)"))
+	   		tree1 = unlist(strsplit(tree1, "\\)"))
 		   		# tree2 will only contain all the branch lengths
 			tree2 = unlist(strsplit(tree, ":"))[-1]
 			tree2 = gsub("[( | ) | ;]", "", tree2)	
@@ -105,8 +104,8 @@ function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSam
 					for (k in all)
 						{
 							# tree3 = gsub(tree1[k], tree4[k], tree3) # PROBLEM
-							tree3 = gsub(paste("\\\\(",tree1[k],sep=""), paste("\\\\(",tree4[k],sep=""), tree3)
-							tree3 = gsub(paste("\\\\)",tree1[k],sep=""), paste("\\\\)",tree4[k],sep=""), tree3)
+							tree3 = gsub(paste("\\(",tree1[k],sep=""), paste("\\(",tree4[k],sep=""), tree3)
+							tree3 = gsub(paste("\\)",tree1[k],sep=""), paste("\\)",tree4[k],sep=""), tree3)
 							tree3 = gsub(paste(",",tree1[k],sep=""), paste(",",tree4[k],sep=""), tree3)
 								# node/tip names are replaced by the coordinate
 	 						tree5 = read.tree(text = tree3)

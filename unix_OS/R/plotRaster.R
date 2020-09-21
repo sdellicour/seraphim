@@ -1,5 +1,4 @@
-plotRaster <-
-function(rast, cols=NULL, colNA="gray90", add=FALSE, new=TRUE, addBox=TRUE, addAxes=FALSE, addLegend=FALSE, legendOnly=FALSE) {
+plotRaster = function(rast, cols=NULL, colNA="gray90", add=FALSE, new=TRUE, addBox=TRUE, addAxes=FALSE, addLegend=FALSE, legendOnly=FALSE) {
 	
 	if (legendOnly == FALSE)
 		{ 

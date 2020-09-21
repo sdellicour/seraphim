@@ -1,5 +1,4 @@
-circuitScape1 <-
-function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, fourCells=FALSE, fromCoor, toCoor, OS="Unix", prefix="", ID="", nberOfCores_CS=1)	{
+circuitScape1 = function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, fourCells=FALSE, fromCoor, toCoor, OS="Unix", prefix="", ID="", nberOfCores_CS=1)	{
 	
 	mat = matrix(nrow=dim(as.matrix(fromCoor))[1], ncol=1)
 	folder = paste(prefix, "_CStemp_", ID, sep="")
@@ -32,10 +31,8 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 	index = which(grepl("habitat_map_is_resistances = ",cs1.ini))
 	if (resistance == TRUE)
 		{
-			# cs1.ini[index] = "ground_file_is_resistances = False"
 			cs1.ini[index] = "habitat_map_is_resistances = True" 
 		}	else	{
-			# cs1.ini[index] = "ground_file_is_resistances = False"
 			cs1.ini[index] = "habitat_map_is_resistances = False"
 		}
 	index = which(grepl("connect_using_avg_resistances = ",cs1.ini))

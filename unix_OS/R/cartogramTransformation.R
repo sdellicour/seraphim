@@ -1,5 +1,4 @@
-cartogramTransformation <-
-function(input, envVariables=list(), resistances=c(T), outputName="")	{
+cartogramTransformation = function(input, envVariables=list(), resistances=c(T), outputName="")	{
 	
 	input0 = input; showingPlots = FALSE
 	textFile = FALSE; fastaAlignment = FALSE; treeFile = FALSE
@@ -251,3 +250,5 @@ function(input, envVariables=list(), resistances=c(T), outputName="")	{
 			sink(NULL)
 		}	
 }
+
+	

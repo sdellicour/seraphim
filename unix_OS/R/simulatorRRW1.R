@@ -1,5 +1,4 @@
-simulatorRRW1 <-
-function(tree, rates, sigmas=c(0.1,0.1), cor=0, envVariables=list(), mostRecentSamplingDatum,
+simulatorRRW1 = function(tree, rates, sigmas=c(0.1,0.1), cor=0, envVariables=list(), mostRecentSamplingDatum,
 						 ancestPosition, reciprocalRates=TRUE, n1=100, n2=0, showingPlots=FALSE, newPlot=TRUE, fixedNodes=c()) {
 	
 	rotation = function(pt1, pt2, angle)

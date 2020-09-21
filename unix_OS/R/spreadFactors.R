@@ -1,5 +1,4 @@
-spreadFactors <-
-function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), pathModel=1, resistances=list(), avgResistances=list(), fourCells=FALSE, 
+spreadFactors = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), pathModel=1, resistances=list(), avgResistances=list(), fourCells=FALSE, 
 			 nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE, nberOfCores=1, OS="Unix", juliaCSImplementation=FALSE, 
 			 simulations=FALSE, randomisations=FALSE, hull_polygons=list(), onlyTipBranches=FALSE, GLM=FALSE, alternativeQstat=FALSE) {
 

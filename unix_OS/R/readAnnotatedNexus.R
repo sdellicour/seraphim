@@ -1,5 +1,6 @@
-readAnnotatedNexus <-
-function(file, tree.names=NULL) {
+# R functions written by Marc Suchard for the "OutbreakTools" package
+
+readAnnotatedNexus = function(file, tree.names=NULL) {
 
 	strip_annotations = function(text) { 
 		annotations = list()

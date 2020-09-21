@@ -1,5 +1,4 @@
-variogramModel <-
-function(envVariables)	{
+variogramModel = function(envVariables)	{
 
 	variogramModels = list()
 	for (h in 1:length(envVariables))
@@ -7,7 +6,7 @@ function(envVariables)	{
 			path = envVariables[[h]]@data@names
 			path = unlist(strsplit(path, "/"))
 			path = path[length(path)]
-			path = unlist(strsplit(path, "\\\\."))
+			path = unlist(strsplit(path, "\\."))
 			path = gsub(" ", "_", path[1])
 			names(envVariables[[h]]) = path
 		}
@@ -153,4 +152,4 @@ function(envVariables)	{
 					# plot(GearyLocal(simRast))
 		}
 	return(variogramModels)
-}
+}    

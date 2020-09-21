@@ -1,5 +1,4 @@
-circuitScape2 <-
-function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, fourCells=FALSE, fromCoor, toCoor, OS="Unix", prefix="", ID="", nberOfCores_CS=1)	{
+circuitScape2 = function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, fourCells=FALSE, fromCoor, toCoor, OS="Unix", prefix="", ID="", nberOfCores_CS=1)	{
 	
 	mat = matrix(nrow=dim(as.matrix(fromCoor))[1], ncol=1)
 	folder = paste(prefix, "_CStemp_", ID, sep="")
@@ -26,13 +25,12 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 		}	else	{
 			cs2.ini[index] = paste("habitat_file = ",getwd(),"/",envVariableName,".asc",sep="")
 		}
+	if (OS == "Windows") cs2.ini = gsub("/", "\\", cs2.ini, fixed=T)
 	index = which(grepl("habitat_map_is_resistances = ",cs2.ini))
 	if (resistance == TRUE)
 		{
-			# cs2.ini[index] = "ground_file_is_resistances = False"
 			cs2.ini[index] = "habitat_map_is_resistances = True" 
 		}	else	{
-			# cs2.ini[index] = "ground_file_is_resistances = False"
 			cs2.ini[index] = "habitat_map_is_resistances = False"
 		}
 	index = which(grepl("connect_using_avg_resistances = ",cs2.ini))
@@ -66,7 +64,6 @@ function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, four
 	if (OS == "Unix")
 		{
 			system(paste("julia",paste(folder,"CS_script.jl", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)
-			# system(paste("python2",paste(folder,"CS_script2.sh", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)
 		}		
 	tab = read.table(paste0(folder,"/raster_file_temp_resistances.out"), header=F)
 	tab = tab[2:dim(tab)[1], 2:dim(tab)[2]]

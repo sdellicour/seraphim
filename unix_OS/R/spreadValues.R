@@ -1,5 +1,4 @@
-spreadValues <-
-function(localTreesDirectory, nberOfExtractionFiles, envVariables, startTime, endTime, timeSlices=200, slidingWindow=1/12, showingPlots=FALSE, outputName=gsub(" ","_",date()), nberOfCores=1, simulations=FALSE) {
+spreadValues = function(localTreesDirectory, nberOfExtractionFiles, envVariables, startTime, endTime, timeSlices=200, slidingWindow=1/12, showingPlots=FALSE, outputName=gsub(" ","_",date()), nberOfCores=1, simulations=FALSE) {
 
 	registerDoMC(cores=nberOfCores)
 	# for (i in 1:nberOfExtractionFiles)

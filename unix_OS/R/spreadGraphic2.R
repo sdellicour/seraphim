@@ -1,8 +1,7 @@
-spreadGraphic2 <-
-function(localTreesDirectory, nberOfExtractionFiles, prob=0.95, startDatum, precision=1, includeRoot=T) {
+spreadGraphic2 = function(localTreesDirectory, nberOfExtractionFiles, prob=0.95, startDatum, precision=1, includeRoot=T) {
 
 	# nberOfCores=1; registerDoMC(cores=nberOfCores)
-	percentage = gsub("0\\\\.","",as.character(prob))
+	percentage = gsub("0\\.","",as.character(prob))
 	timeInterval = precision; nodes = c()
 	for (i in 1:nberOfExtractionFiles)
 		{
