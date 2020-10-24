@@ -2518,22 +2518,22 @@ if (nberOfRandomisations > 0)
 						if (pathModel == -1)
 							{
 								row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
-								colnames(rateOfPositiveDifferencesRandomisationBFs) = colNames
+								colnames(rateOfPositiveDifferencesRandomisationBFs) = "BF"
 								fileName = paste(outputName,"_positiveDiffs_Bayes_factors.txt",sep="")
 								write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 								row.names(meanDifferencesRandomisationBFs) = envVariablesNames
-								colnames(meanDifferencesRandomisationBFs) = colNames
+								colnames(meanDifferencesRandomisationBFs) = "BF"
 								fileName = paste(outputName,"_meanDifferences_Bayes_factors.txt",sep="")
 								write.table(meanDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 							}
 						if (pathModel == 0)
 							{
 								row.names(meanEnvValuesRandomisationBFs) = envVariablesNames
-								colnames(meanEnvValuesRandomisationBFs) = colNames
+								colnames(meanEnvValuesRandomisationBFs) = "BF"
 								fileName = paste(outputName,"_direction_E_Bayes_factors.txt",sep="")
 								write.table(meanEnvValuesRandomisationBFs, fileName, quote=F, sep="\t")
 								row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
-								colnames(rateOfPositiveDifferencesRandomisationBFs) = colNames
+								colnames(rateOfPositiveDifferencesRandomisationBFs) = "BF"
 								fileName = paste(outputName,"_direction_R_Bayes_factors.txt",sep="")
 								write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 							}
