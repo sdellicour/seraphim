@@ -26,7 +26,7 @@ spreadGraphic2 = function(localTreesDirectory, nberOfExtractionFiles, prob=0.95,
 				{
 					c = c+1; H = Hpi(cbind(selectedNodes[,"lon"],selectedNodes[,"lat"])); print(timeSlices[i])
 					kde = kde(cbind(selectedNodes[,"lon"],selectedNodes[,"lat"]), H=H, compute.cont=T, gridsize=c(1000,1000))
-					contourLevel = contourLevels(kde, prob=0.01); polygons = list()
+					contourLevel = contourLevels(kde, prob=(1-prob)); polygons = list()
 					contourLines = contourLines(kde$eval.points[[1]], kde$eval.points[[2]], kde$estimate, level=contourLevel)
 					for (j in 1:length(contourLines)) polygons[[j]] = Polygon(cbind(contourLines[[j]]$x,contourLines[[j]]$y))
 					ps = Polygons(polygons,1); contourPolygons = SpatialPolygons(list(ps)); # plot(contourPolygons, add=T)
