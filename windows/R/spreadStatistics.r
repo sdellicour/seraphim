@@ -176,7 +176,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 											
 										}
 									waveFrontDistances1[i+1,2] = maxDistance1
-						    			waveFrontDistances2[i+1,2] = maxDistance2
+						    		waveFrontDistances2[i+1,2] = maxDistance2
 								}
 							colnames(waveFrontDistances1) = c("endYear", "waveFrontDistances1")
 							colnames(waveFrontDistances2) = c("endYear", "waveFrontDistances2")

@@ -105,14 +105,14 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			for (i in 1:nberOfConnections)
 				{
 					dispersalTime = data[i,"endYear"]-data[i,"startYear"]
-		    			branchVelocity = data[i,"greatCircleDist_km"]/(dispersalTime)
-		    			branchOriginalDiffusionCoefficient = (data[i,"greatCircleDist_km"]^2)/(4*dispersalTime)
-		    			branchMeasures[i,1] = branchVelocity
-		    			branchMeasures[i,2] = branchOriginalDiffusionCoefficient
-		    			weightedDispersalVelocity_numerator = weightedDispersalVelocity_numerator + data[i,"greatCircleDist_km"]
-		    			weightedDispersalVelocity_denominator = weightedDispersalVelocity_denominator + dispersalTime
-		    			weightedDiffusionCoefficient_numerator = weightedDiffusionCoefficient_numerator + (data[i,"greatCircleDist_km"]^2)
-		    			weightedDiffusionCoefficient_denominator = weightedDiffusionCoefficient_denominator + (4*dispersalTime)
+		    		branchVelocity = data[i,"greatCircleDist_km"]/(dispersalTime)
+		    		branchOriginalDiffusionCoefficient = (data[i,"greatCircleDist_km"]^2)/(4*dispersalTime)
+		    		branchMeasures[i,1] = branchVelocity
+		    		branchMeasures[i,2] = branchOriginalDiffusionCoefficient
+		    		weightedDispersalVelocity_numerator = weightedDispersalVelocity_numerator + data[i,"greatCircleDist_km"]
+		    		weightedDispersalVelocity_denominator = weightedDispersalVelocity_denominator + dispersalTime
+		    		weightedDiffusionCoefficient_numerator = weightedDiffusionCoefficient_numerator + (data[i,"greatCircleDist_km"]^2)
+		    		weightedDiffusionCoefficient_denominator = weightedDiffusionCoefficient_denominator + (4*dispersalTime)
 		  		}
 		  	branchVelocities = c(branchVelocities, branchMeasures[,1])
 			sd_var_velocity[t,] = cbind(sd(branchMeasures[,1]), var(branchMeasures[,1]))

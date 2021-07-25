@@ -1,7 +1,7 @@
 mdsTransformation = function(input, envVariables=list(), pathModel=2, resistances=c(T), avgResistances=c(T), fourCells=F, outputName="", OS="Unix")	{
 
 	input0 = input; showingPlots = FALSE
-	nberOfCores = 1; # registerDoMC(cores=nberOfCores)
+	# nberOfCores = 1; registerDoMC(cores=nberOfCores)
 	textFile = FALSE; fastaAlignment = FALSE; treeFile = FALSE
 	if (attr(input,"class") == "data.frame") textFile = TRUE
 	if (attr(input,"class") == "DNAbin") fastaAlignment = TRUE

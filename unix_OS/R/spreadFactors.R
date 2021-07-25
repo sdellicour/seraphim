@@ -394,7 +394,7 @@ if (distanceMatrix == F)
 										text1 = paste(names(envVariables[[h]])[1],", sampled tree ",t,sep="")
 										if (straightLineDistance == TRUE) text2 = "Computing straight-line distances..."
 										if (leastCostDistance == TRUE) text2 = "Computing least-cost distances..."
-										if ((randomWalkDistance == TRUE) | (commuteDistance == TRUE)) text2 = "Computing Circuitscape distances..."
+										if ((randomWalkDistance == TRUE)|(commuteDistance == TRUE)) text2 = "Computing Circuitscape distances..."
 										if (rSPDistance == TRUE) text2 = "Computing randomised shortest path distances..."
 										mtext(text1, col="black", cex=0.7, line=0)
 										mtext(text2, col="red", cex=0.7, line=-1)

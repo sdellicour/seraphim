@@ -49,6 +49,7 @@ treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling
 			tab = gsub(pattern="\\}\\]:\\[&rate=", replacement="\\},rate=", tab) 
 			tab = gsub(pattern="\\}\\]:\\[&+[[:alnum:]]+[[:punct:]]+rate=", replacement="\\},rate=", tab)
 			tab = gsub("\\[&CO", "\\&&CO", tab)
+			tab = gsub("\\[&GTEV", "\\&&GTEV", tab)
 			tab = unlist(strsplit(tab, "\\["))[-1]
 			tab = gsub("&", "", tab)
 			tab = gsub("\\}.+$", "", tab)		
@@ -64,11 +65,11 @@ treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling
 	    		{
 	    			for (k in seq(colNames))
 	    				{	
-	    					ind = grep(paste("^", colNames[k], "=", sep=""),tab[[j]])
+	    					ind = grep(paste("^",colNames[k],"=",sep=""), tab[[j]])
 	    					if (length(ind) > 0)
 	    						{
-	    							v = as.numeric(gsub(paste(colNames[k], "=", sep=""), "", tab[[j]][ind]))
-	    							tab_transit[j, k] = v
+	    							v = as.numeric(gsub(paste(colNames[k],"=",sep=""),"",tab[[j]][ind]))
+	    							tab_transit[j,k] = v
 	    						}
 	    				}
 	    		}
