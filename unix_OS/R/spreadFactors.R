@@ -1098,10 +1098,10 @@ if (nberOfRandomisations > 0)
 								toCoor[[t]] = matrix(nrow=nberOfConnections[t], ncol=2)
 								toCoor[[t]][] = cbind(data[,"endLon"], data[,"endLat"])
 								totalnberOfConnections = totalnberOfConnections + nberOfConnections[t] 
-								if (impactOnVelocity == TRUE)
-									{
-										distances[[t]] = matrix(nrow=nberOfConnections[t], ncol=length(envVariables))
-									}
+								# if (impactOnVelocity == TRUE) # ERROR ??
+									# {
+										# distances[[t]] = matrix(nrow=nberOfConnections[t], ncol=length(envVariables))
+									# }
 								if (("treeID"%in%colnames(data)) == TRUE)
 									{
 										treeIDs[[t]] = data[1,"treeID"]
