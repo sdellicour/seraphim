@@ -4,7 +4,7 @@ seraphim <img src="unix_OS/man/logo_seraphim.png" align="right" alt="" width="20
 `seraphim` is a R package for investigating the impact of environmental factors on the dispersal history and dynamics of viral lineages. The package can also be used to estimate dispersal statistics and mapping continuous phylogeographic trees.
 
 ## Installation
-In `R`, `seraphim` can be installed with the [`devtools`](https://github.com/hadley/devtools) package:
+In R, `seraphim` can be installed with the [`devtools`](https://github.com/hadley/devtools) package:
 ```R
 install.packages("devtools"); library(devtools)
 install_github("sdellicour/seraphim/unix_OS") # (for a Unix OS)
@@ -23,10 +23,7 @@ Within this environment, the command line version of `Circuitscape` running on P
 ```
 sudo -H pip install -U --upgrade circuitscape
 ```
-Finally, `seraphim` can be installed in `R`
-```
-R
-```
+Finally, `seraphim` can be installed in R:
 ```R
 library(devtools)
 install_github("sdellicour/seraphim/unix_OS")
