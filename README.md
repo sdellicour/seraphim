@@ -23,7 +23,7 @@ Within this environment, the command line version of `Circuitscape` running on P
 ```
 sudo -H pip install -U --upgrade circuitscape
 ```
-Always within the dedicated Conda environment, `seraphim` can be installed in R as described above:
+Always within the dedicated `Conda` environment, `seraphim` can be installed in R as described above:
 ```R
 library(devtools)
 install_github("sdellicour/seraphim/unix_OS")
