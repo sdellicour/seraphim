@@ -3,6 +3,13 @@ seraphim <img src="unix_OS/man/logo_seraphim.png" align="right" alt="" width="20
 
 `seraphim` is a R package for investigating the impact of environmental factors on the dispersal history and dynamics of viral lineages. The package can also be used to estimate dispersal statistics and mapping continuous phylogeographic trees.
 
+## References
+* Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. _Bioinformatics_ 32: 3204-3206.
+* Dellicour S, Rose R, Pybus OG (2016). Explaining the geographic spread of emerging epidemics: a framework for comparing viral phylogenies and environmental landscape data. _BMC Bioinformatics_ 17: 82.
+
+## Stay tuned!
+If you want to remain informed about last updates or improvements, just send an e-mail to simon.dellicour[at]ulb[dot]be with "seraphim mailing list" in the object.
+
 ## Installation
 In R, `seraphim` can be installed with the [`devtools`](https://github.com/hadley/devtools) package:
 ```R
@@ -28,7 +35,3 @@ Always within the dedicated `Conda` environment, `seraphim` can be installed in 
 library(devtools)
 install_github("sdellicour/seraphim/unix_OS")
 ```
-
-## References
-* Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. _Bioinformatics_ 32: 3204-3206.
-* Dellicour S, Rose R, Pybus OG (2016). Explaining the geographic spread of emerging epidemics: a framework for comparing viral phylogenies and environmental landscape data. _BMC Bioinformatics_ 17: 82.
