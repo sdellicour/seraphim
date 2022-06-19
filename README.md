@@ -18,7 +18,9 @@ install_github("sdellicour/seraphim/unix_OS") # (for a Unix OS)
 install_github("sdellicour/seraphim/unix_OS") # (for a Windows OS)
 ```
 
-Using `seraphim` with the command line version of `Circuitscape` can sometimes be challenging as the later requires specific Python 2 settings. To facilitate its installation and subsequent application, users can now use `Conda` to install the appropriate environment specified in the `seraphim.yaml` file. This can be done in a `Terminal` with the following command:
+Using `seraphim` with the command line version of `Circuitscape` can sometimes be challenging as the later requires specific Python 2 settings. To facilitate its installation and subsequent application, users can now use `Conda` to install the appropriate environment specified in the `seraphim.yaml` file. `Conda` is an open source package/ environment management system that can be installed following the instructions available [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+
+Once `Conda`is installed, the installation of the `seraphim` environment can be performed in a `Terminal` using the following command:
 ```
 sudo conda env create -f seraphim.yaml --force
 ```
