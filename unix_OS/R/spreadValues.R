@@ -169,8 +169,8 @@ spreadValues = function(localTreesDirectory, nberOfExtractionFiles, envVariables
 							lines(environmentalValuesList[[t]][,1],environmentalValuesList[[t]][,1+k],lwd=LWD)
 						}
 				}
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
@@ -186,8 +186,8 @@ spreadValues = function(localTreesDirectory, nberOfExtractionFiles, envVariables
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
 			lines(slicedTimes, environmentalMedianValue, lwd=1)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
