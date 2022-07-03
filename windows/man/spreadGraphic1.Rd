@@ -14,7 +14,6 @@ spreadGraphic(localTreesDirectory,
               startDatum,
               precision = 1,
               timeLayers = FALSE,
-              nberOfCores = 1, 
               origin = FALSE)
 }
 \arguments{
@@ -24,8 +23,7 @@ spreadGraphic(localTreesDirectory,
   \item{prob}{ probability corresponding to the HPD (highest posterior density) regions. }
   \item{startDatum}{ number in a decimal format (e.g. 2007.4) defining the beginning of the dispersal history. }
   \item{precision}{ number, time intervale that will be used to define the successive time slices. }
-   \item{timeLayers}{ boolean variable specifying if the function has to generate a single raster ("timeLayers=FALSE", default) or a list of raster files with one file per considered time slice. }
- \item{nberOfCores}{ number of available cores to parallelise the estimation of the different time slice layers. }
+  \item{timeLayers}{ boolean variable specifying if the function has to generate a single raster ("timeLayers=FALSE", default) or a list of raster files with one file per considered time slice. }
   \item{origin}{ boolean variable specifying if the function has to rather estimate the HPD region of the spread origin (default value is "FALSE"; see the details). }
 }
 \details{

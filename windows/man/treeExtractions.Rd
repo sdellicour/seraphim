@@ -12,8 +12,7 @@ treeExtractions(localTreesDirectory,
                 randomSampling, 
                 nberOfTreesToSample,
                 mostRecentSamplingDatum, 
-                coordinateAttributeName,
-                nberOfCores = 1)
+                coordinateAttributeName)
 }
 \arguments{
   \item{localTreesDirectory}{ name of the (new) directory where the extracted matrices have to be saved. }
@@ -23,7 +22,6 @@ treeExtractions(localTreesDirectory,
   \item{nberOfTreesToSample}{ number of trees to sample. }
   \item{mostRecentSamplingDatum}{ most recent datum of sampling in decimal format (e.g. 2007.4). }
   \item{coordinateAttributeName}{ attribute name used to indicate the geographic coordinates within the trees file. }
-  \item{nberOfCores}{ number of available cores to parallelise the extractions. }
 }
 \value{
 The function generates "csv" files (one per phylogenetic tree) containing the spatio-tremporal information extracted from phylogenetic trees.

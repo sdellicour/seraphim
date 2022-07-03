@@ -1,6 +1,5 @@
 spreadGraphic2 = function(localTreesDirectory, nberOfExtractionFiles, prob=0.95, startDatum, precision=1, includeRoot=T) {
 
-	# nberOfCores=1; registerDoMC(cores=nberOfCores)
 	percentage = gsub("0\\.","",as.character(prob))
 	timeInterval = precision; nodes = c()
 	for (i in 1:nberOfExtractionFiles)
@@ -14,8 +13,7 @@ spreadGraphic2 = function(localTreesDirectory, nberOfExtractionFiles, prob=0.95,
 			if (i == 1) endDatum = max(tab[,"endYear"])
 		}
 	timeSlices = seq(startDatum,endDatum,timeInterval)
-	spreads = list(); c = 0; # buffer = list(); 
-	# buffer = foreach(i = 1:length(timeSlices)) %dopar% {
+	spreads = list(); c = 0
 	for (i in 1:length(timeSlices)) {
 			startTime = timeSlices[i]-timeInterval/2
 			endTime = timeSlices[i]+timeInterval/2

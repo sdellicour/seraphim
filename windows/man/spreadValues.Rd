@@ -14,9 +14,7 @@ spreadValues(localTreesDirectory = ".",
 				endTime,
 				timeSlices = 100,
 				slidingWindow = 1/12,
-				showingPlots = TRUE, 
-				outputName = gsub(" ","_",date()),
-				nberOfCores = 1)
+				showingPlots = TRUE)
 }
 \arguments{
   \item{localTreesDirectory}{ directory where the extracted matrices are saved (see the "treeExctractions" function). }
@@ -28,7 +26,6 @@ spreadValues(localTreesDirectory = ".",
   \item{slidingWindow}{ sliding window, in units of time, that will be used to generate the environmental skyline-like plot. }
   \item{showingPlots}{ boolean variable specifying if the different plots have to be displayed or not. }
   \item{outputName}{ name (prefix) to give to the different output files. }
-  \item{nberOfCores}{ number of available cores to parallelise the computations. }
 }
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. }

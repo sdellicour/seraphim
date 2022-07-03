@@ -16,8 +16,7 @@ circuitScape1(envVariable,
               toCoor,
               OS = "Unix",
               prefix = "",
-              ID = "",
-              nberOfCores_CS=1)
+              ID = "")
 }
 \arguments{
 \item{envVariable}{ raster file on which the resistance or conductance has to be computed. }
@@ -30,7 +29,6 @@ circuitScape1(envVariable,
   \item{OS}{ operating system on which the function is used ("Unix" or "Windows"). }
   \item{prefix}{ a character string that will be used as a prefix to name the temporary folders generated for Circuitscape. }
   \item{ID}{ a number to identify the Circuitscape operation. }
-  \item{nberOfCores_CS}{ a number to identify the Circuitscape operation. }
 }
 \value{
 The function returns a vector containing the resistance or conductance estimated for each phylogenetic branch.

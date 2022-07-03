@@ -1,4 +1,4 @@
-spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTipBranches=F, showingPlots=TRUE, outputName=gsub(" ","_",date()), nberOfCores=1, slidingWindow=NA, simulations=FALSE, discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot=FALSE) {
+spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTipBranches=F, showingPlots=TRUE, outputName=gsub(" ","_",date()), slidingWindow=NA, simulations=FALSE, discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot=FALSE) {
 
 	nberOfStatistics = 6; treeIDs = c()
 	# registerDoMC(cores=nberOfCores)
@@ -311,8 +311,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			colours = c("#FFFFFF","#D2D3D3","#9D9FA3","#6A6A6D")
 			xLab = "mean branch velocity"; yLab = "mean branch velocity variation among branches"
 			plot(kde, display="filled.contour2", cont=c(50,75,95), col=colours, axes=F, ann=F)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.55, col.main="gray30")
@@ -332,8 +332,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			colours = c("#FFFFFF","#D2D3D3","#9D9FA3","#6A6A6D")
 			xLab = "weighted dispersal velocity"; yLab="weighted dispersal velocity variation among branches"
 			plot(kde, display="filled.contour2", cont=c(50,75,95), col=colours, axes=F, ann=F)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.55, col.main="gray30")
@@ -353,8 +353,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			colours = c("#FFFFFF","#D2D3D3","#9D9FA3","#6A6A6D")
 			xLab = "mean original diffusion coefficient"; yLab="diffusion coefficient variation among branches"
 			plot(kde, display="filled.contour2", cont=c(50,75,95), col=colours, axes=F, ann=F)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text1, cex.main=0.6, col.main="gray30")
@@ -374,8 +374,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			colours = c("#FFFFFF","#D2D3D3","#9D9FA3","#6A6A6D")
 			xLab = "mean weighted diffusion coefficient"; yLab="diffusion coefficient variation among branches"
 			plot(kde, display="filled.contour2", cont=c(50,75,95), col=colours, axes=F, ann=F)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text1, cex.main=0.6, col.main="gray30")
@@ -462,8 +462,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 							if (!t%in%extractionsWithMoreThanOneAncestors) lines(waveFrontDistances1List[[t]][,1], waveFrontDistances1List[[t]][,2], lwd=0.05)
 						}
 				}
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.55, col.main="gray30"); box(lwd=LWD, col="gray30")
@@ -482,8 +482,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 							if (!t%in%extractionsWithMoreThanOneAncestors) lines(waveFrontDistances2List[[t]][,1], waveFrontDistances2List[[t]][,2], lwd=0.05)
 						}
 				}
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.55, col.main="gray30"); box(lwd=LWD, col="gray30")
@@ -499,8 +499,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
 			lines(slicedTimes, waveFrontDistances1MedianValue, lwd=1)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.55, col.main="gray30"); box(lwd=LWD, col="gray30")
@@ -516,8 +516,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
 			lines(slicedTimes, waveFrontDistances2MedianValue, lwd=1)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.55, col.main="gray30"); box(lwd=LWD, col="gray30")
@@ -566,7 +566,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			tab[,1] = slicedTimes; tab[,2] = lower_l; tab[,3] = upper_l; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
 			write.table(tab, file=paste(outputName,"_95%HPD_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
 
-			xLab = "time"; yLab = "weighted branch dispersal velocity"
+			xLab = "time"; yLab = "mean branch dispersal velocity"
 			if (showingPlots) dev.new(width=5, height=5)
 			if (showingPlots == FALSE) pdf(paste(outputName,"_mean_branch_dispersal_velocity_1.pdf",sep=""), width=5, height=5)
 			text = "Evolution of mean branch dispersal velocity"
@@ -579,8 +579,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 							lines(meanDispersalVelocityList[[t]][,1],meanDispersalVelocityList[[t]][,2],lwd=LWD)
 						}
 				}
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
@@ -597,8 +597,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
 			lines(slicedTimes, meanDispersalVelocitiesMedianValue, lwd=1)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
@@ -652,8 +652,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 							lines(weightedDispersalVelocityList[[t]][,1],weightedDispersalVelocityList[[t]][,2],lwd=LWD)
 						}
 				}
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
@@ -670,8 +670,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
 			lines(slicedTimes, weightedDispersalVelocitiesMedianValue, lwd=1)
-			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.axis="gray30")
-			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.axis="gray30")
+			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
+			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")

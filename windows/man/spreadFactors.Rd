@@ -18,7 +18,6 @@ spreadFactors(localTreesDirectory = "",
               randomProcedure = 3,
               outputName = "",
               showingPlots = FALSE,
-              nberOfCores = 1,
               OS = "Unix",
               juliaCSImplementation = FALSE)
 }
@@ -34,8 +33,6 @@ spreadFactors(localTreesDirectory = "",
   \item{randomProcedure}{ randomisation procedure to use: "1" (using external tree randomisations previously performed with the "treesRandomisation" function), "2" (using external RRW simulations previously performed with the "simulatorRRW1" function), "3" (randomisations of nodes position while maintaining the branches length, the tree topology and the location of the most ancestral node), "4" (randomisations of nodes position while maintaining the branches length and the location of the starting node of each branch), "5" (randomisations of nodes position while maintaining the branches length and the location of the ending node of each branch), or "6" (randomisations of nodes position while maintaining only the branches length). }
   \item{outputName}{ name (prefix) to give to the different output files. }
   \item{showingPlots}{ boolean variable specifying if the different plots have to be displayed or not. }
-  \item{nberOfCores}{ number of available cores to parallelise the computations in R. }
-  \item{nberOfCores_CS}{ number of available cores to parallelise the computations in Circuitscape. }
   \item{OS}{ operating system on which the function is used ("Unix" or "Windows"). }
   \item{juliaCSImplementation}{ boolean variable specifying if the Julia implementation of Circuitscape should be called by the function. By default (FALSE), the Python implementation is called. }
 }

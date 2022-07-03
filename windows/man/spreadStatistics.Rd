@@ -13,7 +13,6 @@ spreadStatistics(localTreesDirectory = ".",
 				onlyTipBranches = FALSE,
 				showingPlots = TRUE, 
 				outputName = gsub(" ","_",date()),
-				nberOfCores = 1,
 				slidingWindow = 1)
 }
 \arguments{
@@ -23,7 +22,6 @@ spreadStatistics(localTreesDirectory = ".",
   \item{onlyTipBranches}{ boolean variable defining if the statistic estimations have to be performed only while considering the tip branches of the trees. }
   \item{showingPlots}{ boolean variable specifying if the different plots have to be displayed or not. }
   \item{outputName}{ name (prefix) to give to the different output files. }
-  \item{nberOfCores}{ number of available cores to parallelise the computations. }
   \item{slidingWindow}{ sliding window, in units of time, that will be used to generate the dispersal velocity evolution plot (optional). }
 }
 \value{

@@ -1,4 +1,4 @@
-treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSample, mostRecentSamplingDatum, coordinateAttributeName, nberOfCores=1) {
+treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling, nberOfTreesToSample, mostRecentSamplingDatum, coordinateAttributeName) {
 
 	# registerDoMC(cores=nberOfCores)
 	dir.create(file.path(localTreesDirectory), showWarnings=F)

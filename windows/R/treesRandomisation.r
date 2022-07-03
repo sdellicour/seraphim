@@ -1,4 +1,4 @@
-treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), randomProcedure=3, nberOfCores=1, showingPlots=F) {
+treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), randomProcedure=3, showingPlots=F) {
 
 	nberOfRandomisations = 1
 	# registerDoMC(cores=nberOfCores)

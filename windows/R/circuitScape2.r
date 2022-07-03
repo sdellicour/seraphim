@@ -65,7 +65,7 @@ circuitScape2 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 		{
 			system(paste("julia",paste(folder,"CS_script.jl", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)
 		}		
-	tab = read.table(paste0(folder,"/raster_file_temp_resistances.out"), header=F)
+	tab = read.table(paste0(folder,"/raster_file_temp.txt_resistances.out"), header=F)
 	tab = tab[2:dim(tab)[1], 2:dim(tab)[2]]
 	sameCoordinates = FALSE
 	if (sum(fromCoor-toCoor) == 0) sameCoordinates = TRUE

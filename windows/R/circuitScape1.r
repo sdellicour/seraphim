@@ -65,7 +65,7 @@ circuitScape1 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 	write.table(tab, pairs_to_include, row.names=F, col.names=T, sep="\t", quote=F)
 	if (OS == "Unix")
 		{
-			system(paste("python",paste(folder,"CS_script.sh", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)
+			system(paste("python2",paste(folder,"CS_script.sh", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)
 			# system(paste("python2",paste(folder,"CS_script2.sh", sep="/"),sep=" "), ignore.stdout=T, ignore.stderr=T)
 		}
 	if (OS == "Windows")

@@ -1,5 +1,5 @@
 spreadFactors = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), pathModel=1, resistances=list(), avgResistances=list(), fourCells=FALSE, 
-			 nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE, nberOfCores=1, OS="Unix", juliaCSImplementation=FALSE, 
+			 nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE,OS="Unix", juliaCSImplementation=FALSE, 
 			 simulations=FALSE, randomisations=FALSE, hull_polygons=list(), onlyTipBranches=FALSE, GLM=FALSE, alternativeQstat=FALSE) {
 
 # variogramModels = list(); hull_polygons = list(); simulations = FALSE; randomisations=FALSE; onlyTipBranches = FALSE; GLM = FALSE; alternativeQstat = FALSE
@@ -1098,10 +1098,10 @@ if (nberOfRandomisations > 0)
 								toCoor[[t]] = matrix(nrow=nberOfConnections[t], ncol=2)
 								toCoor[[t]][] = cbind(data[,"endLon"], data[,"endLat"])
 								totalnberOfConnections = totalnberOfConnections + nberOfConnections[t] 
-								if (impactOnVelocity == TRUE)
-									{
-										distances[[t]] = matrix(nrow=nberOfConnections[t], ncol=length(envVariables))
-									}
+								# if (impactOnVelocity == TRUE) # ERROR ??
+									# {
+										# distances[[t]] = matrix(nrow=nberOfConnections[t], ncol=length(envVariables))
+									# }
 								if (("treeID"%in%colnames(data)) == TRUE)
 									{
 										treeIDs[[t]] = data[1,"treeID"]
