@@ -6,7 +6,7 @@ Version: 1.0
 Date: 2014-11-06
 Author: Simon Dellicour, Rebecca Rose, Nuno Faria, Philippe Lemey, Oliver G. Pybus
 Maintainer: Simon Dellicour <simon.dellicour@ulb.ac.be>
-Depends: ape, fields, gdistance, ks, phytools, raster, RColorBrewer, rgeos, R.utils, vegan
+Depends: ape, doMC, fields, gdistance, ks, phytools, raster, RColorBrewer, rgeos, R.utils, vegan
 Description: The source code for SERAPHIM is distributed under a GNU Lesser General Public License
 License: GPL-3
 NeedsCompilation: no
