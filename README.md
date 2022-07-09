@@ -15,7 +15,7 @@ In R, `seraphim` can be installed with the `devtools` package:
 ```R
 install.packages("devtools"); library(devtools)
 install_github("sdellicour/seraphim/unix_OS") # (for a Unix OS)
-install_github("sdellicour/seraphim/unix_OS") # (for a Windows OS)
+install_github("sdellicour/seraphim/windows") # (for a Windows OS)
 ```
 
 Using `seraphim` with the command line version of the program `Circuitscape` can sometimes be challenging as the later requires specific Python 2 settings. To facilitate its installation and subsequent application, users can now use `Conda` to install the appropriate environment specified in the `seraphim.yaml` file. `Conda` is an open source package/environment management system that can be installed following the instructions available [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
