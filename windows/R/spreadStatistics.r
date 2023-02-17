@@ -286,8 +286,9 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 		{
 			medianMeanStatistics[1,i] = median(meanStatistics[,i], na.rm=T)
 			quantiles = quantile(meanStatistics[,i], probs=c(0.025,0.975), na.rm=T)
-			ciMeanStatistics[1,i] = as.numeric(quantiles[1])
-			ciMeanStatistics[2,i] = as.numeric(quantiles[2])
+			ciMeanStatistics[1,i] = as.numeric(quantiles[1]); ciMeanStatistics[2,i] = as.numeric(quantiles[2])
+			HPD = HDInterval::hdi(meanStatistics[,i])[1:2]
+			ciMeanStatistics[1,i] = as.numeric(HPD[1]); ciMeanStatistics[2,i] = as.numeric(HPD[2])
 		}
 	cat("Median value of mean branch dispersal velocity = ",medianMeanStatistics[1,1],"\n	95% HPD = [",ciMeanStatistics[1,1],", ",ciMeanStatistics[2,1],"]","\n",sep="")
 	cat("Median value of weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\n",sep="")	
@@ -414,11 +415,13 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 								}
 						}
 					quantiles = quantile(waveFrontDistances1Values[,i], probs=c(0.025,0.975))
-					lower_l_1[1,i+1] = as.numeric(quantiles[1])
-					upper_l_1[1,i+1] = as.numeric(quantiles[2])
+					lower_l_1[1,i+1] = as.numeric(quantiles[1]); upper_l_1[1,i+1] = as.numeric(quantiles[2])
+					HPD = HDInterval::hdi(waveFrontDistances1Values[,i])[1:2]
+					lower_l_1[1,i+1] = as.numeric(HPD[1]); upper_l_1[1,i+1] = as.numeric(HPD[2])
 					quantiles = quantile(waveFrontDistances2Values[,i], probs=c(0.025,0.975))
-					lower_l_2[1,i+1] = as.numeric(quantiles[1])
-					upper_l_2[1,i+1] = as.numeric(quantiles[2])
+					lower_l_2[1,i+1] = as.numeric(quantiles[1]); upper_l_2[1,i+1] = as.numeric(quantiles[2])
+					HPD = HDInterval::hdi(waveFrontDistances2Values[,i])[1:2]
+					lower_l_2[1,i+1] = as.numeric(HPD[1]); upper_l_2[1,i+1] = as.numeric(HPD[2])
 					waveFrontDistances1MeanValue[1,i+1] = mean(waveFrontDistances1Values[,i+1])
 					waveFrontDistances1MedianValue[1,i+1] = median(waveFrontDistances1Values[,i+1])
 					waveFrontDistances2MeanValue[1,i+1] = mean(waveFrontDistances2Values[,i+1])
@@ -550,6 +553,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					numberOfBranchesMedianValue[1,i] = median(numberOfBranchesValues[,i], na.rm=T)
 					quantiles = quantile(meanDispersalVelocitiesValues[,i], probs=c(0.025,0.975), na.rm=T)
 					lower_l[1,i] = as.numeric(quantiles[1]); upper_l[1,i] = as.numeric(quantiles[2])
+					HPD = HDInterval::hdi(meanDispersalVelocitiesValues[,i])[1:2]
+					lower_l[1,i] = as.numeric(HPD[1]); upper_l[1,i] = as.numeric(HPD[2])
 					meanDispersalVelocitiesMeanValue[1,i] = mean(meanDispersalVelocitiesValues[,i], na.rm=T)
 					meanDispersalVelocitiesMedianValue[1,i] = median(meanDispersalVelocitiesValues[,i], na.rm=T)
 				}
@@ -623,6 +628,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 						}
 					quantiles = quantile(weightedDispersalVelocitiesValues[,i], probs=c(0.025,0.975), na.rm=T)
 					lower_l[1,i] = as.numeric(quantiles[1]); upper_l[1,i] = as.numeric(quantiles[2])
+					HPD = HDInterval::hdi(weightedDispersalVelocitiesValues[,i])[1:2]
+					lower_l[1,i] = as.numeric(HPD[1]); upper_l[1,i] = as.numeric(HPD[2])
 					weightedDispersalVelocitiesMeanValue[1,i] = mean(weightedDispersalVelocitiesValues[,i], na.rm=T)
 					weightedDispersalVelocitiesMedianValue[1,i] = median(weightedDispersalVelocitiesValues[,i], na.rm=T)
 				}

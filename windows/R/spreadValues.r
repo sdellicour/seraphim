@@ -142,8 +142,9 @@ spreadValues = function(localTreesDirectory, nberOfExtractionFiles, envVariables
 							environmentalValues[t,i] = environmentalValuesList[[t]][i,1+k]
 						}
 					quantiles = quantile(environmentalValues[,i], probs=c(0.025,0.975), na.rm=T)
-					lower_l[1,i] = as.numeric(quantiles[1])
-					upper_l[1,i] = as.numeric(quantiles[2])
+					lower_l[1,i] = as.numeric(quantiles[1]); upper_l[1,i] = as.numeric(quantiles[2])
+					HPD = HDInterval::hdi(environmentalValues[which(!is.na(environmentalValues[,i])),i])[1:2]
+					lower_l[1,i] = as.numeric(HPD[1]); upper_l[1,i] = as.numeric(HPD[2])
 					environmentalMeanValue[1,i] = mean(environmentalValues[,i], na.rm=T)
 					environmentalMedianValue[1,i] = median(environmentalValues[,i], na.rm=T)
 				}
