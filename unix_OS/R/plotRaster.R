@@ -18,9 +18,9 @@ plotRaster = function(rast, cols=NULL, colNA="gray90", add=FALSE, new=TRUE, addB
 						}
 					if (addBox == TRUE) rect(xmin(rast), ymin(rast), xmax(rast), ymax(rast), xpd=T, lwd=0.2)
 				}	else	{
-					plot(rast, col=cols, colNA=colNA, box=F, axes=F, legend=F, interpolate=F, useRaster=T, add=T)
+					raster::plot(rast, col=cols, colNA=colNA, box=F, axes=F, legend=F, interpolate=F, useRaster=T, add=T)
 				}
 		}
-	if ((addLegend == TRUE)|(legendOnly == TRUE)) plot(rast, legend.only=T, add=T, col=cols, legend.width=0.5, legend.shrink=0.3, smallplot=c(0.93,0.94,0.3,0.7),
+	if ((addLegend == TRUE)|(legendOnly == TRUE)) raster::plot(rast, legend.only=T, add=T, col=cols, legend.width=0.5, legend.shrink=0.3, smallplot=c(0.93,0.94,0.3,0.7),
 	   legend.args=list(text=""), axis.args=list(cex.axis=0.6, lwd=0, lwd.tick=0.15, tck=-1, col.tick="gray30", col.axis="gray30", col="gray30", line=0, mgp=c(0,0.5,0)))
 }
