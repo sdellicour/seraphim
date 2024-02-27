@@ -1,6 +1,6 @@
 spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTipBranches=F, showingPlots=TRUE, outputName=gsub(" ","_",date()), nberOfCores=1, slidingWindow=NA, simulations=FALSE, discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot=FALSE) {
 
-	nberOfStatistics = 6; treeIDs = c()
+	nberOfStatistics = 7; treeIDs = c()
 	registerDoMC(cores=nberOfCores)
   		# (1) mean branch dispersal velocity
   		# (2) weighted branch dispersal velocity
@@ -8,6 +8,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
   		# (4) original diffuson coefficient (Pybus et al. 2012)
   		# (5) weighted diffuson coefficient (Trovao et al. 2015)
   		# (6) diffusion coefficient variation among branches (CV)
+  		# (7) isolation-by-distance (IBD) signal estimated by r_S
+  		#	  (Spearman correlation between geographic and patristic distances)
 	meanStatistics = matrix(nrow=(nberOfExtractionFiles), ncol=nberOfStatistics)
 	branchVelocities = c() # not used, just to obtain an overall distribution of velocities
 	sd_var_velocity = matrix(nrow=(nberOfExtractionFiles), ncol=2) # not used either
@@ -122,6 +124,58 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			meanStatistics[t,4] = mean(branchMeasures[,2])
 		    meanStatistics[t,5] = weightedDiffusionCoefficient_numerator/weightedDiffusionCoefficient_denominator
 			meanStatistics[t,6] = sd(branchMeasures[,2])/mean(branchMeasures[,2])
+			tipNodeIndices = which(!data[,"node2"]%in%data[,"node1"])
+			distTree = matrix(nrow=length(tipNodeIndices), ncol=length(tipNodeIndices))
+			for (k in 2:dim(distTree)[1])
+				{
+					for (l in 1:(k-1))
+						{
+							index1 = tipNodeIndices[k]
+							index2 = tipNodeIndices[l]
+							indices1 = index1; root = FALSE
+							while (root == FALSE)
+								{	
+									if (data[indices1[length(indices1)],"node1"]%in%data[,"node2"])
+										{
+											indices1 = c(indices1, which(data[,"node2"]==data[indices1[length(indices1)],"node1"]))
+										}	else	{
+											root = TRUE
+										}
+								}
+							indices2 = index2; root = FALSE
+							while (root == FALSE)
+								{	
+									if (data[indices2[length(indices2)],"node1"]%in%data[,"node2"])
+										{
+											indices2 = c(indices2, which(data[,"node2"]==data[indices2[length(indices2)],"node1"]))
+										}	else	{
+											root = TRUE
+										}
+								}
+							indices3 = indices1[which(indices1%in%indices2)]; patristic_dis = NULL
+							if (length(indices3) == 0)
+								{
+									patristic_dis = sum(data[c(indices1,indices2),"length"])
+								}	else	{
+									patristic_dis = sum(data[c(indices1[which(!indices1%in%indices3)],indices2[which(!indices2%in%indices3)]),"length"])
+								}
+							distTree[k,l] = patristic_dis; distTree[l,k] = patristic_dis
+						}
+				}
+			distsGeo = matrix(nrow=dim(distTree)[1], ncol=dim(distTree)[2])
+			for (k in 2:dim(distsGeo)[1])
+				{
+					for (l in 1:(k-1))
+						{
+							index1 = tipNodeIndices[k]
+							index2 = tipNodeIndices[l]
+							x1 = cbind(data[index1,"endLon"], data[index1,"endLat"])
+							x2 = cbind(data[index2,"endLon"], data[index2,"endLat"])
+							distsGeo[k,l] = rdist.earth(x1, x2, miles=F, R=NULL)
+							distsGeo[l,k] = distsGeo[k,l]
+						}
+				}			
+			meanStatistics[t,7] = cor(distTree[lower.tri(distTree)],distsGeo[lower.tri(distsGeo)], method="spearman") # r_S
 		}
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
@@ -294,8 +348,9 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 	cat("Median value of weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\n",sep="")	
 	cat("Median value of original diffusion coefficient = ",medianMeanStatistics[1,4],"\n	95% HPD = [",ciMeanStatistics[1,4],", ",ciMeanStatistics[2,4],"]","\n",sep="")	
 	cat("Median value of weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\n",sep="")	
+	cat("Median value of the IBD signal (rS) = ",medianMeanStatistics[1,7],"\n	95% HPD = [",ciMeanStatistics[1,7],", ",ciMeanStatistics[2,7],"]","\n",sep="")	
 	colnames(meanStatistics) = c("mean_branch_dispersal_velocity", "weighted_branch_dispersal_velocity", "branch_dispersal_velocity_variation_among_branches", 
-	"original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches")
+	"original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches", "isolation_by_distance_signal_rS")
 	write.table(meanStatistics, file=paste(outputName,"_estimated_dispersal_statistics.txt",sep=""), quote=F, row.names=F, sep="\t")
 
 	LWD = 0.2
