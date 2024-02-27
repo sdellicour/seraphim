@@ -344,11 +344,11 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			HPD = HDInterval::hdi(meanStatistics[,i])[1:2]
 			ciMeanStatistics[1,i] = as.numeric(HPD[1]); ciMeanStatistics[2,i] = as.numeric(HPD[2])
 		}
-	cat("Median value of mean branch dispersal velocity = ",medianMeanStatistics[1,1],"\n	95% HPD = [",ciMeanStatistics[1,1],", ",ciMeanStatistics[2,1],"]","\n",sep="")
-	cat("Median value of weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\n",sep="")	
-	cat("Median value of original diffusion coefficient = ",medianMeanStatistics[1,4],"\n	95% HPD = [",ciMeanStatistics[1,4],", ",ciMeanStatistics[2,4],"]","\n",sep="")	
-	cat("Median value of weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\n",sep="")	
-	cat("Median value of the IBD signal (rS) = ",medianMeanStatistics[1,7],"\n	95% HPD = [",ciMeanStatistics[1,7],", ",ciMeanStatistics[2,7],"]","\n",sep="")	
+	cat("Median value of the mean branch dispersal velocity = ",medianMeanStatistics[1,1],"\n	95% HPD = [",ciMeanStatistics[1,1],", ",ciMeanStatistics[2,1],"]","\n",sep="")
+	cat("Median value of the weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\n",sep="")	
+	cat("Median value of the original diffusion coefficient = ",medianMeanStatistics[1,4],"\n	95% HPD = [",ciMeanStatistics[1,4],", ",ciMeanStatistics[2,4],"]","\n",sep="")	
+	cat("Median value of the weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\n",sep="")	
+	cat("Median value of the isolation-by-distance (IBD) signal = ",medianMeanStatistics[1,7],"\n	95% HPD = [",ciMeanStatistics[1,7],", ",ciMeanStatistics[2,7],"]","\n",sep="")	
 	colnames(meanStatistics) = c("mean_branch_dispersal_velocity", "weighted_branch_dispersal_velocity", "branch_dispersal_velocity_variation_among_branches", 
 	"original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches", "isolation_by_distance_signal_rS")
 	write.table(meanStatistics, file=paste(outputName,"_estimated_dispersal_statistics.txt",sep=""), quote=F, row.names=F, sep="\t")
