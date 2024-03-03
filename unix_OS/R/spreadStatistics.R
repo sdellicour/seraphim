@@ -1,6 +1,6 @@
 spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, timeSlices=200, onlyTipBranches=F, showingPlots=TRUE, outputName=gsub(" ","_",date()), nberOfCores=1, slidingWindow=NA, simulations=FALSE, discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot=FALSE) {
 
-	nberOfStatistics = 7; treeIDs = c()
+	nberOfStatistics = 9; treeIDs = c()
 	registerDoMC(cores=nberOfCores)
   		# (1) mean branch dispersal velocity
   		# (2) weighted branch dispersal velocity
@@ -9,7 +9,11 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
   		# (5) weighted diffuson coefficient (Trovao et al. 2015)
   		# (6) diffusion coefficient variation among branches (CV)
   		# (7) isolation-by-distance (IBD) signal estimated by r_S
-  		#	  (Spearman correlation between geographic and patristic distances)
+  		#	  (Spearman correlation between patristic and geographic distances)
+  		# (8) isolation-by-distance (IBD) signal estimated by r_P
+  		#	  (Pearson correlation between patristic and geographic distances)
+  		# (9) isolation-by-distance (IBD) signal estimated by r_P
+  		#	  (Pearson correlation between patristic and log-transformed geographic distances)
 	meanStatistics = matrix(nrow=(nberOfExtractionFiles), ncol=nberOfStatistics)
 	branchVelocities = c() # not used, just to obtain an overall distribution of velocities
 	sd_var_velocity = matrix(nrow=(nberOfExtractionFiles), ncol=2) # not used either
@@ -176,6 +180,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 						}
 				}			
 			meanStatistics[t,7] = cor(distTree[lower.tri(distTree)],distsGeo[lower.tri(distsGeo)], method="spearman") # r_S
+			meanStatistics[t,8] = cor(distTree[lower.tri(distTree)],distsGeo[lower.tri(distsGeo)], method="pearson") # r_P #1
+			meanStatistics[t,9] = cor(distTree[lower.tri(distTree)],log(distsGeo[lower.tri(distsGeo)]), method="pearson") # r_P #2
 		}
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
@@ -348,9 +354,12 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 	cat("Median value of the weighted branch dispersal velocity = ",medianMeanStatistics[1,2],"\n	95% HPD = [",ciMeanStatistics[1,2],", ",ciMeanStatistics[2,2],"]","\n",sep="")	
 	cat("Median value of the original diffusion coefficient = ",medianMeanStatistics[1,4],"\n	95% HPD = [",ciMeanStatistics[1,4],", ",ciMeanStatistics[2,4],"]","\n",sep="")	
 	cat("Median value of the weighted diffusion coefficient = ",medianMeanStatistics[1,5],"\n	95% HPD = [",ciMeanStatistics[1,5],", ",ciMeanStatistics[2,5],"]","\n",sep="")	
-	cat("Median value of the isolation-by-distance (IBD) signal = ",medianMeanStatistics[1,7],"\n	95% HPD = [",ciMeanStatistics[1,7],", ",ciMeanStatistics[2,7],"]","\n",sep="")	
-	colnames(meanStatistics) = c("mean_branch_dispersal_velocity", "weighted_branch_dispersal_velocity", "branch_dispersal_velocity_variation_among_branches", 
-	"original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches", "isolation_by_distance_signal_rS")
+	cat("Median value of the isolation-by-distance (IBD) signal (rS) = ",medianMeanStatistics[1,7],"\n	95% HPD = [",ciMeanStatistics[1,7],", ",ciMeanStatistics[2,7],"]","\n",sep="")	
+	cat("Median value of the isolation-by-distance (IBD) signal (rP #1) = ",medianMeanStatistics[1,8],"\n	95% HPD = [",ciMeanStatistics[1,8],", ",ciMeanStatistics[2,8],"]","\n",sep="")	
+	cat("Median value of the isolation-by-distance (IBD) signal (rP #2) = ",medianMeanStatistics[1,9],"\n	95% HPD = [",ciMeanStatistics[1,9],", ",ciMeanStatistics[2,9],"]","\n",sep="")	
+	colnames(meanStatistics) = c("mean_branch_dispersal_velocity", "weighted_branch_dispersal_velocity", "branch_dispersal_velocity_variation_among_branches",
+								 "original_diffusion_coefficient", "weighted_diffusion_coefficient", "diffusion_coefficient_variation_among_branches",
+								 "isolation_by_distance_signal_rS", "isolation_by_distance_signal_rP1", "isolation_by_distance_signal_rP2")
 	write.table(meanStatistics, file=paste(outputName,"_estimated_dispersal_statistics.txt",sep=""), quote=F, row.names=F, sep="\t")
 
 	LWD = 0.2
