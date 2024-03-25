@@ -181,7 +181,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 				}			
 			meanStatistics[t,7] = cor(distTree[lower.tri(distTree)],distsGeo[lower.tri(distsGeo)], method="spearman") # r_S
 			meanStatistics[t,8] = cor(distTree[lower.tri(distTree)],distsGeo[lower.tri(distsGeo)], method="pearson") # r_P #1
-			meanStatistics[t,9] = cor(distTree[lower.tri(distTree)],log(distsGeo[lower.tri(distsGeo)]), method="pearson") # r_P #2
+			meanStatistics[t,9] = cor(distTree[lower.tri(distTree)],log(distsGeo[lower.tri(distsGeo)]+1), method="pearson") # r_P #2
 		}
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
