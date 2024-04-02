@@ -1,18 +1,18 @@
-simulatorBRW = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
-						d=1, ancestPosition=c(0.4,0.5), birthRate=0.2,samplingRate=0.2, startingYear=0, 
-						samplingWindow=c(10,50), timeSlice=0.1, timeIntervale=1,
-						showingPlots=FALSE, extractionOfValuesOnMatrix=FALSE) {
+simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
+						 resistance=TRUE, scalingValue=1, ancestPosition=c(0.4,0.5), birthRate=0.2,
+						 samplingRate=0.2, startingYear=0, samplingWindow=c(10,50), timeSlice=0.1,
+						 timeIntervale=1, showingPlots=FALSE, extractionOfValuesOnMatrix=FALSE) {
 	
-	rotation = function(pt1, pt2, angle)
-		{
-			s = sin(angle); c = cos(angle)
-			x = pt2[1]-pt1[1]; y = pt2[2]-pt1[2]
-			x_new = (x*c)-(y*s); y_new = (x*s)+(y*c)
-			x_new = x_new+pt1[1]; y_new = y_new+pt1[2]
-			return(c(x_new,y_new))
-		}
 	envVariable0 = envVariable
 	mat0 = raster::as.matrix(envVariable)
+	envVariable[!is.na(envVariable[])] = envVariable[!is.na(envVariable[])]+1
+	if (resistance == TRUE)
+		{
+			envVariable[!is.na(envVariable[])] = 1/envVariable[!is.na(envVariable[])]
+		}
+	vMin = min(envVariable[!is.na(envVariable[])])
+	vMax = max(envVariable[!is.na(envVariable[])])		
+	# options(digits.secs=8)
 	buffer = ancestPosition
 	ancestPosition = matrix(nrow=1, ncol=2)
 	ancestPosition[1,1] = buffer[1]
@@ -64,14 +64,6 @@ simulatorBRW = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0
 				}	else	{
 					cols1 = colorRampPalette(brewer.pal(9,"YlOrRd"))(100)
 				}
-			# if (extractionOfValuesOnMatrix == FALSE)
-				# {
-					# plotRaster(envVariable0, cols=cols1)
-				# }	else	{
-					# rast = raster(mat0,xmn=0,xmx=dim(mat0)[2],ymn=0,ymx=dim(mat0)[1])
-					# plotRaster(rast, cols=cols1, legend=T)
-				# }
-			# points(cbind(particules[[1]][1],particules[[1]][2]), pch=16, cex=0.8, col="blue")
 		}
 	T = startingYear + timeIntervale
 	for (t in seq(startingYear,samplingWindow[2],timeSlice))
@@ -97,21 +89,32 @@ simulatorBRW = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0
 				{
 					if (particules[[i]][5] == 1)
 						{
-							onTheGrid = FALSE
+							onTheGrid = FALSE; c = 0
 							while (onTheGrid == FALSE)
 								{
-									coords1 = cbind(particules[[i]][1],particules[[i]][2])
-									if (extractionOfValuesOnMatrix == TRUE) v1 = extractValueOnMatrix(coords1)
-									if (extractionOfValuesOnMatrix == FALSE) v1 = extractValueOnRaster(coords1)
-									coords2 = coords1; coords2[1,1] = coords2[1,1]+d
-									angle = (2*pi)*runif(1); coords2_rotated = rotation(coords1, coords2, angle)
-									coords2_rotated = cbind(coords2_rotated[1],coords2_rotated[2])
-									if (extractionOfValuesOnMatrix == TRUE) v = extractValueOnMatrix(coords2_rotated)
-									if (extractionOfValuesOnMatrix == FALSE) v = extractValueOnRaster(coords2_rotated)
+									c = c+1
+									if (c == 1000) print(i)
+									coords = cbind(particules[[i]][1],particules[[i]][2])
+									if (extractionOfValuesOnMatrix == TRUE) v1 = extractValueOnMatrix(coords)
+									if (extractionOfValuesOnMatrix == FALSE) v1 = extractValueOnRaster(coords)
+									v2 = v1/vMax
+									if (extractionOfValuesOnMatrix == TRUE)
+										{
+											sdX = v2*1*scalingValue
+											sdY = v2*1*scalingValue
+										}	else	{
+											sdX = v2*xres(envVariable)*scalingValue
+											sdY = v2*yres(envVariable)*scalingValue
+										}
+									dX = rnorm(1,0,sdX)
+									dY = rnorm(1,0,sdY)
+									coords = cbind(particules[[i]][1]+dX,particules[[i]][2]+dY)
+									if (extractionOfValuesOnMatrix == TRUE) v = extractValueOnMatrix(coords)
+									if (extractionOfValuesOnMatrix == FALSE) v = extractValueOnRaster(coords)
 									if (is.na(v) == FALSE)
 										{
-											particules[[i]][1] = coords2_rotated[1,1]
-											particules[[i]][2] = coords2_rotated[1,2]
+											particules[[i]][1] = particules[[i]][1]+dX
+											particules[[i]][2] = particules[[i]][2]+dY
 											onTheGrid = TRUE
 										}
 								}
@@ -133,24 +136,6 @@ simulatorBRW = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0
 				}
 			if (t >= T)
 				{
-					if (showingPlots == TRUE)
-						{
-							# if (extractionOfValuesOnMatrix == FALSE)
-								# {
-									# plotRaster(envVariable0, cols=cols1, new=F)
-								# }	else	{
-									# rast = raster(mat0,xmn=0,xmx=dim(mat0)[2],ymn=0,ymx=dim(mat0)[1])
-									# plotRaster(rast, cols=cols1, new=F)
-								# }
-							# coords1 = c(); coords2 = c()
-							# for (i in 1:length(particules))
-								# {
-									# if (particules[[i]][5] == 0) coords1 = rbind(coords1, cbind(particules[[i]][1],particules[[i]][2]))
-									# if (particules[[i]][5] == 1) coords2 = rbind(coords2, cbind(particules[[i]][1],particules[[i]][2]))
-								# }
-							# points(coords1, pch=16, cex=0.5, col="green3")
-							# points(coords2, pch=16, cex=0.5, col="black")
-						}
 					T = t + timeIntervale
 				}
 		}
@@ -270,8 +255,6 @@ simulatorBRW = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0
 											branches2 = c(branches2, paste("(",branches1[k],",",branches1[j],")",";",length,sep=""))
 										}
 									nodes2 = c(nodes2, node2)
-									# print(paste(coalescenceEvents,nodeB,nodeA,node2,sep=" "))
-									# print(c(node2,j,k))
 								}
 						}
 				}

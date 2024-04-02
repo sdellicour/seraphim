@@ -1,15 +1,16 @@
-\name{simulatorBRW}
-\alias{simulatorBRW}
+\name{simulatorRRW3}
+\alias{simulatorRRW3}
 \title{
-A function to simulate a Bownian random walk (BRW) diffusion process
+A function to simulate a relaxed random walk (RRW) diffusion on an environmental raster impacting the diffusion velocity
 }
 \description{
-This function simulates a Bownian random walk (BRW) diffusion process while preventing dispersal in inaccessible raster cells.
+This function simulates a relaxed random walk (RRW) diffusion whose random walk velocity is stochastically determined by the underneath cell raster values.
 }
 \usage{
-simulatorBRW(envVariable =
+simulatorRRW2(envVariable =
 raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
-			  d = 1,
+			  resistance = TRUE,
+			  scalingValue = 1,
 			  ancestPosition = c(0.4,0.5),
 			  birthRate = 0.2,
 			  samplingRate = 0.2,
@@ -22,7 +23,8 @@ raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
 }
 \arguments{
   \item{envVariable}{ raster that will determine the environmental heterogeneity (cells with a NaN value will be considered as inaccessible). }
-  \item{d}{ distance, in decimal degrees, travelled by each lineage during each time slice. }
+  \item{resistance}{ boolean variable specifying if the environmental raster has to be treated as a resistance or conductance factor. }
+  \item{scalingValue}{ value used to rescale the standard deviation of the two normal distributions with mean = 0 in which longitudinal and latitudinal displacement values are randomly picked (see details below). }
   \item{ancestPosition}{ vector of geographic coordinates (longitude, latitude) of the most ancestral node position, i.e. the starting position of the RRW diffusion simulation. }
   \item{birthRate}{ value defining the rate at which lineages are splited in two new lineages (expressed in events per lineage per time unit). }
   \item{samplingRate}{ value defining the rate at which lineage are sampled and thus stopped moving and splitting on the raster (expressed in events per lineage per time unit). }
@@ -50,5 +52,5 @@ Final note: in order to obtain to simulate trees with a realistic sampling patte
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
 }
 \author{
-Simon Dellicour
+Simon Dellicour, Philippe Lemey
 }
