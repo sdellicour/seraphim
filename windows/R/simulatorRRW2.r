@@ -1,57 +1,29 @@
-simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
-						 resistance=TRUE, scalingValue=1, ancestPosition=c(0.4,0.5), birthRate=0.2,
+simulatorRRW2 = function(RRW=TRUE, envVariable=raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
+						 sigma=1, ancestPosition=c(0.4,0.5), birthRate=0.2,
 						 samplingRate=0.2, startingYear=0, samplingWindow=c(10,50), timeSlice=0.1,
-						 timeIntervale=1, showingPlots=FALSE, extractionOfValuesOnMatrix=FALSE) {
+						 timeIntervale=1, showingPlots=FALSE) {
 	
+	rotation = function(pt1, pt2, angle)
+		{
+			s = sin(angle); c = cos(angle)
+			x = pt2[1]-pt1[1]; y = pt2[2]-pt1[2]
+			x_new = (x*c)-(y*s); y_new = (x*s)+(y*c)
+			x_new = x_new+pt1[1]; y_new = y_new+pt1[2]
+			return(c(x_new,y_new))
+		}
 	envVariable0 = envVariable
 	mat0 = raster::as.matrix(envVariable)
 	envVariable[!is.na(envVariable[])] = envVariable[!is.na(envVariable[])]+1
-	if (resistance == TRUE)
-		{
-			envVariable[!is.na(envVariable[])] = 1/envVariable[!is.na(envVariable[])]
-		}
 	vMin = min(envVariable[!is.na(envVariable[])])
-	vMax = max(envVariable[!is.na(envVariable[])])		
-	# options(digits.secs=8)
+	vMax = max(envVariable[!is.na(envVariable[])])
 	buffer = ancestPosition
 	ancestPosition = matrix(nrow=1, ncol=2)
 	ancestPosition[1,1] = buffer[1]
 	ancestPosition[1,2] = buffer[2]
-	if (extractionOfValuesOnMatrix == TRUE)
+	extractValueOnRaster = function(coords)
 		{
-			mat = raster::as.matrix(envVariable)
-			xMin = extent(envVariable)@xmin
-			yMin = extent(envVariable)@ymin
-			xMax = extent(envVariable)@xmax
-			yMax = extent(envVariable)@ymax
-			ancestPosition[1,1] = (ancestPosition[1,1]-xMin)/(xMax-xMin)
-			ancestPosition[1,1] = ceiling((ancestPosition[1,1]*(dim(mat)[2])))
-			ancestPosition[1,2] = (ancestPosition[1,2]-yMin)/(yMax-yMin)
-			ancestPosition[1,2] = ceiling((ancestPosition[1,2]*(dim(mat)[1])))
-			extractValueOnMatrix = function(coords)
-				{
-					coords_ceiling = coords
-					coords_ceiling[1,1] = ceiling(coords_ceiling[1,1])
-					coords_ceiling[1,2] = ceiling(dim(mat)[1]-coords_ceiling[1,2])
-					onTheGrid = TRUE
-					if (coords_ceiling[1,1] <= 0) onTheGrid = FALSE
-					if (coords_ceiling[1,2] <= 0) onTheGrid = FALSE
-					if (coords_ceiling[1,1] > dim(mat)[2]) onTheGrid = FALSE
-					if (coords_ceiling[1,2] > dim(mat)[1]) onTheGrid = FALSE
-					if (onTheGrid == FALSE)
-						{
-							v = NA
-						}	else	{
-							v = mat[coords_ceiling[1,2],coords_ceiling[1,1]]
-						}
-					return(v)
-				}
-		}	else	{	
-			extractValueOnRaster = function(coords)
-				{
-					return(raster::extract(envVariable, coords))
-				}	
-		}
+			return(raster::extract(envVariable, coords))
+		}	
 	particules = list()
 	newParticule = cbind(ancestPosition,1,0,1,0)
 	particules[[length(particules)+1]] = newParticule
@@ -64,14 +36,6 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 				}	else	{
 					cols1 = colorRampPalette(brewer.pal(9,"YlOrRd"))(100)
 				}
-			# if (extractionOfValuesOnMatrix == FALSE)
-				# {
-					# plotRaster(envVariable0, cols=cols1)
-				# }	else	{
-					# rast = raster(mat0,xmn=0,xmx=dim(mat0)[2],ymn=0,ymx=dim(mat0)[1])
-					# plotRaster(rast, cols=cols1, legend=T)
-				# }
-			# points(cbind(particules[[1]][1],particules[[1]][2]), pch=16, cex=0.8, col="blue")
 		}
 	T = startingYear + timeIntervale
 	for (t in seq(startingYear,samplingWindow[2],timeSlice))
@@ -97,30 +61,29 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 				{
 					if (particules[[i]][5] == 1)
 						{
-							onTheGrid = FALSE
-							while(onTheGrid == FALSE)
+							onTheGrid = FALSE; c = 0
+							while (onTheGrid == FALSE)
 								{
-									coords = cbind(particules[[i]][1],particules[[i]][2])
-									if (extractionOfValuesOnMatrix == TRUE) v1 = extractValueOnMatrix(coords)
-									if (extractionOfValuesOnMatrix == FALSE) v1 = extractValueOnRaster(coords)
-									v2 = v1/vMax
-									if (extractionOfValuesOnMatrix == TRUE)
+									c = c+1
+									if (c == 1000) print(i)
+									coords1 = cbind(particules[[i]][1],particules[[i]][2])
+									if (RRW == FALSE)
 										{
-											sdX = v2*1*scalingValue
-											sdY = v2*1*scalingValue
-										}	else	{
-											sdX = v2*xres(envVariable)*scalingValue
-											sdY = v2*yres(envVariable)*scalingValue
+											dX = rnorm(1, 0, sigma); dY = rnorm(1, 0, sigma)
 										}
-									dX = rnorm(1,0,sdX)
-									dY = rnorm(1,0,sdY)
-									coords = cbind(particules[[i]][1]+dX,particules[[i]][2]+dY)
-									if (extractionOfValuesOnMatrix == TRUE) v = extractValueOnMatrix(coords)
-									if (extractionOfValuesOnMatrix == FALSE) v = extractValueOnRaster(coords)
+									if (RRW == TRUE)
+										{
+											dX = rcauchy(1, 0, sigma); dY = rcauchy(1, 0, sigma)
+										}
+									d = sqrt((dX^2)+(dY^2))
+									coords2 = coords1; coords2[1,1] = coords2[1,1]+d
+									angle = (2*pi)*runif(1); coords2_rotated = rotation(coords1, coords2, angle)
+									coords2_rotated = cbind(coords2_rotated[1],coords2_rotated[2])
+									v = extractValueOnRaster(coords2_rotated)
 									if (is.na(v) == FALSE)
 										{
-											particules[[i]][1] = particules[[i]][1]+dX
-											particules[[i]][2] = particules[[i]][2]+dY
+											particules[[i]][1] = coords2_rotated[1,1]
+											particules[[i]][2] = coords2_rotated[1,2]
 											onTheGrid = TRUE
 										}
 								}
@@ -142,33 +105,7 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 				}
 			if (t >= T)
 				{
-					if (showingPlots == TRUE)
-						{
-							# if (extractionOfValuesOnMatrix == FALSE)
-								# {
-									# plotRaster(envVariable0, cols=cols1, new=F)
-								# }	else	{
-									# rast = raster(mat0,xmn=0,xmx=dim(mat0)[2],ymn=0,ymx=dim(mat0)[1])
-									# plotRaster(rast, cols=cols1, new=F)
-								# }
-							# coords1 = c(); coords2 = c()
-							# for (i in 1:length(particules))
-								# {
-									# if (particules[[i]][5] == 0) coords1 = rbind(coords1, cbind(particules[[i]][1],particules[[i]][2]))
-									# if (particules[[i]][5] == 1) coords2 = rbind(coords2, cbind(particules[[i]][1],particules[[i]][2]))
-								# }
-							# points(coords1, pch=16, cex=0.5, col="green3")
-							# points(coords2, pch=16, cex=0.5, col="black")
-						}
 					T = t + timeIntervale
-				}
-		}
-	if (extractionOfValuesOnMatrix == TRUE)
-		{
-			for (i in 1:length(particules))
-				{
-					particules[[i]][1] = ((particules[[i]][1]/dim(mat)[2])*(xMax-xMin))+xMin
-					particules[[i]][2] = ((particules[[i]][2]/dim(mat)[1])*(yMax-yMin))+yMin
 				}
 		}	
 	csv = c()
@@ -186,8 +123,7 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 			treeID = length; treeID[] = -9999
 			csv = rbind(csv, cbind(node1,node2,startLat,startLon,endLat,endLon,endNodeL,startNodeL,startYear,endYear,greatCircleDist_km,treeID))
 		}
-	colNames = c("node1","node2","startLat","startLon","endLat","endLon","endNodeL","startNodeL",
-					"startYear","endYear","greatCircleDist_km","treeID")
+	colNames = c("node1","node2","startLat","startLon","endLat","endLon","endNodeL","startNodeL","startYear","endYear","greatCircleDist_km","treeID")
 	colnames(csv) = colNames
 	csv = as.matrix(csv); row.names(csv) = c()
 	unsampledTipNodes = as.numeric(which(csv[,"endYear"] == samplingWindow[2]))
@@ -206,8 +142,6 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 							csv[j,"endLat"] = csv[index,"endLat"]
 							csv[j,"endNodeL"] = csv[index,"endNodeL"]
 							csv[j,"endYear"] = csv[index,"endYear"]
-							# x1 = cbind(csv[j,"startLon"],csv[j,"startLat"]); x2 = cbind(csv[j,"endLon"],csv[j,"endLat"])
-							# csv[j,"greatCircleDist_km"] = rdist.earth(x1, x2, miles=FALSE, R=NULL)
 							csv[j,"greatCircleDist_km"] = NaN
 							branchesToRemove = c(branchesToRemove, index)
 						}
@@ -280,8 +214,6 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 											branches2 = c(branches2, paste("(",branches1[k],",",branches1[j],")",";",length,sep=""))
 										}
 									nodes2 = c(nodes2, node2)
-									# print(paste(coalescenceEvents,nodeB,nodeA,node2,sep=" "))
-									# print(c(node2,j,k))
 								}
 						}
 				}
@@ -297,8 +229,8 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 	csv = rbind(csv1, csv2)
 	if (showingPlots == TRUE)
 		{
-			col_start = colorRampPalette(brewer.pal(9,'PuBu'))(101)[1]
-			cols2 = colorRampPalette(brewer.pal(9,'PuBu'))(101)[(((csv[,"endYear"]-startingYear)/(samplingWindow[2]-startingYear))*100)+1]
+			col_start = colorRampPalette(brewer.pal(9,"PuBu"))(101)[1]
+			cols2 = colorRampPalette(brewer.pal(9,"PuBu"))(101)[(((csv[,"endYear"]-startingYear)/(samplingWindow[2]-startingYear))*100)+1]
 			plotRaster(envVariable0, cols=cols1, addLegend=TRUE)
 			for (i in 1:dim(csv)[1])
 				{
@@ -315,8 +247,8 @@ simulatorRRW2 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 					points(cbind(csv[i,"endLon"],csv[i,"endLat"]), pch=1, cex=0.9, col=rgb(1,1,1,255,maxColorValue=255), lwd=0.25)
 				}
 			dev.new()
-			col_start = colorRampPalette(brewer.pal(9,'PuBu'))(101)[1]
-			cols3 = colorRampPalette(brewer.pal(9,'PuBu'))(101)[(((nodeHeights(tree)[,2])/(samplingWindow[2]-startingYear))*100)+1]
+			col_start = colorRampPalette(brewer.pal(9,"PuBu"))(101)[1]
+			cols3 = colorRampPalette(brewer.pal(9,"PuBu"))(101)[(((nodeHeights(tree)[,2])/(samplingWindow[2]-startingYear))*100)+1]
 			plot(tree, show.tip.label=F, edge.width=0.5)
 			for (i in 1:dim(tree$edge)[1])
 				{
