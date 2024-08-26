@@ -148,7 +148,7 @@ spreadValues = function(localTreesDirectory, nberOfExtractionFiles, envVariables
 					environmentalMeanValue[1,i] = mean(environmentalValues[,i], na.rm=T)
 					environmentalMedianValue[1,i] = median(environmentalValues[,i], na.rm=T)
 				}
-			xLim = c(minStartYear, maxEndYear); yLim = c(min(upper_l, na.rm=T), max(upper_l, na.rm=T))
+			xLim = c(minStartYear, maxEndYear); yLim = c(min(lower_l, na.rm=T), max(upper_l, na.rm=T))
 			tab = matrix(nrow=length(slicedTimes), ncol=2)
 			tab[,1] = slicedTimes; tab[,2] = environmentalMeanValue; colnames(tab) = c("time",envVariableName)	
 			write.csv(tab, file=paste(outputName,"_mean_",envVariableName,".csv",sep=""), row.names=F, quote=F)
