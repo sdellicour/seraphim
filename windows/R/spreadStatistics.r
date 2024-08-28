@@ -21,15 +21,15 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 	ciMeanStatistics = matrix(nrow=2, ncol=nberOfStatistics)
 	waveFrontDistances1List = list()
 	waveFrontDistances2List = list()
-	meanBranchDispersalVelocityList = list()
-	weightedBranchDispersalVelocityList = list()
+	meanDiffusionCoefficientList = list()
+	weightedDiffusionCoefficientList = list()
 	numberOfBranchesList = list()
 	dispersalOrientationList = list()
 	cat("Estimation of summary statistics", "\n", sep="")
 	onlyOneAncestor = TRUE; extractionsWithMoreThanOneAncestors = c()
 	if ((timeSlices==0)|is.na(timeSlices)|is.null(timeSlices)) onlyOneAncestor = FALSE
-	dispersalVelocityGraph = FALSE
-	if (!is.na(slidingWindow)) dispersalVelocityGraph = TRUE
+	diffusionCoefficientEvolutionGraphs = FALSE
+	if (!is.na(slidingWindow)) diffusionCoefficientEvolutionGraphs = TRUE
 	for (t in 1:nberOfExtractionFiles)
 		{
 			if (simulations == FALSE) fileName = paste(localTreesDirectory,"/TreeExtractions_",t,".csv",sep="")
@@ -81,8 +81,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 		}
 	wavefrontDistanceSlices = timeSlices
 	wavefrontDistanceTimeInterval = (maxEndYear-minStartYear)/wavefrontDistanceSlices
-	dispersalVelocitySlices = timeSlices
-	dispersalVelocityTimeInterval = (maxEndYear-minStartYear)/dispersalVelocitySlices
+	diffusionCoefficientSlices = timeSlices
+	diffusionCoefficientTimeInterval = (maxEndYear-minStartYear)/diffusionCoefficientSlices
 	xLim = c(minStartYear, maxEndYear)
 	for (t in 1:nberOfExtractionFiles)
 		{
@@ -265,15 +265,13 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 						}
 				}
 		}
-	if ((onlyTipBranches == FALSE)&(dispersalVelocityGraph == TRUE)&(nberOfExtractionFiles > 1))
+	if ((onlyTipBranches == FALSE)&(diffusionCoefficientEvolutionGraphs == TRUE)&(nberOfExtractionFiles > 1))
 		{
-			startEndTimes = matrix(nrow=dispersalVelocitySlices, ncol=3)
-			for (i in 1:dispersalVelocitySlices)
+			startEndTimes = matrix(nrow=diffusionCoefficientSlices, ncol=3)
+			for (i in 1:diffusionCoefficientSlices)
 				{
-					time = minStartYear+((i-1)*dispersalVelocityTimeInterval)+(dispersalVelocityTimeInterval/2)
-					startTime = time - (slidingWindow/2)
-					endTime = time + (slidingWindow/2)
-					startEndTimes[i,1:3] = cbind(time, startTime, endTime)
+					time = minStartYear+((i-1)*diffusionCoefficientTimeInterval)+(diffusionCoefficientTimeInterval/2)
+					startTime = time - (slidingWindow/2); endTime = time + (slidingWindow/2); startEndTimes[i,1:3] = cbind(time, startTime, endTime)
 				}
 			buffer = list()
 			# buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {		
@@ -283,13 +281,13 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					data = read.csv(fileName, h=T)
 					data = data[with(data, order(endYear, startYear)),]
 					nberOfConnections = dim(data)[1]
-					meanBranchDispersalVelocities = matrix(nrow=dispersalVelocitySlices, ncol=2)
-					weightedBranchDispersalVelocities = matrix(nrow=dispersalVelocitySlices, ncol=2)
-					numberOfBranches = matrix(nrow=dispersalVelocitySlices, ncol=2)
+					meanDiffusionCoefficients = matrix(nrow=diffusionCoefficientSlices, ncol=2)
+					weightedDiffusionCoefficients = matrix(nrow=diffusionCoefficientSlices, ncol=2)
+					numberOfBranches = matrix(nrow=diffusionCoefficientSlices, ncol=2)
 					data = data[order(data[,"endYear"]),]
-					for (i in 1:dispersalVelocitySlices)
+					for (i in 1:diffusionCoefficientSlices)
 						{
-							n = 0; vS = 0; dS = 0; tS = 0 
+							n = 0; Ds = 0; dS = 0; tS = 0 
 							time = startEndTimes[i,1]
 							startTime = startEndTimes[i,2]
 							endTime = startEndTimes[i,3]
@@ -315,30 +313,30 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 											pointLocation2Y = data[j,"startLat"]+((data[j,"endLat"]-data[j,"startLat"])*timeProportion2)
 											pointLocation2 = cbind(pointLocation2X, pointLocation2Y)
 											branchDistInInterval = rdist.earth(pointLocation1, pointLocation2, miles=F, R=NULL)				    		 		
-				    							n = n+1; vS = vS + (branchDistInInterval/branchTimeInInterval)
-				    							dS = dS + branchDistInInterval; tS = tS + branchTimeInInterval
+				    						n = n+1; Ds = Ds + ((branchDistInInterval^2)/(4*branchTimeInInterval))
+				    						dS = dS + branchDistInInterval; tS = tS + branchTimeInInterval
 										}
 								}
-							meanBranchDispersalVelocities[i,1] = time
-							meanBranchDispersalVelocities[i,2] = vS/n
-							weightedBranchDispersalVelocities[i,1] = time
-							weightedBranchDispersalVelocities[i,2] = dS/tS
+							meanDiffusionCoefficients[i,1] = time
+							meanDiffusionCoefficients[i,2] = Ds/n
+							weightedDiffusionCoefficients[i,1] = time
+							weightedDiffusionCoefficients[i,2] = (dS^2)/(4*tS)
 							numberOfBranches[i,1] = time
 							numberOfBranches[i,2] = n
 						}
-					colnames(meanBranchDispersalVelocities) = c("year","meanBranchDispersalVelocity")
-					colnames(weightedBranchDispersalVelocities) = c("year","weightedBranchDispersalVelocity")
-					dispersalVelocities = list()
-					dispersalVelocities[[1]] = meanBranchDispersalVelocities
-					dispersalVelocities[[2]] = weightedBranchDispersalVelocities
-					dispersalVelocities[[3]] = numberOfBranches
-					buffer[[t]] = dispersalVelocities
-					# dispersalVelocities
+					colnames(meanDiffusionCoefficients) = c("year","meanDiffusionCoefficient")
+					colnames(weightedDiffusionCoefficients) = c("year","weightedDiffusionCoefficient")
+					diffusionCoefficients = list()
+					diffusionCoefficients[[1]] = meanDiffusionCoefficients
+					diffusionCoefficients[[2]] = weightedDiffusionCoefficients
+					diffusionCoefficients[[3]] = numberOfBranches
+					buffer[[t]] = diffusionCoefficients
+					# diffusionCoefficients
 				}
 			for (t in 1:length(buffer))
 				{
-					meanBranchDispersalVelocityList[[t]] = buffer[[t]][[1]]
-					weightedBranchDispersalVelocityList[[t]] = buffer[[t]][[2]]
+					meanDiffusionCoefficientList[[t]] = buffer[[t]][[1]]
+					weightedDiffusionCoefficientList[[t]] = buffer[[t]][[2]]
 					numberOfBranchesList[[t]] = buffer[[t]][[3]]
 				}
 		}
@@ -449,7 +447,6 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_weighted_diffusion_coefficient_variation.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 		}
-
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
 			cat("Building wavefront distance evolution graphs", "\n", sep="")
@@ -591,61 +588,61 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_patristic_wavefront_distance_2.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 		}
-	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&(dispersalVelocityGraph == TRUE))
+	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
-			cat("Building branch dispersal velocity evolution graphs", "\n", sep="")
-			slicedTimes = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			lower_l = matrix(nrow=1, ncol=dispersalVelocitySlices); upper_l = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			numberOfBranchesValues = matrix(nrow=nberOfExtractionFiles, ncol=dispersalVelocitySlices)
-			numberOfBranchesMeanValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			numberOfBranchesMedianValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			meanBranchDispersalVelocitiesValues = matrix(nrow=nberOfExtractionFiles, ncol=dispersalVelocitySlices)
-			meanBranchDispersalVelocitiesMeanValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			meanBranchDispersalVelocitiesMedianValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			meanBranchDispersalVelocitiesValues = matrix(nrow=nberOfExtractionFiles, ncol=dispersalVelocitySlices)
-			meanBranchDispersalVelocitiesMeanValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			meanBranchDispersalVelocitiesMedianValue = matrix(nrow=1 ,ncol=dispersalVelocitySlices)
-			for (i in 1:dispersalVelocitySlices)
+			cat("Building diffusion coefficient evolution graphs", "\n", sep="")
+			slicedTimes = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			lower_l = matrix(nrow=1, ncol=diffusionCoefficientSlices); upper_l = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			numberOfBranchesValues = matrix(nrow=nberOfExtractionFiles, ncol=diffusionCoefficientSlices)
+			numberOfBranchesMeanValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			numberOfBranchesMedianValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			meanDiffusionCoefficientsValues = matrix(nrow=nberOfExtractionFiles, ncol=diffusionCoefficientSlices)
+			meanDiffusionCoefficientsMeanValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			meanDiffusionCoefficientsMedianValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			meanDiffusionCoefficientsValues = matrix(nrow=nberOfExtractionFiles, ncol=diffusionCoefficientSlices)
+			meanDiffusionCoefficientsMeanValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			meanDiffusionCoefficientsMedianValue = matrix(nrow=1 ,ncol=diffusionCoefficientSlices)
+			for (i in 1:diffusionCoefficientSlices)
 				{
-					slicedTimes[1,i] = meanBranchDispersalVelocityList[[1]][i,1]
+					slicedTimes[1,i] = meanDiffusionCoefficientList[[1]][i,1]
 					for (t in 1:nberOfExtractionFiles)
 						{
 							numberOfBranchesValues[t,i] = numberOfBranchesList[[t]][i,2]
-							meanBranchDispersalVelocitiesValues[t,i] = meanBranchDispersalVelocityList[[t]][i,2]
+							meanDiffusionCoefficientsValues[t,i] = meanDiffusionCoefficientList[[t]][i,2]
 						}
 					numberOfBranchesMeanValue[1,i] = mean(numberOfBranchesValues[,i], na.rm=T)
 					numberOfBranchesMedianValue[1,i] = median(numberOfBranchesValues[,i], na.rm=T)
-					quantiles = quantile(meanBranchDispersalVelocitiesValues[,i], probs=c(0.025,0.975), na.rm=T)
+					quantiles = quantile(meanDiffusionCoefficientsValues[,i], probs=c(0.025,0.975), na.rm=T)
 					lower_l[1,i] = as.numeric(quantiles[1]); upper_l[1,i] = as.numeric(quantiles[2])
-					HPD = HDInterval::hdi(meanBranchDispersalVelocitiesValues[,i])[1:2]
+					HPD = HDInterval::hdi(meanDiffusionCoefficientsValues[,i])[1:2]
 					lower_l[1,i] = as.numeric(HPD[1]); upper_l[1,i] = as.numeric(HPD[2])
-					meanBranchDispersalVelocitiesMeanValue[1,i] = mean(meanBranchDispersalVelocitiesValues[,i], na.rm=T)
-					meanBranchDispersalVelocitiesMedianValue[1,i] = median(meanBranchDispersalVelocitiesValues[,i], na.rm=T)
+					meanDiffusionCoefficientsMeanValue[1,i] = mean(meanDiffusionCoefficientsValues[,i], na.rm=T)
+					meanDiffusionCoefficientsMedianValue[1,i] = median(meanDiffusionCoefficientsValues[,i], na.rm=T)
 				}
 			yLim = c(0, max(upper_l, na.rm=T))
 			treeIDs = paste("distance_tree", treeIDs, sep="")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
-			tab[,1] = slicedTimes; tab[,2] = meanBranchDispersalVelocitiesMeanValue
-			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_mean_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
-			tab[,1] = slicedTimes; tab[,2] = meanBranchDispersalVelocitiesMedianValue
-			tab[,3] = numberOfBranchesMedianValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_median_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
+			tab[,1] = slicedTimes; tab[,2] = meanDiffusionCoefficientsMeanValue
+			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","diffusion_coefficient","number_of_branches")	
+			write.table(tab, file=paste(outputName,"_mean_mean_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
+			tab[,1] = slicedTimes; tab[,2] = meanDiffusionCoefficientsMedianValue
+			tab[,3] = numberOfBranchesMedianValue; colnames(tab) = c("time","diffusion_coefficient","number_of_branches")	
+			write.table(tab, file=paste(outputName,"_median_mean_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = lower_l; tab[,3] = upper_l; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
-			write.table(tab, file=paste(outputName,"_95%HPD_mean_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
+			write.table(tab, file=paste(outputName,"_95%HPD_mean_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
 
-			xLab = "time"; yLab = "mean branch dispersal velocity"
+			xLab = "time"; yLab = "mean diffusion coefficient"
 			if (showingPlots) dev.new(width=5, height=5)
-			if (showingPlots == FALSE) pdf(paste(outputName,"_mean_branch_dispersal_velocity_1.pdf",sep=""), width=5, height=5)
-			text = "Evolution of mean branch dispersal velocity"
+			if (showingPlots == FALSE) pdf(paste(outputName,"_mean_diffusion_coefficient_1.pdf",sep=""), width=5, height=5)
+			text = "Evolution of mean diffusion coefficient"
 			par(mgp=c(1,0.35,0), oma=c(1,1,1.5,3), mar=c(3.3,3.3,2,0))
-			plot(meanBranchDispersalVelocityList[[1]][,1], meanBranchDispersalVelocityList[[1]][,2], type="l", lwd=0.05, axes=F, ann=F, ylim=yLim, xlim=xLim)
+			plot(meanDiffusionCoefficientList[[1]][,1], meanDiffusionCoefficientList[[1]][,2], type="l", lwd=0.05, axes=F, ann=F, ylim=yLim, xlim=xLim)
 			if (nberOfExtractionFiles > 1)
 				{
 					for (t in 2:nberOfExtractionFiles)
 						{
-							lines(meanBranchDispersalVelocityList[[t]][,1],meanBranchDispersalVelocityList[[t]][,2],lwd=LWD)
+							lines(meanDiffusionCoefficientList[[t]][,1], meanDiffusionCoefficientList[[t]][,2], lwd=LWD)
 						}
 				}
 			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
@@ -654,73 +651,73 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
 			box(lwd=LWD, col="gray30")
-			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_mean_branch_dispersal_velocity_1.pdf",sep=""))
+			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_mean_diffusion_coefficient_1.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 						
 			if (showingPlots) dev.new(width=5, height=5)
-			if (showingPlots == FALSE) pdf(paste(outputName,"_mean_branch_dispersal_velocity_2.pdf",sep=""), width=5, height=5)
-			text = "Evolution of mean branch dispersal velocity"
+			if (showingPlots == FALSE) pdf(paste(outputName,"_mean_diffusion_coefficient_2.pdf",sep=""), width=5, height=5)
+			text = "Evolution of mean diffusion coefficient"
 			par(mgp=c(1,0.35,0), oma=c(1,1,1.5,3), mar=c(3.3,3.3,2,0))
-			plot(slicedTimes, meanBranchDispersalVelocitiesMedianValue, type="l", axes=F, ann=F, ylim=yLim, xlim=xLim)
+			plot(slicedTimes, meanDiffusionCoefficientsMedianValue, type="l", axes=F, ann=F, ylim=yLim, xlim=xLim)
 			xx_l = c(slicedTimes,rev(slicedTimes)); yy_l = c(lower_l,rev(upper_l))
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
-			lines(slicedTimes, meanBranchDispersalVelocitiesMedianValue, lwd=1)
+			lines(slicedTimes, meanDiffusionCoefficientsMedianValue, lwd=1)
 			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
 			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
 			box(lwd=LWD, col="gray30")
-			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_mean_branch_dispersal_velocity_2.pdf",sep=""))
+			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_mean_diffusion_coefficient_2.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 			
-			slicedTimes = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			lower_l = matrix(nrow=1, ncol=dispersalVelocitySlices); upper_l = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			weightedBranchDispersalVelocitiesValues = matrix(nrow=nberOfExtractionFiles, ncol=dispersalVelocitySlices)
-			weightedBranchDispersalVelocitiesMeanValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			weightedBranchDispersalVelocitiesMedianValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			weightedBranchDispersalVelocitiesValues = matrix(nrow=nberOfExtractionFiles, ncol=dispersalVelocitySlices)
-			weightedBranchDispersalVelocitiesMeanValue = matrix(nrow=1, ncol=dispersalVelocitySlices)
-			weightedBranchDispersalVelocitiesMedianValue = matrix(nrow=1 ,ncol=dispersalVelocitySlices)
-			for (i in 1:dispersalVelocitySlices)
+			slicedTimes = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			lower_l = matrix(nrow=1, ncol=diffusionCoefficientSlices); upper_l = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			weightedDiffusionCoefficientsValues = matrix(nrow=nberOfExtractionFiles, ncol=diffusionCoefficientSlices)
+			weightedDiffusionCoefficientsMeanValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			weightedDiffusionCoefficientsMedianValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			weightedDiffusionCoefficientsValues = matrix(nrow=nberOfExtractionFiles, ncol=diffusionCoefficientSlices)
+			weightedDiffusionCoefficientsMeanValue = matrix(nrow=1, ncol=diffusionCoefficientSlices)
+			weightedDiffusionCoefficientsMedianValue = matrix(nrow=1 ,ncol=diffusionCoefficientSlices)
+			for (i in 1:diffusionCoefficientSlices)
 				{
-					slicedTimes[1,i] = weightedBranchDispersalVelocityList[[1]][i,1]
+					slicedTimes[1,i] = weightedDiffusionCoefficientList[[1]][i,1]
 					for (t in 1:nberOfExtractionFiles)
 						{
-							weightedBranchDispersalVelocitiesValues[t,i] = weightedBranchDispersalVelocityList[[t]][i,2]
+							weightedDiffusionCoefficientsValues[t,i] = weightedDiffusionCoefficientList[[t]][i,2]
 						}
-					quantiles = quantile(weightedBranchDispersalVelocitiesValues[,i], probs=c(0.025,0.975), na.rm=T)
+					quantiles = quantile(weightedDiffusionCoefficientsValues[,i], probs=c(0.025,0.975), na.rm=T)
 					lower_l[1,i] = as.numeric(quantiles[1]); upper_l[1,i] = as.numeric(quantiles[2])
-					HPD = HDInterval::hdi(weightedBranchDispersalVelocitiesValues[,i])[1:2]
+					HPD = HDInterval::hdi(weightedDiffusionCoefficientsValues[,i])[1:2]
 					lower_l[1,i] = as.numeric(HPD[1]); upper_l[1,i] = as.numeric(HPD[2])
-					weightedBranchDispersalVelocitiesMeanValue[1,i] = mean(weightedBranchDispersalVelocitiesValues[,i], na.rm=T)
-					weightedBranchDispersalVelocitiesMedianValue[1,i] = median(weightedBranchDispersalVelocitiesValues[,i], na.rm=T)
+					weightedDiffusionCoefficientsMeanValue[1,i] = mean(weightedDiffusionCoefficientsValues[,i], na.rm=T)
+					weightedDiffusionCoefficientsMedianValue[1,i] = median(weightedDiffusionCoefficientsValues[,i], na.rm=T)
 				}
 			yLim = c(0, max(upper_l, na.rm=T))
 			treeIDs = paste("distance_tree", treeIDs, sep="")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
-			tab[,1] = slicedTimes; tab[,2] = weightedBranchDispersalVelocitiesMeanValue
-			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_mean_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
-			tab[,1] = slicedTimes; tab[,2] = weightedBranchDispersalVelocitiesMedianValue
-			tab[,3] = numberOfBranchesMedianValue; colnames(tab) = c("time","velocity","number_of_branches")	
-			write.table(tab, file=paste(outputName,"_median_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
+			tab[,1] = slicedTimes; tab[,2] = weightedDiffusionCoefficientsMeanValue
+			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","diffusion_coefficient","number_of_branches")	
+			write.table(tab, file=paste(outputName,"_mean_weighted_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
+			tab[,1] = slicedTimes; tab[,2] = weightedDiffusionCoefficientsMedianValue
+			tab[,3] = numberOfBranchesMedianValue; colnames(tab) = c("time","diffusion_coefficient","number_of_branches")	
+			write.table(tab, file=paste(outputName,"_median_weighted_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = lower_l; tab[,3] = upper_l; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
-			write.table(tab, file=paste(outputName,"_95%HPD_weighted_branch_dispersal_velocity.txt",sep=""), row.names=F, quote=F, sep="\t")
+			write.table(tab, file=paste(outputName,"_95%HPD_weighted_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
 
-			xLab = "time"; yLab = "weighted branch dispersal velocity"
+			xLab = "time"; yLab = "weighted diffusion coefficient"
 			if (showingPlots) dev.new(width=5, height=5)
-			if (showingPlots == FALSE) pdf(paste(outputName,"_weighted_branch_dispersal_velocity_1.pdf",sep=""), width=5, height=5)
-			text = "Evolution of weighted branch dispersal velocity"
+			if (showingPlots == FALSE) pdf(paste(outputName,"_weighted_diffusion_coefficient_1.pdf",sep=""), width=5, height=5)
+			text = "Evolution of weighted diffusion coefficient"
 			par(mgp=c(1,0.35,0), oma=c(1,1,1.5,3), mar=c(3.3,3.3,2,0))
-			plot(weightedBranchDispersalVelocityList[[1]][,1], weightedBranchDispersalVelocityList[[1]][,2], type="l", lwd=0.05, axes=F, ann=F, ylim=yLim, xlim=xLim)
+			plot(weightedDiffusionCoefficientList[[1]][,1], weightedDiffusionCoefficientList[[1]][,2], type="l", lwd=0.05, axes=F, ann=F, ylim=yLim, xlim=xLim)
 			if (nberOfExtractionFiles > 1)
 				{
 					for (t in 2:nberOfExtractionFiles)
 						{
-							lines(weightedBranchDispersalVelocityList[[t]][,1],weightedBranchDispersalVelocityList[[t]][,2],lwd=LWD)
+							lines(weightedDiffusionCoefficientList[[t]][,1], weightedDiffusionCoefficientList[[t]][,2], lwd=LWD)
 						}
 				}
 			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
@@ -729,25 +726,25 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
 			box(lwd=LWD, col="gray30")
-			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_weighted_branch_dispersal_velocity_1.pdf",sep=""))
+			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_weighted_diffusion_coefficient_1.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 			
 			if (showingPlots) dev.new(width=5, height=5)
-			if (showingPlots == FALSE) pdf(paste(outputName,"_weighted_branch_dispersal_velocity_2.pdf",sep=""), width=5, height=5)
-			text = "Evolution of weighted branch dispersal velocity"
+			if (showingPlots == FALSE) pdf(paste(outputName,"_weighted_diffusion_coefficient_2.pdf",sep=""), width=5, height=5)
+			text = "Evolution of weighted diffusion coefficient"
 			par(mgp=c(1,0.35,0), oma=c(1,1,1.5,3), mar=c(3.3,3.3,2,0))
-			plot(slicedTimes, weightedBranchDispersalVelocitiesMedianValue, type="l", axes=F, ann=F, ylim=yLim, xlim=xLim)
+			plot(slicedTimes, weightedDiffusionCoefficientsMedianValue, type="l", axes=F, ann=F, ylim=yLim, xlim=xLim)
 			xx_l = c(slicedTimes,rev(slicedTimes)); yy_l = c(lower_l,rev(upper_l))
 			getOption("scipen"); opt = options("scipen"=20)
 			polygon(xx_l, yy_l, col=rgb(187/255,187/255,187/255,0.5), border=0)
-			lines(slicedTimes, weightedBranchDispersalVelocitiesMedianValue, lwd=1)
+			lines(slicedTimes, weightedDiffusionCoefficientsMedianValue, lwd=1)
 			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
 			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")
 			title(xlab=xLab, cex.lab=0.7, mgp=c(1.4,0,0), col.lab="gray30")
 			title(ylab=yLab, cex.lab=0.7, mgp=c(1.5,0,0), col.lab="gray30")
 			title(main=text, cex.main=0.6, col.main="gray30")
 			box(lwd=LWD, col="gray30")
-			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_weighted_branch_dispersal_velocity_2.pdf",sep=""))
+			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_weighted_diffusion_coefficient_2.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 		}
 }
