@@ -475,13 +475,13 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 									waveFrontDistances2Values[n,i+1] = waveFrontDistances2List[[t]][i+1,2]
 								}
 						}
-					quantiles = quantile(waveFrontDistances1Values[,i], probs=c(0.025,0.975))
+					quantiles = quantile(waveFrontDistances1Values[,i+1], probs=c(0.025,0.975))
 					lower_l_1[1,i+1] = as.numeric(quantiles[1]); upper_l_1[1,i+1] = as.numeric(quantiles[2])
-					HPD = HDInterval::hdi(waveFrontDistances1Values[,i])[1:2]
+					HPD = HDInterval::hdi(waveFrontDistances1Values[,i+1])[1:2]
 					lower_l_1[1,i+1] = as.numeric(HPD[1]); upper_l_1[1,i+1] = as.numeric(HPD[2])
-					quantiles = quantile(waveFrontDistances2Values[,i], probs=c(0.025,0.975))
+					quantiles = quantile(waveFrontDistances2Values[,i+1], probs=c(0.025,0.975))
 					lower_l_2[1,i+1] = as.numeric(quantiles[1]); upper_l_2[1,i+1] = as.numeric(quantiles[2])
-					HPD = HDInterval::hdi(waveFrontDistances2Values[,i])[1:2]
+					HPD = HDInterval::hdi(waveFrontDistances2Values[,i+1])[1:2]
 					lower_l_2[1,i+1] = as.numeric(HPD[1]); upper_l_2[1,i+1] = as.numeric(HPD[2])
 					waveFrontDistances1MeanValue[1,i+1] = mean(waveFrontDistances1Values[,i+1])
 					waveFrontDistances1MedianValue[1,i+1] = median(waveFrontDistances1Values[,i+1])
@@ -588,7 +588,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_patristic_wavefront_distance_2.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 		}
-	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
+	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE))
 		{
 			cat("Building diffusion coefficient evolution graphs", "\n", sep="")
 			slicedTimes = matrix(nrow=1, ncol=diffusionCoefficientSlices)

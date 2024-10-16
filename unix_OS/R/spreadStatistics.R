@@ -62,8 +62,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					minLat = min(min(data[,"endLat"]),min(data[,"startLat"]))
 					maxLat = max(max(data[,"endLat"]),max(data[,"startLat"]))
 					minStartYear = min(data[,"startYear"])
-		    		minEndYear = min(data[,"startYear"])
-		    		maxEndYear = max(data[,"endYear"])
+		    			minEndYear = min(data[,"startYear"])
+		    			maxEndYear = max(data[,"endYear"])
 				}	else	{
 					if (minLon > min(min(data[,"endLon"]),min(data[,"startLon"]))) minLon = min(min(data[,"endLon"]),min(data[,"startLon"]))
 					if (maxLon < max(max(data[,"endLon"]),max(data[,"startLon"]))) maxLon = max(max(data[,"endLon"]),max(data[,"startLon"]))
@@ -111,14 +111,14 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			for (i in 1:nberOfConnections)
 				{
 					dispersalTime = data[i,"endYear"]-data[i,"startYear"]
-		    		BranchDispersalVelocity = data[i,"greatCircleDist_km"]/(dispersalTime)
-		    		branchOriginalDiffusionCoefficient = (data[i,"greatCircleDist_km"]^2)/(4*dispersalTime)
-		    		branchMeasures[i,1] = BranchDispersalVelocity
-		    		branchMeasures[i,2] = branchOriginalDiffusionCoefficient
-		    		weightedBranchDispersalVelocity_numerator = weightedBranchDispersalVelocity_numerator + data[i,"greatCircleDist_km"]
-		    		weightedBranchDispersalVelocity_denominator = weightedBranchDispersalVelocity_denominator + dispersalTime
-		    		weightedDiffusionCoefficient_numerator = weightedDiffusionCoefficient_numerator + (data[i,"greatCircleDist_km"]^2)
-		    		weightedDiffusionCoefficient_denominator = weightedDiffusionCoefficient_denominator + (4*dispersalTime)
+		    			BranchDispersalVelocity = data[i,"greatCircleDist_km"]/(dispersalTime)
+		    			branchOriginalDiffusionCoefficient = (data[i,"greatCircleDist_km"]^2)/(4*dispersalTime)
+		    			branchMeasures[i,1] = BranchDispersalVelocity
+		    			branchMeasures[i,2] = branchOriginalDiffusionCoefficient
+		    			weightedBranchDispersalVelocity_numerator = weightedBranchDispersalVelocity_numerator + data[i,"greatCircleDist_km"]
+		    			weightedBranchDispersalVelocity_denominator = weightedBranchDispersalVelocity_denominator + dispersalTime
+		    			weightedDiffusionCoefficient_numerator = weightedDiffusionCoefficient_numerator + (data[i,"greatCircleDist_km"]^2)
+		    			weightedDiffusionCoefficient_denominator = weightedDiffusionCoefficient_denominator + (4*dispersalTime)
 		  		}
 		  	branchVelocities = c(branchVelocities, branchMeasures[,1])
 			sd_var_velocity[t,] = cbind(sd(branchMeasures[,1]), var(branchMeasures[,1]))
@@ -475,13 +475,13 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 									waveFrontDistances2Values[n,i+1] = waveFrontDistances2List[[t]][i+1,2]
 								}
 						}
-					quantiles = quantile(waveFrontDistances1Values[,i], probs=c(0.025,0.975))
+					quantiles = quantile(waveFrontDistances1Values[,i+1], probs=c(0.025,0.975))
 					lower_l_1[1,i+1] = as.numeric(quantiles[1]); upper_l_1[1,i+1] = as.numeric(quantiles[2])
-					HPD = HDInterval::hdi(waveFrontDistances1Values[,i])[1:2]
+					HPD = HDInterval::hdi(waveFrontDistances1Values[,i+1])[1:2]
 					lower_l_1[1,i+1] = as.numeric(HPD[1]); upper_l_1[1,i+1] = as.numeric(HPD[2])
-					quantiles = quantile(waveFrontDistances2Values[,i], probs=c(0.025,0.975))
+					quantiles = quantile(waveFrontDistances2Values[,i+1], probs=c(0.025,0.975))
 					lower_l_2[1,i+1] = as.numeric(quantiles[1]); upper_l_2[1,i+1] = as.numeric(quantiles[2])
-					HPD = HDInterval::hdi(waveFrontDistances2Values[,i])[1:2]
+					HPD = HDInterval::hdi(waveFrontDistances2Values[,i+1])[1:2]
 					lower_l_2[1,i+1] = as.numeric(HPD[1]); upper_l_2[1,i+1] = as.numeric(HPD[2])
 					waveFrontDistances1MeanValue[1,i+1] = mean(waveFrontDistances1Values[,i+1])
 					waveFrontDistances1MedianValue[1,i+1] = median(waveFrontDistances1Values[,i+1])
@@ -588,7 +588,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			if (showingPlots) dev.copy2pdf(file=paste(outputName,"_patristic_wavefront_distance_2.pdf",sep=""))
 			if (showingPlots == FALSE) dev.off()
 		}
-	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
+	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE))
 		{
 			cat("Building diffusion coefficient evolution graphs", "\n", sep="")
 			slicedTimes = matrix(nrow=1, ncol=diffusionCoefficientSlices)
