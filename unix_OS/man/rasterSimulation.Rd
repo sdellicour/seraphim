@@ -14,7 +14,7 @@ rasterSimulation(rast, variogramModel)
   \item{variogramModel}{ estimated variogram model for the environmental variable. }
 }
 \details{
-This function can be called by the "spreadFactor" function.
+This function was called by a previous version of the "spreadFactor" function.
 }
 \value{
 The function returns a raster simulated under a specific variogram model.

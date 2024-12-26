@@ -64,7 +64,7 @@ for (h in 1:length(envVariables0))
 			}	else		{
 				fric = "_C"
 			}
-		names(newEnvVariables[[h+1]]) = paste(names(newEnvVariables[[h+1]]), fric, sep="")
+		names(newEnvVariables[[h+1]]) = paste(names(newEnvVariables[[h+1]]),fric,sep="")
 		if (length(resistances) > 0)
 			{
 				newResistances = c(newResistances, resistances[[h]])
@@ -153,7 +153,7 @@ for (t in 1:nberOfExtractionFiles)
 					{
 						fileName = paste(extractionFileName,"_",t,".csv",sep="")
 					}	else	{
-						fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv", sep="")
+						fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv",sep="")
 					}	
 				data = read.csv(fileName, h = T)
 				data = data[with(data, order(endYear, startYear)),]
@@ -279,9 +279,9 @@ if (distanceMatrix == F)
 			{
 				if (impactOnVelocity == TRUE)
 					{
-						if (straightLineDistance == TRUE) cat("Computing environmental distances (straight-line path model) for ", names(envVariables[[h]])[1], "\n", sep="")
-						if (leastCostDistance == TRUE) cat("Computing environmental distances (least-cost path model) for ", names(envVariables[[h]])[1], "\n", sep="")
-						if (randomWalkDistance == TRUE) cat("Computing environmental distances (Circuitscape path model) for ", names(envVariables[[h]])[1], "\n", sep="")	
+						if (straightLineDistance == TRUE) cat("Computing environmental distances (straight-line path model) for ",names(envVariables[[h]])[1],"\n",sep="")
+						if (leastCostDistance == TRUE) cat("Computing environmental distances (least-cost path model) for ",names(envVariables[[h]])[1],"\n",sep="")
+						if (randomWalkDistance == TRUE) cat("Computing environmental distances (Circuitscape path model) for ",names(envVariables[[h]])[1],"\n",sep="")	
 						if (fourCells == TRUE) directions = 4
 						if (fourCells == FALSE) directions = 8
 						if (resistances[h] == FALSE)
@@ -505,7 +505,7 @@ if ((showingPlots == TRUE) & (impactOnVelocity == TRUE))
 							# }
 					# }
 				# dev.new(width=5, height=5); par(mar=c(3.5,3.5,4,2), mgp=c(1.6,0.5,0))	
-				# formula = paste("times ~ dists", sep="")
+				# formula = paste("times ~ dists",sep="")
 				# form = as.formula(formula); LM = lm(form)
 				# title = paste("Linear regression R2 = ",round(summary(LM)$r.squared,3),sep="")
 				# plot(dists, times, xlab="environmental distances", ylab="dispersal times", main=title, cex.main=0.7, cex.axis=0.6, lwd=0.8, pch=19, cex=0.3, cex.lab=0.7)
@@ -516,7 +516,7 @@ if ((showingPlots == TRUE) & (impactOnVelocity == TRUE))
 	}
 if ((nberOfExtractionFiles == 1) & (impactOnVelocity == TRUE))
 	{
-		fileName = paste(outputName, "_env_distances.txt", sep="")
+		fileName = paste(outputName,"_env_distances.txt",sep="")
 		mat = cbind(dispersalTime[[1]][], distances[[1]][,1:length(envVariables)])
 		columnNames = "dispersal_times"
 		for (h in 1:length(envVariables))
@@ -530,7 +530,7 @@ if ((file.exists(outputName)) & (impactOnVelocity == TRUE))
 	{	
 		for (t in 1:nberOfExtractionFiles)
 			{
-				fileName = paste(outputName, "/", outputName, "_tree", t, "_env_distances.txt", sep="")
+				fileName = paste(outputName,"/",outputName,"_tree",t,"_env_distances.txt",sep="")
 				mat = cbind(dispersalTime[[t]][], distances[[t]][,1:length(envVariables)])
 				columnNames = cbind("dispersal_times")
 				for (h in 1:length(envVariables))
@@ -624,9 +624,9 @@ if (impactOnVelocity == TRUE)
 								matMultiGLMNames = c(matMultiGLMNames, names(envVariables[[h]]))
 								if (h == 1)
 									{
-										distVariables = paste("dispersalTime ~ ", names(envVariables[[h]]), sep="")
+										distVariables = paste("dispersalTime ~ ",names(envVariables[[h]]),sep="")
 									}	else	{
-										distVariables = paste(distVariables, " + ", names(envVariables[[h]]), sep="")
+										distVariables = paste(distVariables," + ",names(envVariables[[h]]),sep="")
 									}
 							}
 						matMultiGLM = as.data.frame(matMultiGLM)
@@ -718,14 +718,14 @@ if (impactOnVelocity == TRUE)
 					{
 						if (commonalityAnalysis == TRUE)
 							{
-								fileName1 = paste(outputName, "_LR-GLM-CA_results.pdf", sep="")
+								fileName1 = paste(outputName,"_LR-GLM-CA_results.pdf",sep="")
 								pdf(fileName1, width=(4*(length(envVariables))), height=(5*4)); par(mfrow=c(6,(length(envVariables))))
 							}	else	{
-								fileName1 = paste(outputName, "_LR-GLM_results.pdf", sep="")
+								fileName1 = paste(outputName,"_LR-GLM_results.pdf",sep="")
 								pdf(fileName1, width=(4*(length(envVariables))), height=(3*4)); par(mfrow=c(4,(length(envVariables))))
 							}
 					}	else	{
-						fileName1 = paste(outputName, "_linear_regression_results.pdf", sep="")
+						fileName1 = paste(outputName,"_linear_regression_results.pdf",sep="")
 						pdf(fileName1, width=(4*(length(envVariables))), height=(2.25*4)); par(mfrow=c(3,(length(envVariables))))
 					}
 				breakList_1 = (0:50)/50; breakList_2 = (0:50)/100
@@ -853,7 +853,7 @@ if (impactOnVelocity == TRUE)
 								fileName2 = paste(outputName,"_LR-GLM_results.txt",sep="")
 							}
 					}	else	{
-						fileName2 = paste(outputName, "_linear_regression_results.txt", sep="")
+						fileName2 = paste(outputName,"_linear_regression_results.txt",sep="")
 					}
 				uniLRcoefficientsNames1 = c(); uniLRRsquaresNames1 = c(); uniLRdeltaRsquaresNames1 = c(); uniLRpValuesNames = c()
 				uniLRcoefficientsNames2 = c(); uniLRRsquaresNames2 = c(); uniLRdeltaRsquaresNames2 = c()
@@ -881,20 +881,20 @@ if (impactOnVelocity == TRUE)
 					{
 						if (alternativeQstat == TRUE)
 							{
-								uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, paste("Univariate_LR1_coefficients_", names(envVariables[[h]]), sep=""))	
-								uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, paste("Univariate_LR1_R2_", names(envVariables[[h]]), sep=""))				
-								uniLRcoefficientsNames2 = cbind(uniLRcoefficientsNames2, paste("Univariate_LR2_coefficients_", names(envVariables[[h]]), sep=""))	
-								uniLRRsquaresNames2 = cbind(uniLRRsquaresNames2, paste("Univariate_LR2_R2_", names(envVariables[[h]]), sep=""))	
-								if (h > 1) uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1, paste("Univariate_LR1_delta_R2_", names(envVariables[[h]]), sep=""))
-								if (h > 1) uniLRdeltaRsquaresNames2 = cbind(uniLRdeltaRsquaresNames2, paste("Univariate_LR2_delta_R2_", names(envVariables[[h]]), sep=""))
+								uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1,paste("Univariate_LR1_coefficients_",names(envVariables[[h]]),sep=""))	
+								uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1,paste("Univariate_LR1_R2_",names(envVariables[[h]]),sep=""))		
+								uniLRcoefficientsNames2 = cbind(uniLRcoefficientsNames2,paste("Univariate_LR2_coefficients_",names(envVariables[[h]]),sep=""))	
+								uniLRRsquaresNames2 = cbind(uniLRRsquaresNames2,paste("Univariate_LR2_R2_",names(envVariables[[h]]),sep=""))	
+								if (h > 1) uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1,paste("Univariate_LR1_delta_R2_",names(envVariables[[h]]),sep=""))
+								if (h > 1) uniLRdeltaRsquaresNames2 = cbind(uniLRdeltaRsquaresNames2,paste("Univariate_LR2_delta_R2_",names(envVariables[[h]]),sep=""))
 							}	else		{
-								uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, paste("Univariate_LR_coefficients_", names(envVariables[[h]]), sep=""))	
-								uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, paste("Univariate_LR_R2_", names(envVariables[[h]]), sep=""))				
-								if (h > 1) uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1, paste("Univariate_LR_delta_R2_", names(envVariables[[h]]), sep=""))
+								uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, paste("Univariate_LR_coefficients_",names(envVariables[[h]]),sep=""))	
+								uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, paste("Univariate_LR_R2_", names(envVariables[[h]]),sep=""))				
+								if (h > 1) uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1, paste("Univariate_LR_delta_R2_",names(envVariables[[h]]),sep=""))
 							}
 						if (GLM == TRUE)
 							{
-								multiGLMcoefficientsNames = cbind(multiGLMcoefficientsNames, paste("Multivariate_GLM_coefficients_", names(envVariables[[h]]), sep=""))
+								multiGLMcoefficientsNames = cbind(multiGLMcoefficientsNames, paste("Multivariate_GLM_coefficients_",names(envVariables[[h]]),sep=""))
 								if (commonalityAnalysis == TRUE)
 									{
 										multiGLMCAuniqueContributionsNames = cbind(multiGLMCAuniqueContributionsNames,
@@ -1054,7 +1054,7 @@ if (nberOfRandomisations > 0)
 											{
 												fileName = paste(extractionFileName,"_",t,".csv",sep="")
 											}	else	{
-												fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv", sep="")
+												fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv",sep="")
 											}	
 										data = read.csv(fileName, h = T)
 										data = data[with(data, order(endYear, startYear)),]
@@ -1131,7 +1131,7 @@ if (nberOfRandomisations > 0)
 				if (rastersSimulations == TRUE)
 					{	
 						simRasters = list()
-						cat("Analysis on raster simulation ", s, "\n", sep="")
+						cat("Analysis on raster simulation ",s,"\n",sep="")
 						for (h in 2:length(hullRasters))
 							{
 								simRasters[[h]] = rasterSimulation(hullRasters[[h]], variogramModels[[h-1]]) 
@@ -1164,7 +1164,7 @@ if (nberOfRandomisations > 0)
 												if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
 												if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=F)
 												lines(points[hull,], lwd=0.5, col="black")
-												text1 = paste("randomisation of branch positions, sampled tree ", t, sep="")
+												text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
 												mtext(text1, col="black", cex=0.7, line=0)
 												# for (i in 1:dim(fromCoor[[t]])[1])
 													# {
@@ -1318,7 +1318,7 @@ if (nberOfRandomisations > 0)
 					{
 						simRasters = list()
 						simRasters = hullRasters
-						cat("Analysis of randomised branch positions ", s, "\n", sep="")
+						cat("Analysis of randomised branch positions ",s,"\n",sep="")
 						fromCoorRand = fromCoor; toCoorRand = toCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -1327,7 +1327,7 @@ if (nberOfRandomisations > 0)
 										if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
 										if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=F)
 										lines(points[hull,], lwd=0.5, col="black")
-										text1 = paste("randomisation of branch positions, sampled tree ", t, sep="")
+										text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
 										mtext(text1, col="black", cex=0.7, line=0)
 									}
 								for (i in 1:nberOfConnections[t])
@@ -1414,7 +1414,7 @@ if (nberOfRandomisations > 0)
 					{
 						simRasters = list()
 						simRasters = hullRasters
-						cat("Analysis of randomised branch positions ", s, "\n", sep="")
+						cat("Analysis of randomised branch positions ",s,"\n",sep="")
 						fromCoorRand = fromCoor; toCoorRand = toCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -1423,7 +1423,7 @@ if (nberOfRandomisations > 0)
 										if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
 										if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=T)
 										plot(sps, lwd=0.5, border="black", add=T)
-										text1 = paste("randomisation of branch positions, sampled tree ", t, sep="")
+										text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
 										mtext(text1, col="black", cex=0.7, line=0)
 									}
 								for (i in 1:nberOfConnections[t])
@@ -1557,7 +1557,7 @@ if (nberOfRandomisations > 0)
 					{
 						if (distPermutations == TRUE)
 							{
-								cat("Analysis on environmental distances permutation ", s, "\n", sep="")
+								cat("Analysis on environmental distances permutation ",s,"\n",sep="")
 								for (h in 1:length(envVariables))
 									{
 										for (t in 1:nberOfExtractionFiles)
@@ -1785,7 +1785,7 @@ if (nberOfRandomisations > 0)
 											{	
 												for (t in 1:nberOfExtractionFiles)
 													{
-														distVariables = paste("dispersalTime ~ ", names(envVariables[[1]]), sep="")
+														distVariables = paste("dispersalTime ~ ",names(envVariables[[1]]),sep="")
 														matMultiGLM = matrix(nrow=length(dispersalTime[[t]]), ncol=(length(envVariables)+1))
 														matMultiGLM[,1] = dispersalTime[[t]]
 														matMultiGLM[,2] = distances[[t]][,1]
@@ -1794,7 +1794,7 @@ if (nberOfRandomisations > 0)
 														for (h in 2:length(envVariables))
 															{
 																matMultiGLMNames = c(matMultiGLMNames, names(envVariables[[h]]))
-																distVariables = paste(distVariables, " + ", names(envVariables[[h]]), sep="")
+																distVariables = paste(distVariables," + ",names(envVariables[[h]]),sep="")
 																if (h == i)
 																	{
 																		matMultiGLM[,h+1] = distancesSim[[t]][,h]
@@ -1832,7 +1832,7 @@ if (nberOfRandomisations > 0)
 									}	else		{
 										for (t in 1:nberOfExtractionFiles)
 											{
-												distVariables = paste("dispersalTime ~ ", names(envVariables[[1]]), sep="")
+												distVariables = paste("dispersalTime ~ ",names(envVariables[[1]]),sep="")
 												matMultiGLM = matrix(nrow=length(dispersalTime[[t]]), ncol=(length(envVariables)+1))
 												matMultiGLM[,1] = dispersalTime[[t]]
 												matMultiGLM[,2] = distances[[t]][,1]
@@ -1841,8 +1841,8 @@ if (nberOfRandomisations > 0)
 												for (h in 2:length(envVariables))
 													{
 														matMultiGLMNames = c(matMultiGLMNames, names(envVariables[[h]]))
-														distVariables = paste(distVariables, " + ", names(envVariables[[h]]), sep="")
-														# distVariables = paste(distVariables, " + ", "distancesSim[[", t, "]][,", h, "]", sep="")
+														distVariables = paste(distVariables," + ",names(envVariables[[h]]),sep="")
+														# distVariables = paste(distVariables," + ","distancesSim[[", t, "]][,", h, "]",sep="")
 														matMultiGLM[,h+1] = distancesSim[[t]][,h]	
 													}
 												matMultiGLM = as.data.frame(matMultiGLM)
@@ -2188,7 +2188,7 @@ if (nberOfRandomisations > 0)
 		# 3.5. Creation of the pdf file containing histograms:
 		if (impactOnVelocity == TRUE)
 			{
-				fileName = paste(outputName, "_randomisation_results.pdf", sep="")	
+				fileName = paste(outputName,"_randomisation_results.pdf",sep="")	
 				if ((plottingHistograms == TRUE)&(nberOfExtractionFiles > 49)&(nberOfRandomisations > 1))
 					{
 						if (GLM == TRUE)
@@ -2377,7 +2377,7 @@ if (nberOfRandomisations > 0)
 		# 3.6. Creation of the text files containing randomisation results:
 		if ((nberOfRandomisations > 1) & (impactOnVelocity == TRUE))
 			{
-				fileName = paste(outputName, "_randomisation_results.txt", sep="")
+				fileName = paste(outputName,"_randomisation_results.txt",sep="")
 				if (GLM == TRUE)
 					{
 						mat = cbind(uniLRRsquaresRandomisationPValues1[,2:dim(uniLRRsquaresRandomisationPValues1)[2]], 
@@ -2437,13 +2437,13 @@ if (nberOfRandomisations > 0)
 						if (GLM == TRUE)
 							{
 								multiGLMcoefficientPValuesNames = cbind(multiGLMcoefficientPValuesNames,
-																		paste("Multivariate_GLM_coefficient_p-values_", names(envVariables[[h]]), sep=""))
+																		paste("Multivariate_GLM_coefficient_p-values_",names(envVariables[[h]]),sep=""))
 								if (commonalityAnalysis == TRUE)
 									{
 										multiGLMCAuniqueContributionsPValuesNames = cbind(multiGLMCAuniqueContributionsPValuesNames, 
-										paste("Multivariate_GLM_CA_unique_contributions_", names(envVariables[[h]]), sep=""))
+										paste("Multivariate_GLM_CA_unique_contributions_",names(envVariables[[h]]),sep=""))
 										multiGLMCAcommonContributionsPValuesNames = cbind(multiGLMCAcommonContributionsPValuesNames,
-										paste("Multivariate_GLM_CA_common_contributions_", names(envVariables[[h]]), sep=""))
+										paste("Multivariate_GLM_CA_common_contributions_",names(envVariables[[h]]),sep=""))
 									}
 							}
 					}
@@ -2463,7 +2463,7 @@ if (nberOfRandomisations > 0)
 			}
 		if ((nberOfRandomisations > 1) & (impactOnDirection == TRUE))
 			{
-				fileName = paste(outputName, "_randomisation_results.txt", sep="")
+				fileName = paste(outputName,"_randomisation_results.txt",sep="")
 				mat = cbind(meanEnvValuesRandomisationPValues[,2:dim(meanEnvValuesRandomisationPValues)[2]], 
 							rateOfPositiveDifferencesRandomisationPValues[,2:dim(rateOfPositiveDifferencesRandomisationPValues)[2]])
 				if (nberOfExtractionFiles == 1)
@@ -2474,8 +2474,8 @@ if (nberOfRandomisations > 0)
 				meanEnvValuesPValuesNames = c(); rateOfPositiveDifferencesPValuesNames = c()
 				for (h in 2:length(envVariables))
 					{
-						meanEnvValuesPValuesNames = cbind(meanEnvValuesPValuesNames, paste("Direction_E_p-values_", names(envVariables[[h]]), sep=""))
-						rateOfPositiveDifferencesPValuesNames = cbind(rateOfPositiveDifferencesPValuesNames, paste("Direction_R_p-values_", names(envVariables[[h]]), sep=""))
+						meanEnvValuesPValuesNames = cbind(meanEnvValuesPValuesNames,paste("Direction_E_p-values_",names(envVariables[[h]]),sep=""))
+						rateOfPositiveDifferencesPValuesNames = cbind(rateOfPositiveDifferencesPValuesNames, paste("Direction_R_p-values_",names(envVariables[[h]]),sep=""))
 					}
 				names = cbind(meanEnvValuesPValuesNames, rateOfPositiveDifferencesPValuesNames)
 				colnames(mat) = names; write.table(mat, file=fileName, row.names=F, quote=F, sep="\t")

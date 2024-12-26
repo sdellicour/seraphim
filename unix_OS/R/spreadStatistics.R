@@ -25,7 +25,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 	weightedDiffusionCoefficientList = list()
 	numberOfBranchesList = list()
 	dispersalOrientationList = list()
-	cat("Estimation of summary statistics", "\n", sep="")
+	cat("Estimation of summary statistics","\n",sep="")
 	onlyOneAncestor = TRUE; extractionsWithMoreThanOneAncestors = c()
 	if ((timeSlices==0)|is.na(timeSlices)|is.null(timeSlices)) onlyOneAncestor = FALSE
 	diffusionCoefficientEvolutionGraphs = FALSE
@@ -62,8 +62,8 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					minLat = min(min(data[,"endLat"]),min(data[,"startLat"]))
 					maxLat = max(max(data[,"endLat"]),max(data[,"startLat"]))
 					minStartYear = min(data[,"startYear"])
-		    			minEndYear = min(data[,"startYear"])
-		    			maxEndYear = max(data[,"endYear"])
+					minEndYear = min(data[,"startYear"])
+					maxEndYear = max(data[,"endYear"])
 				}	else	{
 					if (minLon > min(min(data[,"endLon"]),min(data[,"startLon"]))) minLon = min(min(data[,"endLon"]),min(data[,"startLon"]))
 					if (maxLon < max(max(data[,"endLon"]),max(data[,"startLon"]))) maxLon = max(max(data[,"endLon"]),max(data[,"startLon"]))
@@ -111,14 +111,14 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			for (i in 1:nberOfConnections)
 				{
 					dispersalTime = data[i,"endYear"]-data[i,"startYear"]
-		    			BranchDispersalVelocity = data[i,"greatCircleDist_km"]/(dispersalTime)
-		    			branchOriginalDiffusionCoefficient = (data[i,"greatCircleDist_km"]^2)/(4*dispersalTime)
-		    			branchMeasures[i,1] = BranchDispersalVelocity
-		    			branchMeasures[i,2] = branchOriginalDiffusionCoefficient
-		    			weightedBranchDispersalVelocity_numerator = weightedBranchDispersalVelocity_numerator + data[i,"greatCircleDist_km"]
-		    			weightedBranchDispersalVelocity_denominator = weightedBranchDispersalVelocity_denominator + dispersalTime
-		    			weightedDiffusionCoefficient_numerator = weightedDiffusionCoefficient_numerator + (data[i,"greatCircleDist_km"]^2)
-		    			weightedDiffusionCoefficient_denominator = weightedDiffusionCoefficient_denominator + (4*dispersalTime)
+					BranchDispersalVelocity = data[i,"greatCircleDist_km"]/(dispersalTime)
+					branchOriginalDiffusionCoefficient = (data[i,"greatCircleDist_km"]^2)/(4*dispersalTime)
+					branchMeasures[i,1] = BranchDispersalVelocity
+					branchMeasures[i,2] = branchOriginalDiffusionCoefficient
+					weightedBranchDispersalVelocity_numerator = weightedBranchDispersalVelocity_numerator + data[i,"greatCircleDist_km"]
+					weightedBranchDispersalVelocity_denominator = weightedBranchDispersalVelocity_denominator + dispersalTime
+					weightedDiffusionCoefficient_numerator = weightedDiffusionCoefficient_numerator + (data[i,"greatCircleDist_km"]^2)
+					weightedDiffusionCoefficient_denominator = weightedDiffusionCoefficient_denominator + (4*dispersalTime)
 		  		}
 		  	branchVelocities = c(branchVelocities, branchMeasures[,1])
 			sd_var_velocity[t,] = cbind(sd(branchMeasures[,1]), var(branchMeasures[,1]))
@@ -219,19 +219,19 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 													pointLocationY = data[j,"startLat"]+((data[j,"endLat"]-data[j,"startLat"])*timeProportion)
 													pointLocation = cbind(pointLocationX, pointLocationY)
 													distance1 = rdist.earth(originLocation, pointLocation, miles=F, R=NULL)				    		 		
-						    							coordinatesOfStartNode = cbind(data[j,"startLon"], data[j,"startLat"])
-						    							distance2 = rdist.earth(coordinatesOfStartNode, pointLocation, miles=F, R=NULL)
-						    							originNode = data[j,"node1"]
-						    							while (originNode != ancestralNode)
-						    								{
-						    									index = which(data[,"node2"]==originNode)[1]
-						    									coordinatesOfEndNode = cbind(data[index,"endLon"], data[index,"endLat"])
-						    									coordinatesOfStartNode = cbind(data[index,"startLon"], data[index,"startLat"])
-						    									distance2 = distance2 + rdist.earth(coordinatesOfStartNode, coordinatesOfEndNode, miles=F, R=NULL)
-						    									originNode = data[index,"node1"]
-						    								}
+													coordinatesOfStartNode = cbind(data[j,"startLon"], data[j,"startLat"])
+													distance2 = rdist.earth(coordinatesOfStartNode, pointLocation, miles=F, R=NULL)
+													originNode = data[j,"node1"]
+													while (originNode != ancestralNode)
+														{
+															index = which(data[,"node2"]==originNode)[1]
+															coordinatesOfEndNode = cbind(data[index,"endLon"], data[index,"endLat"])
+															coordinatesOfStartNode = cbind(data[index,"startLon"], data[index,"startLat"])
+															distance2 = distance2 + rdist.earth(coordinatesOfStartNode, coordinatesOfEndNode, miles=F, R=NULL)
+															originNode = data[index,"node1"]
+														}
 													if (distance1 > maxDistance1) maxDistance1 = distance1
-						    							if (distance2 > maxDistance2) maxDistance2 = distance2
+													if (distance2 > maxDistance2) maxDistance2 = distance2
 												}
 											
 										}
@@ -449,7 +449,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 		}
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE)&((onlyOneAncestor == TRUE)|(discardExtractionTablesWithMoreThanOneAncestorForWavefrontPlot == TRUE)))
 		{
-			cat("Building wavefront distance evolution graphs", "\n", sep="")
+			cat("Building wavefront distance evolution graphs","\n",sep="")
 			wavefrontDistanceTimeInterval = (maxEndYear-minStartYear)/wavefrontDistanceSlices
 			slicedTimes = matrix(nrow=1, ncol=(wavefrontDistanceSlices+1))
 			lower_l_1 = matrix(nrow=1, ncol=(wavefrontDistanceSlices+1))
@@ -490,7 +490,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 				}
 			yLim1 = c(min(waveFrontDistances1List[[1]][,2]),maxDistance1)
 			yLim2 = c(min(waveFrontDistances1List[[1]][,2]),maxDistance2)
-			treeIDs = paste("distance_tree", treeIDs, sep="")
+			treeIDs = paste("distance_tree",treeIDs,sep="")
 			tab = matrix(nrow=length(slicedTimes), ncol=2)
 			tab[,1] = slicedTimes; tab[,2] = waveFrontDistances1MeanValue; colnames(tab) = c("time","distance")	
 			write.table(tab, file=paste(outputName,"_mean_spatial_wavefront_distance.txt",sep=""), row.names=F, quote=F, sep="\t")
@@ -590,7 +590,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 		}
 	if ((nberOfExtractionFiles > 1)&(onlyTipBranches == FALSE))
 		{
-			cat("Building diffusion coefficient evolution graphs", "\n", sep="")
+			cat("Building diffusion coefficient evolution graphs","\n",sep="")
 			slicedTimes = matrix(nrow=1, ncol=diffusionCoefficientSlices)
 			lower_l = matrix(nrow=1, ncol=diffusionCoefficientSlices); upper_l = matrix(nrow=1, ncol=diffusionCoefficientSlices)
 			numberOfBranchesValues = matrix(nrow=nberOfExtractionFiles, ncol=diffusionCoefficientSlices)
@@ -620,7 +620,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					meanDiffusionCoefficientsMedianValue[1,i] = median(meanDiffusionCoefficientsValues[,i], na.rm=T)
 				}
 			yLim = c(0, max(upper_l, na.rm=T))
-			treeIDs = paste("distance_tree", treeIDs, sep="")
+			treeIDs = paste("distance_tree",treeIDs,sep="")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = meanDiffusionCoefficientsMeanValue
 			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","diffusion_coefficient","number_of_branches")	
@@ -695,7 +695,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					weightedDiffusionCoefficientsMedianValue[1,i] = median(weightedDiffusionCoefficientsValues[,i], na.rm=T)
 				}
 			yLim = c(0, max(upper_l, na.rm=T))
-			treeIDs = paste("distance_tree", treeIDs, sep="")
+			treeIDs = paste("distance_tree",treeIDs,sep="")
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = weightedDiffusionCoefficientsMeanValue
 			tab[,3] = numberOfBranchesMeanValue; colnames(tab) = c("time","diffusion_coefficient","number_of_branches")	

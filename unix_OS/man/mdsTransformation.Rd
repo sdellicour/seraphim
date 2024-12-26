@@ -4,30 +4,30 @@
 A function to transform sampling coordinates according to multidimensional scaling (MDS) transformations based on pairwise environmental distances
 }
 \description{
-This function transforms sampling coordinates according to multidimensional scaling (MDS) analyses based on pairwise environmental distances computed among sampling points. A MDS analysis is performed for each specified environmental raster and original sampling coordinates are replaced by new coordinates found on two main MDS dimensions. Original sampling coordinates have to be contained in sequence names available in a fasta file or in tab-delimited text file only containing these coordinates. 
+This function transforms sampling coordinates according to multidimensional scaling (MDS) analyses based on pairwise environmental distances computed among sampling points. A MDS analysis is performed for each specified environmental raster, and original sampling coordinates are replaced by new coordinates found on two main MDS dimensions. Original sampling coordinates have to be contained in sequence names available in a fasta file or in tab-delimited text file containing these coordinates (see below for further details). 
 }
 \usage{
 mdsTransformation(input,
-              envVariables,
-              pathModel = 2,
-              resistances = list(),
-              avgResistances = list(),
-              fourCells = FALSE,
-              outputName = "",
-              OS = "Unix")
+				  envVariables,
+				  pathModel = 2,
+				  resistances = list(),
+				  avgResistances = list(),
+				  fourCells = FALSE,
+				  outputName = "",
+				  OS = "Unix")
 }
 \arguments{
-  \item{input}{ list of sequences in a fasta format or data frame only containing the sampling coordinates to transform. In the first case, the fasta object has to be obtained by reading a fasta file withe the "read.dna" function of the "ape" package: read.dna ("file_name.fasta", format="fasta"). Important requirement: in the fasta file, the sequence names have to contain the following details in a specific order and separated by underscores: (1) sequence ID (e.g. GenBank accession number), (2) sampling date in a decimal format (e.g. 2015.47), (3) latitude coordinate and (4) longitude coordinate in a decimal format. Here is an example: ">hOH10_1997.2_41.053_-80.706". See the example files for further details. In the second case, the text file has to contain only two columns, one with the latitude and one with the longitude coordinates of each sampled sequence. }
-  \item{envVariables}{ list of environmental rasters to that will be used to compute pairwise environmental distances on which MDS analyses will be based. }
-  \item{pathModel}{ path taken model to use for computing environmental distances: "1" (straight-line path model), "2" (least-cost path model, Dijkstra 1959) or "3" (Circuitscape path model, McRae 2006). }
-  \item{resistances}{ list of boolean variables corresponding to the "envVariables" list. These boolean variables specify if the rasters of the "envVariables" list have to be treated as resistance or conductance factors (only useful for the least-cost and Circuitscape path models). }
-  \item{avgResistances}{ list of boolean variables corresponding to the "envVariables" list. These boolean variables specify if the raster cells have to be connected by average resistance (TRUE) or average conductance (FALSE). This option is only useful for the Circuitscape path model. }
-  \item{fourCells}{ boolean variable specifying if a cell is connected to its four (TRUE) or eight (FALSE) neighbours. This option is only important for the Circuitscape path model. }
+  \item{input}{ list of sequences in a fasta format or data frame containing the sampling coordinates to transform. In the first case, the fasta object has to be obtained by reading a fasta file withe the "read.dna" function of the "ape" package: read.dna ("file_name.fasta", format="fasta"). Important requirement: in the fasta file, the sequence names have to contain the following details in a specific order and separated by underscores: (i) sequence ID (e.g., GenBank accession number), (ii) sampling date in a decimal format (e.g., 2015.47), (iii) latitude coordinate and (iv) longitude coordinate in a decimal format. Here is an example: ">hOH10_1997.2_41.053_-80.706". See the example files for further details. In the second case, the text file has to contain only four columns: (i) the genomic sequence IDs, (ii) their collection dates, and their sampling (iii) latitude and (iv) longitude coordinates to transform. }
+  \item{envVariables}{ list of environmental rasters that will be used to compute the pairwise environmental distances on which MDS analyses will be based. }
+  \item{pathModel}{ path model to use for computing environmental distances: "1" (straight-line path model), "2" (least-cost path model, Dijkstra 1959) or "3" (Circuitscape path model, McRae 2006). }
+  \item{resistances}{ list of boolean variables corresponding to the "envVariables" list. These boolean variables specify if the rasters of the "envVariables" list have to be treated as resistance or conductance factors (only relevant for the least-cost and Circuitscape path models). }
+  \item{avgResistances}{ list of boolean variables corresponding to the "envVariables" list. These boolean variables specify if the raster cells have to be connected by average resistance (TRUE) or average conductance (FALSE). This option is only relevant for the Circuitscape path model. }
+  \item{fourCells}{ boolean variable specifying if a given raster cell should be connected to either its four first-order (TRUE) or eight first- and second-order (FALSE). This option is only relevant for the least-cost and Circuitscape path models. }
   \item{outputName}{ name (prefix) to give to the different output files. }
   \item{OS}{ operating system on which the function is used ("Unix" or "Windows"). }
 }
 \value{
-For each environmental raster that is provided, the function first computes pairwise environmental distances among all sampling coordinates. These pairwise environmental distances are then used to perform MDS analyses and tranform the original geographic coordinates by taking new values on the two main MDS dimensions. In practice, new fasta or text files are generated, one per MDS analysis that is performed. In the case of new fasta files, only the sequence names are modified: longitude and latitude coordinates are updated according to the MDS transformation and thus indicate the new position of each sampled sequence in the transformed space. If text files are generated, these files will then only contain the transformed coordinates.
+For each environmental raster that is provided, the function first computes pairwise environmental distances among all sampling coordinates. These pairwise environmental distances are then used to perform MDS analyses and tranform the original geographic coordinates by taking new values on the two main MDS dimensions. In practice, new fasta or text files are generated, one per MDS analysis that is performed. In the case of new fasta files, only the sequence names are modified: longitude and latitude coordinates are updated according to the MDS transformation and thus indicate the new position of each sampled sequence in the transformed space. If text files are generated, these files will then contain the transformed coordinates.
 }
 \author{
 Simon Dellicour

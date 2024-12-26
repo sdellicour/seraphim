@@ -62,7 +62,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 						{
 							fileName = paste(extractionFileName,"_",t,".csv",sep="")
 						}	else	{
-							fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv", sep="")
+							fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv",sep="")
 						}	
 					data = read.csv(fileName, h = T)
 					data = data[with(data, order(endYear, startYear)),]
@@ -189,7 +189,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 															if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
 															if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=F)
 															lines(points[hull,], lwd=0.5, col="black")
-															text1 = paste("randomisation of branch positions, sampled tree ", t, sep="")
+															text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
 															mtext(text1, col="black", cex=0.7, line=0)
 															# for (i in 1:dim(fromCoor[[t]])[1])
 																# {
@@ -347,7 +347,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 					if (branchRandomisation2 == TRUE)
 						{
 							simRasters = list(); simRasters = hullRasters
-							cat("Analysis of randomised branch positions ", s, "\n", sep="")
+							cat("Analysis of randomised branch positions ",s,"\n",sep="")
 							fromCoorRand = fromCoor; toCoorRand = toCoor
 							buffer = list()
 							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
@@ -359,7 +359,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 													if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
 													if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=F)
 													lines(points[hull,], lwd=0.5, col="black")
-													text1 = paste("randomisation of branch positions, sampled tree ", t, sep="")
+													text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
 													mtext(text1, col="black", cex=0.7, line=0)
 												}
 											for (i in 1:nberOfConnections[t])
@@ -450,7 +450,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 					if (branchRandomisation1 == TRUE)
 						{
 							simRasters = list(); simRasters = hullRasters
-							cat("Analysis of randomised branch positions ", s, "\n", sep="")
+							cat("Analysis of randomised branch positions ",s,"\n",sep="")
 							fromCoorRand = fromCoor; toCoorRand = toCoor
 							buffer = list()
 							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
@@ -462,7 +462,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 													if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
 													if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=T)
 													plot(sps, lwd=0.5, border="black", add=T)
-													text1 = paste("randomisation of branch positions, sampled tree ", t, sep="")
+													text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
 													mtext(text1, col="black", cex=0.7, line=0)
 												}
 											for (i in 1:nberOfConnections[t])

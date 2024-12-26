@@ -1,7 +1,7 @@
 circuitScape2 = function(envVariable, envVariableName, resistance=TRUE, avgResistance=TRUE, fourCells=FALSE, fromCoor, toCoor, OS="Unix", prefix="", ID="", nberOfCores_CS=1)	{
 	
 	mat = matrix(nrow=dim(as.matrix(fromCoor))[1], ncol=1)
-	folder = paste(prefix, "_CStemp_", ID, sep="")
+	folder = paste(prefix,"_CStemp_", ID,sep="")
 	if (folder%in%dir(getwd())==FALSE) dir.create(file.path(getwd(), folder))
 	cs.text = file(paste(folder, "CS_script.jl", sep="/"))
 	line1 = "using Circuitscape"; line2 = paste0("compute(\"",folder,"/CS_temporary.ini\")")

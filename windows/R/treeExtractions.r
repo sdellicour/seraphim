@@ -33,14 +33,14 @@ treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling
 	# buffer = foreach(i = 1:length(sampledNewTreeListMinusBurnIn)) %dopar% {
 	for (i in 1:length(sampledNewTreeListMinusBurnIn)) {	
 			extractionsID = runif(1,0,1)
-			properTreeName = paste("ProperTree_", extractionsID, ".tree", sep="")
+			properTreeName = paste("ProperTree_",extractionsID,".tree",sep="")
 			tree = sampledNewTreeListMinusBurnIn[i]
 			if (MCCtree == FALSE)
 				{
 					treeID = gsub(pattern="\\[.+\\];", replacement="", tree)
 					treeID = gsub(pattern=" ", replacement="", treeID)
 					treeID = unlist(strsplit(treeID, "_"))[2]
-					cat("Exctracting information from sampled tree n°", treeID, "\n", sep="");
+					cat("Exctracting information from sampled tree n°",treeID,"\n",sep="")
 				}	else		{
 					treeID = "MCC_tree"
 				}
@@ -100,7 +100,7 @@ treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling
 				{
 					tree3 = tree
 					val = tab[,j]
-					tree4 = paste(val, tree2, sep="")
+					tree4 = paste(val,tree2,sep="")
 						# tree4 will only contain one coordinate and the branch length
 					for (k in all)
 						{
@@ -200,7 +200,7 @@ treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling
 	 				mat = cbind(mat,treeIDs)
 	 		
 	 				file.remove(properTreeName)
-					file = as.character(paste(localTreesDirectory, "/TreeExtractions_", i, ".csv", sep=""))
+					file = as.character(paste(localTreesDirectory,"/TreeExtractions_",i,".csv",sep=""))
 					write.csv(mat, file, row.names=F, quote=F)
 				}	else	{
 					file.remove(properTreeName)

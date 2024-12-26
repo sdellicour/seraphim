@@ -62,8 +62,8 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 			if("CS_envVariables"%in%dir(getwd())==FALSE) dir.create(file.path(getwd(), "CS_envVariables"))
 			for (i in 1:length(envVariables))
 				{
-					# name = paste("CS_envVariables/", gsub("_0.","_0,",names(envVariables[[i]])), "_cs.asc", sep="")
-					name = paste("CS_envVariables/", names(envVariables[[i]]), "_cs.asc", sep="")
+					# name = paste("CS_envVariables/",gsub("_0.","_0,",names(envVariables[[i]])),"_cs.asc",sep="")
+					name = paste("CS_envVariables/",names(envVariables[[i]]),"_cs.asc",sep="")
 					writeRaster(envVariables[[i]], name, overwrite=T)
 				}
 		}

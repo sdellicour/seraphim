@@ -1,13 +1,9 @@
-spreadFactors = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), pathModel=2, resistances=list(), avgResistances=list(), 
-						 fourCells=FALSE, nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE, nberOfCores=1, 
-						 OS="Unix", juliaCSImplementation=FALSE, simulations=FALSE, randomisations=FALSE, minimumConvexHull=TRUE) {
+isolationByResistance = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), pathModel=2, resistances=list(), avgResistances=list(), 
+								 fourCells=FALSE, nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE, nberOfCores=1, 
+								 OS="Unix", juliaCSImplementation=FALSE, simulations=FALSE, randomisations=FALSE, minimumConvexHull=TRUE) {
 
 reportingBothQstats = TRUE; # simulations = FALSE; randomisations = FALSE
-impactOnVelocity = TRUE; impactOnDirection = FALSE
-if (pathModel == 0)
-	{
-		impactOnVelocity = FALSE; impactOnDirection = TRUE
-	}
+impactOnIsolation = TRUE
 registerDoMC(cores=nberOfCores); nberOfCores_CS = 1
 preLogTransformation = function(x, m)
 	{
@@ -84,17 +80,13 @@ if ((simulations == FALSE)&(randomisations == TRUE))
 	{
 		extractionFileName = "TreeRandomisation"
 	}
+nberOfTipNodes = rep(NA, nberOfExtractionFiles)
 nberOfConnections = rep(NA, nberOfExtractionFiles); totalNberOfConnections = 0
-node1 = list(); node2 = list(); fromCoor = list(); toCoor = list()
+node1 = list(); node2 = list(); fromCoor = list(); toCoor = list(); samplingCoor = list()
 dispersalTime = list(); treeIDs = list()
-if (impactOnVelocity == TRUE)
+if (impactOnIsolation == TRUE)
 	{
 		distances = list()
-	}
-if (impactOnDirection == TRUE)
-	{
-		meanEnvValues = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		rateOfPositiveDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 	}
 for (t in 1:nberOfExtractionFiles)
 	{
@@ -109,12 +101,15 @@ for (t in 1:nberOfExtractionFiles)
 		node2[[t]] = matrix(nrow=dim(data)[1], ncol=1); node2[[t]][] = data[,"node2"]
 		fromCoor[[t]] = matrix(nrow=dim(data)[1], ncol=2); fromCoor[[t]][] = cbind(data[,"startLon"], data[,"startLat"])
 		toCoor[[t]] = matrix(nrow=dim(data)[1], ncol=2); toCoor[[t]][] = cbind(data[,"endLon"], data[,"endLat"])
+		tipIndices = which(!data[,"node2"]%in%data[,"node1"]); samplingCoor[[t]] = matrix(nrow=length(tipIndices), ncol=2)
+		samplingCoor[[t]][] = cbind(data[tipIndices,"endLon"], data[tipIndices,"endLat"]); nberOfTipNodes[t] = length(tipIndices)
 		dispersalTime[[t]] = matrix(nrow=dim(data)[1], ncol=1); colnames(dispersalTime[[t]]) = "dispersalTime"
 		dispersalTime[[t]][] = data[,"endYear"]-data[,"startYear"]
 		totalNberOfConnections = totalNberOfConnections + dim(data)[1]
-		if (impactOnVelocity == TRUE)
+		if (impactOnIsolation == TRUE)
 			{
-				distances[[t]] = matrix(nrow=dim(data)[1], ncol=length(envVariables))
+				nRows = ((nberOfTipNodes[t]*nberOfTipNodes[t])-nberOfTipNodes[t])/2
+				distances[[t]] = matrix(nrow=nRows, ncol=length(envVariables))
 			}
 		if (("treeID"%in%colnames(data)) == TRUE)
 			{
@@ -171,11 +166,67 @@ if (circuitscapeDistance == TRUE)
 			}
 	}
 
-# 1. Computation of environmental distances or extraction of environmental values
+# 1. Computation of all the patristic and environmental distances
 
+cat("Computing patristic distances","\n",sep="")
+patristicDistances = list(); buffer = list()
+buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
+# for (t in 1:nberOfExtractionFiles) {
+		if (nchar(localTreesDirectory) == 0)
+			{
+				fileName = paste(extractionFileName,"_",t,".csv",sep="")
+			}	else	{
+				fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv", sep="")
+			}	
+		data = read.csv(fileName, head=T); nberOfConnections[t] = dim(data)[1]
+		tipNodeIndices = which(!data[,"node2"]%in%data[,"node1"])
+		distTree = matrix(nrow=length(tipNodeIndices), ncol=length(tipNodeIndices))
+		for (i in 2:dim(distTree)[1])
+			{
+				for (j in 1:(i-1))
+					{
+						index1 = tipNodeIndices[i]
+						index2 = tipNodeIndices[j]
+						indices1 = index1; root = FALSE
+						while (root == FALSE)
+							{	
+								if (data[indices1[length(indices1)],"node1"]%in%data[,"node2"])
+									{
+										indices1 = c(indices1, which(data[,"node2"]==data[indices1[length(indices1)],"node1"]))
+									}	else	{
+										root = TRUE
+									}
+							}
+						indices2 = index2; root = FALSE
+						while (root == FALSE)
+							{	
+								if (data[indices2[length(indices2)],"node1"]%in%data[,"node2"])
+									{
+										indices2 = c(indices2, which(data[,"node2"]==data[indices2[length(indices2)],"node1"]))
+									}	else	{
+										root = TRUE
+									}
+							}
+						indices3 = indices1[which(indices1%in%indices2)]; patristic_dis = NULL
+						if (length(indices3) == 0)
+							{
+								patristic_dis = sum(data[c(indices1,indices2),"length"])
+							}	else	{
+								patristic_dis = sum(data[c(indices1[which(!indices1%in%indices3)],indices2[which(!indices2%in%indices3)]),"length"])
+							}
+						distTree[i,j] = patristic_dis; distTree[i,j] = patristic_dis
+					}
+			}
+		# patristicDistances[[t]] = distTree[lower.tri(distTree)]
+		distTree[lower.tri(distTree)]
+	}
+for (t in 1:length(buffer))
+	{
+		patristicDistances[[t]] = buffer[[t]]
+	}
 for (h in 1:length(envVariables))
 	{
-		if (impactOnVelocity == TRUE)
+		if (impactOnIsolation == TRUE)
 			{
 				if (straightLineDistance == TRUE) cat("Computing environmental distances (straight-line path model) for ",names(envVariables[[h]])[1],"\n",sep="")
 				if (leastCostDistance == TRUE) cat("Computing environmental distances (least-cost path model) for ",names(envVariables[[h]])[1],"\n",sep="")
@@ -198,66 +249,61 @@ for (h in 1:length(envVariables))
 				buffer = list()
 				buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
 				# for (t in 1:nberOfExtractionFiles) {
-						mat = matrix(nrow=nberOfConnections[t], ncol=1)
+						mat = matrix(nrow=dim(samplingCoor[[t]])[1], ncol=dim(samplingCoor[[t]])[1])
 						if (straightLineDistance == TRUE)
 							{
-								linesList = list()
-								for (i in 1:length(fromCoor[[t]][,1]))
+								linesList = list(); c = 0
+								for (i in 2:dim(samplingCoor[[t]])[1])
 									{
-										points = rbind(fromCoor[[t]][i,], toCoor[[t]][i,])
-										linesList[[i]] = Lines(list(Line(points)),i)
+										for (j in 1:(i-1))
+											{
+												points = rbind(samplingCoor[[t]][i,], samplingCoor[[t]][j,])
+												c = c+1; linesList[[c]] = Lines(list(Line(points)),c)
+											}
 									}
 								lines = SpatialLines(linesList)
-								extractions = raster::extract(hullRasters[[h]], lines)
-								for (i in 1:length(fromCoor[[t]][,1]))
+								extractions = raster::extract(hullRasters[[h]], lines); c = 0
+								for (i in 2:length(samplingCoor[[t]][,1]))
 									{
-										mat[i] = sum(extractions[[i]], na.rm=T)
+										for (j in 1:(i-1))
+											{
+												c = c+1; mat[i,j] = sum(extractions[[c]], na.rm=T); mat[j,i] = mat[i,j]
+											}
 									}
 							}
 						if (leastCostDistance == TRUE)
 							{
-								mat[] = diag(costDistance(trEnvVariableCorr, fromCoor[[t]], toCoor[[t]]))									
+								mat[] = costDistance(trEnvVariableCorr, samplingCoor[[t]], samplingCoor[[t]])
 							}
 						if (circuitscapeDistance == TRUE)
 							{
 								envVariableName = paste("CS_rasters/",names(hullRasters[[h]]),"_",outputName,"_cs",extensions[h],sep="")
-								branchesNotNA = which(!((is.na(raster::extract(hullRasters[[h]], fromCoor[[t]][])))
-													  |(is.na(raster::extract(hullRasters[[h]], toCoor[[t]][])))))
-								fromCoor_temp = fromCoor[[t]][branchesNotNA,]; toCoor_temp = toCoor[[t]][branchesNotNA,]
+								samplingPointNotNA = which(!(is.na(raster::extract(hullRasters[[h]], samplingCoor[[t]][]))))
+								samplingCoor_temp = samplingCoor[[t]][samplingPointNotNA,]
 								if (juliaCSImplementation == FALSE)
 									{
-										mat[branchesNotNA,1] = circuitScape1(hullRasters[[h]], envVariableName, resistances[[h]], avgResistances[[h]],
-																			 fourCells, fromCoor_temp, toCoor_temp, OS, outputName, t, nberOfCores_CS)
+										mat[samplingPointNotNA,samplingPointNotNA] = circuitScape1(hullRasters[[h]], envVariableName, resistances[[h]], avgResistances[[h]],
+																			 					   fourCells, samplingCoor_temp, samplingCoor_temp, OS, outputName, t, nberOfCores_CS)
 									}	else	{
-										mat[branchesNotNA,1] = circuitScape2(hullRasters[[h]], envVariableName, resistances[[h]], avgResistances[[h]],
-																			 fourCells, fromCoor_temp, toCoor_temp, OS, outputName, t, nberOfCores_CS)
+										mat[samplingPointNotNA,samplingPointNotNA] = circuitScape2(hullRasters[[h]], envVariableName, resistances[[h]], avgResistances[[h]],
+																			 					   fourCells, samplingCoor_temp, samplingCoor_temp, OS, outputName, t, nberOfCores_CS)
 									}
-							}			
-						colnames(mat) = names(envVariables[[h]])
+							}
 						# buffer[[t]] = mat
 						mat
 					}		
 				for (t in 1:length(buffer))
 					{
-						buffer[[t]][!is.finite(buffer[[t]][])] = NA # least-cost case
-						buffer[[t]][buffer[[t]][]==-1] = NA # CircuitScape case
-						buffer[[t]][buffer[[t]][]==-777] = NA # NA value in Circuitscape
-						distances[[t]][,h] = buffer[[t]][]
-					}
-			}
-		if (impactOnDirection == TRUE)
-			{
-				for (t in 1:nberOfExtractionFiles)
-					{
-						envValues = 0; ancestralNodes = unique(node1[[t]][which(!node1[[t]]%in%node2[[t]])])
-						for (i in 1:length(ancestralNodes))
+						for (i in 1:dim(buffer[[t]])[1])
 							{
-								ancestralBranch = which(node1[[t]]==ancestralNodes[i])[1]
-								envValues = envValues + raster::extract(envVariables[[h]], cbind(fromCoor[[t]][ancestralBranch,1],fromCoor[[t]][ancestralBranch,2]))
+								for (j in 1:dim(buffer[[t]])[2])
+									{
+										if (!is.finite(buffer[[t]][i,j])) buffer[[t]][i,j] = NA # least-cost case
+										if ((!is.na(buffer[[t]][i,j]))&&(buffer[[t]][i,j] == -1)) buffer[[t]][i,j] = NA # CircuitScape case
+										if ((!is.na(buffer[[t]][i,j]))&&(buffer[[t]][i,j] == -777)) buffer[[t]][i,j] = NA # NA value in Circuitscape
+									}
 							}
-						meanEnvValues[t,h] = mean(c(envValues,raster::extract(envVariables[[h]], toCoor[[t]])), na.rm=T)
-						diffs = raster::extract(envVariables[[h]], fromCoor[[t]])-raster::extract(envVariables[[h]], toCoor[[t]])
-						rateOfPositiveDifferences[t,h] = sum(diffs[!is.na(diffs)] > 0)/length(diffs[!is.na(diffs)])
+						distances[[t]][,h] = buffer[[t]][lower.tri(buffer[[t]])]
 					}
 			}
 	}
@@ -266,17 +312,10 @@ for (h in 2:length(envVariables))
 	{
 		envVariableNames = cbind(envVariableNames, names(envVariables[[h]]))
 	}
-if (impactOnVelocity == TRUE)
+if ((nberOfExtractionFiles == 1)&(impactOnIsolation == TRUE))
 	{
-		for (t in 1:nberOfExtractionFiles)
-			{
-				colnames(distances[[t]]) = envVariableNames
-			}
-	}
-if ((nberOfExtractionFiles == 1)&(impactOnVelocity == TRUE))
-	{
-		mat = cbind(dispersalTime[[1]][], distances[[1]][,1:length(envVariables)])
-		columnNames = "dispersal_times"
+		mat = cbind(patristicDistances[[1]][], distances[[1]][,1:length(envVariables)])
+		columnNames = "patristic_distances"
 		for (h in 1:length(envVariables))
 			{
 				columnNames = cbind(columnNames, names(envVariables[[h]]))
@@ -284,7 +323,7 @@ if ((nberOfExtractionFiles == 1)&(impactOnVelocity == TRUE))
 		colnames(mat) = columnNames
 		write.table(mat, file=paste(outputName,"_env_distances.txt",sep=""), row.names=F, quote=F, sep="\t")
 	}
-if ((file.exists(outputName))&(impactOnVelocity == TRUE))
+if ((file.exists(outputName))&(impactOnIsolation == TRUE))
 	{	
 		for (t in 1:nberOfExtractionFiles)
 			{
@@ -301,74 +340,58 @@ if ((file.exists(outputName))&(impactOnVelocity == TRUE))
 
 # 2. Linear regressions of dispersal durations vs environmental distances
 
-if (impactOnVelocity == TRUE)
+if (impactOnIsolation == TRUE)
 	{
-		realUniLRcoefficients1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		realUniLRcoefficients2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		realUniLRRsquares1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		realUniLRRsquares2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		realUniDeltaRsquares1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		realUniDeltaRsquares2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-		colNames = c(); for (t in 1:nberOfExtractionFiles) colNames = c(colNames, paste("tree_",treeIDs[[t]],sep=""))
+		realUniLRcoefficients = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+		realUniLRRsquares = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+		realUniDeltaRsquares = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+		realRP2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+		realDeltaRP2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables)); colNames = c()
+		for (t in 1:nberOfExtractionFiles) colNames = c(colNames, paste("tree_",treeIDs[[t]],sep=""))
 		for (h in 1:length(envVariables))
 			{
-				nRowsMax = length(dispersalTime[[1]])
+				nRowsMax = length(patristicDistances[[1]])
 				if (nberOfExtractionFiles > 1)
 					{
 						for (t in 2:nberOfExtractionFiles)
 							{
-								if (nRowsMax < length(dispersalTime[[t]])) nRowsMax = length(dispersalTime[[t]])
+								if (nRowsMax < length(patristicDistances[[t]])) nRowsMax = length(patristicDistances[[t]])
 							}
 					}
 				for (t in 1:nberOfExtractionFiles)
 					{
-						durationTimes = dispersalTime[[t]]; distances1 = distances[[t]][,h]
-						LM1 = lm(as.formula("durationTimes ~ distances1"))
-						realUniLRcoefficients1[t,h] = summary(LM1)$coefficients[2,"Estimate"]
-						realUniLRRsquares1[t,h] = summary(LM1)$r.squared
-						durationTimes4 = 4*dispersalTime[[t]]; squareDistances = distances[[t]][,h]^2
-						LM2 = lm(as.formula("durationTimes4 ~ squareDistances"))
-						realUniLRcoefficients2[t,h] = summary(LM2)$coefficients[2,"Estimate"]
-						realUniLRRsquares2[t,h] = summary(LM2)$r.squared
-						# plot(distances1, durationTimes); plot(squareDistances, durationTimes4)
+						patristicDistance = patristicDistances[[t]]; environmentalDistance = distances[[t]][,h]
+						patristicDistance = patristicDistance[which(!is.na(environmentalDistance))]
+						environmentalDistance = environmentalDistance[which(!is.na(environmentalDistance))]
+						environmentalDistanceLog = log(environmentalDistance+1)
+						LM = lm(as.formula("patristicDistance ~ environmentalDistanceLog"))
+						realUniLRcoefficients[t,h] = summary(LM)$coefficients[2,"Estimate"]
+						realUniLRRsquares[t,h] = summary(LM)$r.squared
+						realRP2[t,h] = cor(patristicDistance,log(environmentalDistance+1), method="pearson")
 					}
 			}
 		for (h in 2:length(envVariables))
 			{
-				realUniDeltaRsquares1[,h] = (realUniLRRsquares1[,h]-realUniLRRsquares1[,1])
-				realUniDeltaRsquares2[,h] = (realUniLRRsquares2[,h]-realUniLRRsquares2[,1])
+				realUniDeltaRsquares[,h] = (realUniLRRsquares[,h]-realUniLRRsquares[,1])
+				realDeltaRP2[,h] = realRP2[,h]-realRP2[,1]
 			}
 		if (nberOfExtractionFiles > 1)
 			{
-				uniLRcoefficientsNames1 = c(); uniLRRsquaresNames1 = c(); uniLRdeltaRsquaresNames1 = c(); uniLRcoefficientsNames2 = c(); uniLRRsquaresNames2 = c(); uniLRdeltaRsquaresNames2 = c()
-				mat = cbind(realUniLRcoefficients1[,1:dim(realUniLRcoefficients1)[2]], realUniLRRsquares1[,1:dim(realUniLRRsquares1)[2]], realUniDeltaRsquares1[,2:dim(realUniDeltaRsquares1)[2]])
-				if (reportingBothQstats == TRUE)
-					{
-						mat = cbind(mat, realUniLRcoefficients2[,1:dim(realUniLRcoefficients2)[2]], realUniLRRsquares2[,1:dim(realUniLRRsquares2)[2]], realUniDeltaRsquares2[,2:dim(realUniDeltaRsquares2)[2]])
-					}
+				uniLRcoefficientsNames = c(); uniLRRsquaresNames = c(); uniLRdeltaRsquaresNames = c(); realRP2Names = c(); realDeltaRP2Names = c()
+				mat1 = cbind(realUniLRcoefficients[,1:dim(realUniLRcoefficients)[2]], realUniLRRsquares[,1:dim(realUniLRRsquares)[2]], realUniDeltaRsquares[,2:dim(realUniDeltaRsquares)[2]])
+				mat2 = cbind(realRP2[,1:dim(realRP2)[2]], realDeltaRP2[,2:dim(realDeltaRP2)[2]])
 				for (h in 1:length(envVariables))
 					{
-						if (reportingBothQstats == TRUE)
-							{
-								uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, paste("LR1_coefficients_",names(envVariables[[h]]),sep=""))	
-								uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, paste("LR1_R2_",names(envVariables[[h]]),sep=""))				
-								uniLRcoefficientsNames2 = cbind(uniLRcoefficientsNames2, paste("LR2_coefficients_",names(envVariables[[h]]),sep=""))	
-								uniLRRsquaresNames2 = cbind(uniLRRsquaresNames2, paste("LR2_R2_",names(envVariables[[h]]),sep=""))	
-								if (h > 1) uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1, paste("LR1_Q_",names(envVariables[[h]]),sep=""))
-								if (h > 1) uniLRdeltaRsquaresNames2 = cbind(uniLRdeltaRsquaresNames2, paste("LR2_Q_",names(envVariables[[h]]),sep=""))
-							}	else	{
-								uniLRcoefficientsNames1 = cbind(uniLRcoefficientsNames1, paste("LR_coefficients_",names(envVariables[[h]]),sep=""))	
-								uniLRRsquaresNames1 = cbind(uniLRRsquaresNames1, paste("LR_R2_",names(envVariables[[h]]), sep=""))				
-								if (h > 1) uniLRdeltaRsquaresNames1 = cbind(uniLRdeltaRsquaresNames1,paste("LR_Q_",names(envVariables[[h]]),sep=""))
-							}
+						uniLRcoefficientsNames = cbind(uniLRcoefficientsNames, paste("LR_coefficients_",names(envVariables[[h]]),sep=""))	
+						uniLRRsquaresNames = cbind(uniLRRsquaresNames, paste("LR_R2_",names(envVariables[[h]]), sep=""))				
+						if (h > 1) uniLRdeltaRsquaresNames = cbind(uniLRdeltaRsquaresNames,paste("LR_Q_",names(envVariables[[h]]),sep=""))
+						realRP2Names = cbind(realRP2Names, paste("Pearson_correlation_",names(envVariables[[h]]),sep=""))	
+						if (h > 1) realDeltaRP2Names = cbind(realDeltaRP2Names, paste("Pearson_correlation_difference_",names(envVariables[[h]]),sep=""))
 					}
-				if (reportingBothQstats == TRUE)
-					{
-						names = cbind(uniLRcoefficientsNames1, uniLRRsquaresNames1, uniLRdeltaRsquaresNames1, uniLRcoefficientsNames2, uniLRRsquaresNames2, uniLRdeltaRsquaresNames2)
-					}	else	{
-						names = cbind(uniLRcoefficientsNames1, uniLRRsquaresNames1, uniLRdeltaRsquaresNames1)
-					}
-				colnames(mat) = names; write.table(mat, file=paste(outputName,"_linear_regression_results.txt",sep=""), row.names=F, quote=F, sep="\t")
+				names1 = cbind(uniLRcoefficientsNames, uniLRRsquaresNames, uniLRdeltaRsquaresNames); colnames(mat1) = names1
+				names2 = cbind(realRP2Names, realDeltaRP2Names); colnames(mat2) = names2
+				write.table(mat1, file=paste(outputName,"_linear_regression_results.txt",sep=""), row.names=F, quote=F, sep="\t")
+				# write.table(mat2, file=paste(outputName,"_Pearson_correlation_results.txt",sep=""), row.names=F, quote=F, sep="\t")
 			}
 	}
 
@@ -376,25 +399,21 @@ if (impactOnVelocity == TRUE)
 
 if (nberOfRandomisations > 0)
 	{	
-		if (impactOnVelocity == TRUE)
+		if (impactOnIsolation == TRUE)
 			{
-				uniLRdeltaRsquaresRandomisationBFs1 = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)	
-				uniLRdeltaRsquaresRandomisationBFs2 = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)	
-			}
-		if (impactOnDirection == TRUE)
-			{
-				meanEnvValuesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
-				rateOfPositiveDifferencesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
+				uniLRdeltaRsquaresRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
+				deltaRP2RandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
 			}
 		for (s in 1:nberOfRandomisations)
 			{
-				if (impactOnVelocity == TRUE)
+				if (impactOnIsolation == TRUE)
 					{
 						uniLRdeltaRsquaresRand = matrix(0, nrow=nberOfExtractionFiles, ncol=nberOfRandomisations)
 						distancesSim = list()
 						for (t in 1:nberOfExtractionFiles)
 							{
-								distancesSim[[t]] = matrix(nrow=nberOfConnections[t], ncol=length(envVariables))
+								nRows = ((nberOfTipNodes[t]*nberOfTipNodes[t])-nberOfTipNodes[t])/2
+								distancesSim[[t]] = matrix(nrow=nRows, ncol=length(envVariables))
 							}
 					}
 				
@@ -414,7 +433,7 @@ if (nberOfRandomisations > 0)
 							}
 						nberOfConnections = rep(NA, nberOfExtractionFiles)
 						node1 = list(); node2 = list(); fromCoor = list(); toCoor = list()
-						dispersalTime = list(); treeIDs = list()
+						samplingCoor = list(); dispersalTime = list(); treeIDs = list()
 						for (t in 1:nberOfExtractionFiles)
 							{
 								if (nchar(localTreesDirectory) == 0)
@@ -428,6 +447,8 @@ if (nberOfRandomisations > 0)
 								node2[[t]] = matrix(nrow=dim(data)[1], ncol=1); node2[[t]][] = data[,"node2"]
 								fromCoor[[t]] = matrix(nrow=dim(data)[1], ncol=2); fromCoor[[t]][] = cbind(data[,"startLon"], data[,"startLat"])
 								toCoor[[t]] = matrix(nrow=dim(data)[1], ncol=2); toCoor[[t]][] = cbind(data[,"endLon"], data[,"endLat"])
+								tipIndices = which(!data[,"node2"]%in%data[,"node1"]); samplingCoor[[t]] = matrix(nrow=length(tipIndices), ncol=2)
+								samplingCoor[[t]][] = cbind(data[tipIndices,"endLon"], data[tipIndices,"endLat"])
 								dispersalTime[[t]] = matrix(nrow=dim(data)[1], ncol=1); colnames(dispersalTime[[t]]) = "dispersalTime"
 								dispersalTime[[t]][] = (data[,"endYear"]-data[,"startYear"])
 								if (("treeID"%in%colnames(data)) == TRUE)
@@ -437,7 +458,7 @@ if (nberOfRandomisations > 0)
 										treeIDs[[t]] = "noTreeID"
 									}	
 							}
-						fromCoorRand = fromCoor; toCoorRand = toCoor	
+						fromCoorRand = fromCoor; toCoorRand = toCoor; samplingCoorRand = samplingCoor
 					}
 				if (torusRandomisations == TRUE)
 					{
@@ -454,7 +475,7 @@ if (nberOfRandomisations > 0)
 										mtext(text1, col="black", cex=0.7, line=0)
 									}
 							}
-						fromCoorRand = fromCoor; toCoorRand = toCoor						
+						fromCoorRand = fromCoor; toCoorRand = toCoor; samplingCoorRand = samplingCoor				
 					}
 				if (rastersSimulations == TRUE)
 					{	
@@ -471,13 +492,13 @@ if (nberOfRandomisations > 0)
 										mtext(text1, col="black", cex=0.7, line=0)
 									}
 							}
-						fromCoorRand = fromCoor; toCoorRand = toCoor
+						fromCoorRand = fromCoor; toCoorRand = toCoor; samplingCoorRand = samplingCoor
 					}
 				if (branchRandomisation3 == TRUE)
 					{
 						simRasters = list(); simRasters = hullRasters
 						cat("Analysis of randomised branch positions ",s,"\n",sep="")
-						fromCoorRand = fromCoor; toCoorRand = toCoor
+						fromCoorRand = fromCoor; toCoorRand = toCoor; samplingCoorRand = samplingCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
 								counter1 = 0; twoPointsOnTheGrid = FALSE
@@ -631,13 +652,14 @@ if (nberOfRandomisations > 0)
 												startingNodes = newStartingNodes	
 											}
 									}
+								samplingCoorRand[[t]] = toCoorRand[[t]][which(!node2[[t]]%in%node1[[t]]),]
 							}
 					}
 				if (branchRandomisation2 == TRUE)
 					{
 						simRasters = list(); simRasters = hullRasters
 						cat("Analysis of randomised branch positions ",s,"\n",sep="")
-						fromCoorRand = fromCoor; toCoorRand = toCoor
+						fromCoorRand = fromCoor; toCoorRand = toCoor; samplingCoorRand = samplingCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
 								if (showingPlots == TRUE)
@@ -726,13 +748,14 @@ if (nberOfRandomisations > 0)
 												fromCoorRand[[t]][i,1] = pt2[1]; fromCoorRand[[t]][i,2] = pt2[2]
 											}
 									}
+								samplingCoorRand[[t]] = toCoorRand[[t]][which(!node2[[t]]%in%node1[[t]]),]
 							}
 					}			
 				if (branchRandomisation1 == TRUE)
 					{
 						simRasters = list(); simRasters = hullRasters
 						cat("Analysis of randomised branch positions ",s,"\n",sep="")
-						fromCoorRand = fromCoor; toCoorRand = toCoor
+						fromCoorRand = fromCoor; toCoorRand = toCoor; samplingCoorRand = samplingCoor
 						for (t in 1:nberOfExtractionFiles)
 							{
 								if (showingPlots == TRUE)
@@ -868,9 +891,10 @@ if (nberOfRandomisations > 0)
 										fromCoorRand[[t]][i,1] = pt1[1]; fromCoorRand[[t]][i,2] = pt1[2]
 										toCoorRand[[t]][i,1] = pt2[1]; toCoorRand[[t]][i,2] = pt2[2]
 									}
+								samplingCoorRand[[t]] = toCoorRand[[t]][which(!node2[[t]]%in%node1[[t]]),]
 							}
 					}		
-				if (impactOnVelocity == TRUE)
+				if (impactOnIsolation == TRUE)
 					{
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -897,160 +921,111 @@ if (nberOfRandomisations > 0)
 								buffer = list()
 								buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
 								# for (t in 1:nberOfExtractionFiles) {
-										mat = matrix(nrow=nberOfConnections[t], ncol=1)
+										mat = matrix(nrow=dim(samplingCoorRand[[t]])[1], ncol=dim(samplingCoorRand[[t]])[1])
 										if (straightLineDistance == TRUE)
 											{	
-												linesList = list()
-												for (i in 1:length(fromCoorRand[[t]][,1]))
+												linesList = list(); c = 0
+												for (i in 2:dim(samplingCoorRand[[t]])[1])
 													{
-														points = rbind(fromCoorRand[[t]][i,], toCoorRand[[t]][i,])
-														linesList[[i]] = Lines(list(Line(points)),i)
+														for (j in 1:(i-1))
+															{
+																points = rbind(samplingCoorRand[[t]][i,], samplingCoorRand[[t]][j,])
+																c = c+1; linesList[[c]] = Lines(list(Line(points)),c)
+															}
 													}
 												lines = SpatialLines(linesList)
-												extractions = raster::extract(simRasters[[h]], lines)
-												for (i in 1:length(fromCoorRand[[t]][,1]))
+												extractions = raster::extract(hullRasters[[h]], lines); c = 0
+												for (i in 2:length(samplingCoorRand[[t]][,1]))
 													{
-														mat[i] = sum(extractions[[i]], na.rm=T)
-													}	
+														for (j in 1:(i-1))
+															{
+																c = c+1; mat[i,j] = sum(extractions[[c]], na.rm=T); mat[j,i] = mat[i,j]
+															}
+													}
 											}	
 										if (leastCostDistance == TRUE)
 											{	
-												mat[] = diag(costDistance(simTrEnvVariableCorr, fromCoorRand[[t]], toCoorRand[[t]]))
+												mat[] = costDistance(trEnvVariableCorr, samplingCoorRand[[t]], samplingCoorRand[[t]])
 											}
 										if (circuitscapeDistance == TRUE)
 											{
 												simRasterName = paste("CS_rasters/",names(simRasters[[h]]),"_",outputName,"_cs",extensions[h],sep="")
-												branchesNotNA = which(!((is.na(raster::extract(simRasters[[h]],fromCoorRand[[t]][])))|
-																	   (is.na(raster::extract(simRasters[[h]],toCoorRand[[t]][])))))
+												samplingPointNotNA = which(!(is.na(raster::extract(simRasters[[h]], samplingCoorRand[[t]][]))))
+												samplingCoor_temp = samplingCoorRand[[t]][samplingPointNotNA,]
 												if (juliaCSImplementation == FALSE)
 													{
-														mat[branchesNotNA,] = circuitScape1(simRasters[[h]], simRasterName, resistances[[h]], avgResistances[[h]], fourCells, 
-																							fromCoorRand[[t]][branchesNotNA,], toCoorRand[[t]][branchesNotNA,], OS, outputName,
-																							t, nberOfCores_CS)
+														mat[samplingPointNotNA,samplingPointNotNA] = circuitScape1(simRasters[[h]], simRasterName, resistances[[h]], avgResistances[[h]], 
+																												   fourCells, samplingCoor_temp, samplingCoor_temp, OS, outputName, t, 
+																												   nberOfCores_CS)
 													}	else	{
-														mat[branchesNotNA,] = circuitScape2(simRasters[[h]], simRasterName, resistances[[h]], avgResistances[[h]], fourCells, 
-																							fromCoorRand[[t]][branchesNotNA,], toCoorRand[[t]][branchesNotNA,], OS, outputName,
-																							t, nberOfCores_CS)
+														mat[samplingPointNotNA,samplingPointNotNA] = circuitScape2(simRasters[[h]], simRasterName, resistances[[h]], avgResistances[[h]], 
+																												   fourCells, samplingCoor_temp, samplingCoor_temp, OS, outputName, t, 
+																												   nberOfCores_CS)
 													}
-											}	
-										colnames(mat) = names(envVariables[[h]])
+											}
 										# buffer[[t]] = mat
 										mat
 									}		
 								for (t in 1:length(buffer))
 									{
-										buffer[[t]][!is.finite(buffer[[t]][])] = NA
-										buffer[[t]][buffer[[t]][]==-1] = NA
-										buffer[[t]][buffer[[t]][]==-777] = NA
-										distancesSim[[t]][,h] = buffer[[t]][]
-									}	
-							}
-					}
-				if (impactOnDirection == TRUE)
-					{
-						simMeanEnvValues = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-						simRateOfPositiveDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-						for (h in 2:length(envVariables))
-							{
-								for (t in 1:nberOfExtractionFiles)
-									{
-										envValues = 0; ancestralNodes = unique(node1[[t]][which(!node1[[t]]%in%node2[[t]])])
-										for (i in 1:length(ancestralNodes))
+										for (i in 1:dim(buffer[[t]])[1])
 											{
-												ancestralBranch = which(node1[[t]]==ancestralNodes[i])[1]
-												envValues = envValues + raster::extract(envVariables[[h]], cbind(fromCoorRand[[t]][ancestralBranch,1],fromCoorRand[[t]][ancestralBranch,2]))
+												for (j in 1:dim(buffer[[t]])[2])
+													{
+														if (!is.finite(buffer[[t]][i,j])) buffer[[t]][i,j] = NA # least-cost case
+														if ((!is.na(buffer[[t]][i,j]))&&(buffer[[t]][i,j] == -1)) buffer[[t]][i,j] = NA # CircuitScape case
+														if ((!is.na(buffer[[t]][i,j]))&&(buffer[[t]][i,j] == -777)) buffer[[t]][i,j] = NA # NA value in Circuitscape
+													}
 											}
-										simMeanEnvValues[t,h] = mean(c(envValues,raster::extract(envVariables[[h]], cbind(toCoorRand[[t]][,1],toCoorRand[[t]][,2]))), na.rm=T)
-										diffs = raster::extract(envVariables[[h]], fromCoorRand[[t]])-raster::extract(envVariables[[h]], toCoorRand[[t]])
-										simRateOfPositiveDifferences[t,h] = sum(diffs[!is.na(diffs)] > 0)/length(diffs[!is.na(diffs)])
+										distancesSim[[t]][,h] = buffer[[t]][lower.tri(buffer[[t]])]
 									}
 							}
 					}
 
 				# 3.2. Linear regressions analyses on randomised datasets
-				if (impactOnVelocity == TRUE)
+				if (impactOnIsolation == TRUE)
 					{
-						simUniLRRsquares1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-						simUniLRRsquares2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-						simUniLRDeltaRsquares1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
-						simUniLRDeltaRsquares2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+						simUniLRRsquares = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+						simUniLRDeltaRsquares = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+						simRP2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+						simDeltaRP2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 						for (h in 1:length(envVariables))
 							{
 								for (t in 1:nberOfExtractionFiles)
 									{
-										durationTimes = dispersalTime[[t]]; distances1 = distancesSim[[t]][,h]
-										LM1 = lm(as.formula("durationTimes ~ distances1"))
-										simUniLRRsquares1[t,h] = summary(LM1)$r.squared
-										simUniLRDeltaRsquares1[t,h] = simUniLRRsquares1[t,h]-simUniLRRsquares1[t,1]
-										durationTimes4 = 4*dispersalTime[[t]]; squareDistances = distancesSim[[t]][,h]^2
-										LM2 = lm(as.formula("durationTimes4 ~ squareDistances"))
-										simUniLRRsquares2[t,h] = summary(LM2)$r.squared
-										simUniLRDeltaRsquares2[t,h] = simUniLRRsquares2[t,h]-simUniLRRsquares2[t,1]
+										patristicDistance = patristicDistances[[t]]; environmentalDistance = distancesSim[[t]][,h]
+										patristicDistance = patristicDistance[which(!is.na(environmentalDistance))]
+										environmentalDistance = environmentalDistance[which(!is.na(environmentalDistance))]
+										environmentalDistanceLog = log(environmentalDistance+1)
+										LM = lm(as.formula("patristicDistance ~ environmentalDistanceLog"))
+										simUniLRRsquares[t,h] = summary(LM)$r.squared
+										simUniLRDeltaRsquares[t,h] = simUniLRRsquares[t,h]-simUniLRRsquares[t,1]
+										simRP2[t,h] = cor(patristicDistance,log(environmentalDistance+1), method="pearson")
+										simDeltaRP2[t,h] = simRP2[t,h]-simRP2[t,1]
 									}
 							}
 					}
-				if (impactOnVelocity == TRUE) H = 2
-				if (impactOnDirection == TRUE) H = 2
+				if (impactOnIsolation == TRUE) H = 2
 					
 				# 3.3. Computations of the BF values for this randomisation	
-				if (impactOnVelocity == TRUE)
+				if (impactOnIsolation == TRUE)
 					{
 						for (h in H:length(envVariables))
 							{
 								c = 0
 								for (t in 1:nberOfExtractionFiles)
 									{
-										if (simUniLRDeltaRsquares1[t,h] < realUniDeltaRsquares1[t,h]) c = c+1
+										if (simUniLRDeltaRsquares[t,h] < realUniDeltaRsquares[t,h]) c = c+1
 									}
 								f = c/nberOfExtractionFiles; bf = f/(1-f)
-								uniLRdeltaRsquaresRandomisationBFs1[h,s] = round(bf, 4)
+								uniLRdeltaRsquaresRandomisationBFs[h,s] = round(bf, 4)
 								c = 0
 								for (t in 1:nberOfExtractionFiles)
 									{
-										if (simUniLRDeltaRsquares2[t,h] < realUniDeltaRsquares2[t,h]) c = c+1
+										if (simDeltaRP2[t,h] < realDeltaRP2[t,h]) c = c+1
 									}
 								f = c/nberOfExtractionFiles; bf = f/(1-f)
-								uniLRdeltaRsquaresRandomisationBFs2[h,s] = round(bf, 4)
-							}
-					}
-				if (impactOnDirection == TRUE)
-					{
-						for (h in H:length(envVariables))
-							{
-								c = 0; missingValues = 0
-								for (t in 1:nberOfExtractionFiles)
-									{
-										if ((!is.na(simMeanEnvValues[t,h]))&(!is.na(meanEnvValues[t,h])))
-											{
-												if (resistances[h] == TRUE)
-													{
-														if (simMeanEnvValues[t,h] > meanEnvValues[t,h]) c = c+1
-													}	else	{
-														if (simMeanEnvValues[t,h] < meanEnvValues[t,h]) c = c+1
-													}
-											}	else	{
-												missingValues = missingValues + 1
-											}
-									}
-								f = c/(nberOfExtractionFiles-missingValues); bf = f/(1-f)
-								meanEnvValuesRandomisationBFs[h,s] = round(bf, 4)
-								c = 0; missingValues = 0
-								for (t in 1:nberOfExtractionFiles)
-									{
-										if ((!is.na(simRateOfPositiveDifferences[t,h]))&(!is.na(rateOfPositiveDifferences[t,h])))
-											{
-												if (resistances[h] == TRUE)
-													{
-														if (simRateOfPositiveDifferences[t,h] < rateOfPositiveDifferences[t,h]) c = c+1
-													}	else	{
-														if (simRateOfPositiveDifferences[t,h] > rateOfPositiveDifferences[t,h]) c = c+1
-													}
-											}	else	{
-												missingValues = missingValues + 1
-											}
-									}	
-								f = c/(nberOfExtractionFiles-missingValues); bf = f/(1-f)
-								rateOfPositiveDifferencesRandomisationBFs[h,s] = round(bf, 4)
+								# deltaRP2RandomisationBFs[h,s] = round(bf, 4)
 							}
 					}
 			} # End of randomisations
@@ -1063,36 +1038,17 @@ if (nberOfRandomisations > 0)
 					{
 						envVariablesNames = c(envVariablesNames, names(envVariables[[h]]))
 					}
-				if (impactOnVelocity == TRUE)
+				if (impactOnIsolation == TRUE)
 					{
-						colNames1 = c(); colNames2 = c()
+						colNames = c()
 						for (s in 1:nberOfRandomisations)
 							{
-								colNames1 = c(colNames1, paste("BFs_Q_LR1_randomisation_",s,sep=""))
-								colNames2 = c(colNames2, paste("BFs_Q_LR2_randomisation_",s,sep=""))
+								colNames = c(colNames, paste("BFs_Q_LR_randomisation_",s,sep=""))
+								# colNames = c(colNames, paste("BFs_rP2_randomisation_",s,sep=""))
 							}
-						row.names(uniLRdeltaRsquaresRandomisationBFs1) = envVariablesNames
-						colnames(uniLRdeltaRsquaresRandomisationBFs1) = colNames1
-						row.names(uniLRdeltaRsquaresRandomisationBFs2) = envVariablesNames
-						colnames(uniLRdeltaRsquaresRandomisationBFs2) = colNames2
-						if (reportingBothQstats == TRUE)
-							{
-								buffer = cbind(uniLRdeltaRsquaresRandomisationBFs1,uniLRdeltaRsquaresRandomisationBFs2)
-							}	else	{
-								buffer = uniLRdeltaRsquaresRandomisationBFs1
-							}
-						write.table(buffer, paste(outputName,"_randomisation_BF_results.txt",sep=""), quote=F, sep="\t")
-					}
-				if (impactOnDirection == TRUE)
-					{
-						row.names(meanEnvValuesRandomisationBFs) = envVariablesNames
-						colnames(meanEnvValuesRandomisationBFs) = "BF"
-						fileName = paste(outputName,"_position_E_BF_results.txt",sep="")
-						write.table(meanEnvValuesRandomisationBFs, fileName, quote=F, sep="\t")
-						row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
-						colnames(rateOfPositiveDifferencesRandomisationBFs) = "BF"
-						fileName = paste(outputName,"_direction_R_BF_results.txt",sep="")
-						write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
+						row.names(deltaRP2RandomisationBFs) = envVariablesNames
+						colnames(deltaRP2RandomisationBFs) = colNames
+						write.table(deltaRP2RandomisationBFs, paste(outputName,"_randomisation_BF_results.txt",sep=""), quote=F, sep="\t")
 					}
 			}
 	}

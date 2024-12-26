@@ -13,13 +13,14 @@ torusRandomisation(rast)
   \item{rast}{ raster to randomise with a torus translation and reflection. }
 }
 \details{
-This function can be called by the "spreadFactor" function.
+This function was called by a previous version of the "spreadFactor" function.
 }
 \value{
-The function returns a raster object with cell values randomized by a torus translation and reflection.
+The function returns a raster object with cell values randomised by a torus translation and reflection.
 }
 \references{
-Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
+Dellicour S, Rose R, Pybus OG (2016a). Explaining the geographic spread of emerging epidemics: a framework for comparing viral phylogenies and environmental landscape data. \emph{BMC Bioinformatics} 17: 82. \cr \cr
+Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016b). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
 Harms KE, Condit R, Hubbell SP, Foster RB (2001). Habitat associations of trees and shrubs in a 50-ha neotropical forest plot. \emph{Journal of Ecology} 89: 947-959. \cr \cr
 Hardy OJ (2009). TOROCOR: a program to assess the association between spatially autocorrelated variables using a torus-translation test on multiple grids.
 }

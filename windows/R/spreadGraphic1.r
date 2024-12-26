@@ -14,7 +14,7 @@ spreadGraphic1 = function(localTreesDirectory, nberOfExtractionFiles, rast, prob
 	rast1 = rast; rast1[!is.na(rast1[])] = 1
 	rast2 = rast; rast2[!is.na(rast2[])] = NA
 	eA = extent(xmin(rast), xmax(rast), ymin(rast), ymax(rast))
-	fileName = paste(localTreesDirectory, "/TreeExtractions_1.csv", sep="")
+	fileName = paste(localTreesDirectory,"/TreeExtractions_1.csv",sep="")
 	data = read.csv(fileName, h=T)
 	mostRecentSamplingDatum = max(data[,"endYear"])
 	originPoints = matrix(nrow=nberOfExtractionFiles, ncol=3)
@@ -26,7 +26,7 @@ spreadGraphic1 = function(localTreesDirectory, nberOfExtractionFiles, rast, prob
 	for (t in 1:nberOfExtractionFiles)
 		{
 			if (mostRecentSamplingDatum < max(data[,"endYear"])) mostRecentSamplingDatum = max(data[,"endYear"])
-			fileName = paste(localTreesDirectory, "/TreeExtractions_", t, ".csv", sep="")
+			fileName = paste(localTreesDirectory,"/TreeExtractions_",t,".csv",sep="")
 			data = read.csv(fileName, h=T)
 			data = data[with(data, order(endYear, startYear)),]
 			if (timeLayers == TRUE) originPoints[t,1] = ceiling(data[data[,"startYear"]==min(data[,"startYear"]),"startYear"][1])

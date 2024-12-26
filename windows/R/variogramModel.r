@@ -55,14 +55,14 @@ variogramModel = function(envVariables)	{
 				coordinates(samples) = ~x+y 
 				# also transforms into a "SpatialPointsDataFrame"
 				# plot(samples, add = T, pch=15, cex=0.2)
-				fmla = as.formula(paste(rast@data@names, "~1", sep=""))
+				fmla = as.formula(paste(rast@data@names,"~1",sep=""))
 				observedVariogram = variogram(fmla, data = samples)
 				dev.new(width=5, height =5); par("mar"=c(3.5,3.5,4.5,2)); par(mgp=c(1.6, 0.5, 0))
-				text1 = paste("Observed variogram for ", rast@data@names, "*", sep="")
-				text2 = paste("User-defined variogram for ", rast@data@names, "*", sep="")
-				text3 = paste("Fitted (corrected) variogram for ", rast@data@names, "*", sep="")
-				text4 = paste("* a normal transformation was                 ", sep="")
-				text5 = paste(" previously performed on the raster grid   ", sep="")
+				text1 = paste("Observed variogram for ",rast@data@names,"*",sep="")
+				text2 = paste("User-defined variogram for ",rast@data@names,"*",sep="")
+				text3 = paste("Fitted (corrected) variogram for ",rast@data@names,"*",sep="")
+				text4 = paste("* a normal transformation was                 ",sep="")
+				text5 = paste(" previously performed on the raster grid   ",sep="")
 				plot(observedVariogram$dist, observedVariogram$gamma, xlab="distance", ylab="semivariance", cex.lab=0.7, cex.axis=0.7)
 				mtext(text1, cex=0.8, line=2.5)
 				mtext(text4, cex=0.7, line=-16, adj=1)
@@ -70,7 +70,7 @@ variogramModel = function(envVariables)	{
 				happyWithModel = FALSE
 				while(happyWithModel == FALSE)
 					{
-						cat("Setting parameters value for variogram model fitting (", rast@data@names, "):", sep="")
+						cat("Setting parameters value for variogram model fitting (", rast@data@names, "):",sep="")
 						cat ("N.B: call vgm() without a model argument to get available models");
 						model = readline(prompt = "	model (e.g. Exp, Sph, Gau, Mat) = ")
 						sill = readline(prompt = "	sill value = ")
