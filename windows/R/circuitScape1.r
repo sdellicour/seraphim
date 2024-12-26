@@ -84,7 +84,7 @@ circuitScape1 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 				}
 		}	else	{
 			mat = matrix(nrow=dim(as.matrix(fromCoor))[1], ncol=dim(as.matrix(fromCoor))[1])
-			mat = tab[1:dim(fromCoor)[1],1:dim(fromCoor)[1]]
+			mat = as.matrix(tab)[1:dim(fromCoor)[1],1:dim(fromCoor)[1]]
 		}
 	if (OS == "Unix")
 		{		

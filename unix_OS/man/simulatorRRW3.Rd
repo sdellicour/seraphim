@@ -22,7 +22,7 @@ raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
 			  extractionOfValuesOnMatrix = FALSE)
 }
 \arguments{
-  \item{envVariable}{ raster that will determine the environmental heterogeneity impacting the dispersal velocity of evolving lineages (cells with a NaN value will be considered as inaccessible). }
+  \item{envVariable}{ raster that will determine the environmental heterogeneity impacting the dispersal velocity of evolving lineages (cells with a NA value will be considered as inaccessible). }
   \item{resistance}{ boolean variable specifying if the environmental raster has to be treated as a resistance or conductance factor. If treated as a resistance factor, raster cell values will be inverted (1/x) prior to the simulation. }
   \item{scalingValue}{ value used to rescale the standard deviation of the two normal distributions with mean = 0 in which longitudinal and latitudinal displacement values are randomly picked (see details below). }
   \item{ancestPosition}{ vector of geographic coordinates (longitude, latitude) of the most ancestral node position, i.e. the starting position of the RRW diffusion simulation. }

@@ -273,7 +273,7 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 					n = 0
 					for (k in 1:dim(coordsMDS_modList[[j]])[1])
 						{
-							if(is.na(raster::extract(hullRaster,cbind(coordsMDS_modList[[j]][k,1],coordsMDS_modList[[j]][k,2])))) n = n+1
+							if (is.na(raster::extract(hullRaster,cbind(coordsMDS_modList[[j]][k,1],coordsMDS_modList[[j]][k,2])))) n = n+1
 						}
 					numberOfNApoints = c(numberOfNApoints, n)
 				}

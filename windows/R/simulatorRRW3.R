@@ -3,20 +3,15 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 						 samplingRate=0.2, startingYear=0, samplingWindow=c(10,50), timeSlice=0.1,
 						 timeIntervale=1, showingPlots=FALSE, extractionOfValuesOnMatrix=FALSE) {
 	
-	envVariable0 = envVariable
-	mat0 = raster::as.matrix(envVariable)
+	envVariable0 = envVariable; mat0 = raster::as.matrix(envVariable)
 	envVariable[!is.na(envVariable[])] = envVariable[!is.na(envVariable[])]+1
 	if (resistance == TRUE)
 		{
 			envVariable[!is.na(envVariable[])] = 1/envVariable[!is.na(envVariable[])]
 		}
-	vMin = min(envVariable[!is.na(envVariable[])])
-	vMax = max(envVariable[!is.na(envVariable[])])		
-	# options(digits.secs=8)
-	buffer = ancestPosition
-	ancestPosition = matrix(nrow=1, ncol=2)
-	ancestPosition[1,1] = buffer[1]
-	ancestPosition[1,2] = buffer[2]
+	vMin = min(envVariable[!is.na(envVariable[])]); vMax = max(envVariable[!is.na(envVariable[])])
+	buffer = ancestPosition; ancestPosition = matrix(nrow=1, ncol=2)
+	ancestPosition[1,1] = buffer[1]; ancestPosition[1,2] = buffer[2]
 	if (extractionOfValuesOnMatrix == TRUE)
 		{
 			mat = raster::as.matrix(envVariable)
@@ -65,7 +60,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 					cols1 = colorRampPalette(brewer.pal(9,"YlOrRd"))(100)
 				}
 		}
-	T = startingYear + timeIntervale
+	tt = startingYear + timeIntervale
 	for (t in seq(startingYear,samplingWindow[2],timeSlice))
 		{
 			statut = cbind(length(particules), t)
@@ -93,7 +88,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 							while (onTheGrid == FALSE)
 								{
 									c = c+1
-									if (c == 1000) print(i)
+									if (c == 1000) print(c(i,1000))
 									coords = cbind(particules[[i]][1],particules[[i]][2])
 									if (extractionOfValuesOnMatrix == TRUE) v1 = extractValueOnMatrix(coords)
 									if (extractionOfValuesOnMatrix == FALSE) v1 = extractValueOnRaster(coords)
@@ -106,8 +101,9 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 											sdX = v2*xres(envVariable)*scalingValue
 											sdY = v2*yres(envVariable)*scalingValue
 										}
-									dX = rnorm(1,0,sdX)
-									dY = rnorm(1,0,sdY)
+									dX = rnorm(1,0,sdX); dY = rnorm(1,0,sdY)
+									# dX = rcauchy(1,0,sdX); dY = rcauchy(1,0,sdY)
+									# coords = cbind(particules[[i]][1]+sdX,particules[[i]][2]+sdY)
 									coords = cbind(particules[[i]][1]+dX,particules[[i]][2]+dY)
 									if (extractionOfValuesOnMatrix == TRUE) v = extractValueOnMatrix(coords)
 									if (extractionOfValuesOnMatrix == FALSE) v = extractValueOnRaster(coords)
@@ -120,7 +116,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 								}
 						}
 				}
-			if (t>samplingWindow[1])
+			if (t > samplingWindow[1])
 				{
 					for (i in 1:length(particules))
 						{
@@ -134,9 +130,9 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 								}
 						}
 				}
-			if (t >= T)
+			if (t >= tt)
 				{
-					T = t + timeIntervale
+					tt = t + timeIntervale
 				}
 		}
 	if (extractionOfValuesOnMatrix == TRUE)
@@ -178,6 +174,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 						{
 							index = which(csv[,"node1"]==csv[j,"node2"])
 							csv[j,"node2"] = csv[index,"node2"]
+							csv[j,"endLon"] = csv[index,"endLon"]
 							csv[j,"endLat"] = csv[index,"endLat"]
 							csv[j,"endNodeL"] = csv[index,"endNodeL"]
 							csv[j,"endYear"] = csv[index,"endYear"]
@@ -229,8 +226,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 					tipNodes = rbind(tipNodes, c(csv[j,"node2"], csv[j,"startYear"]))
 				}
 		}
-	coalescenceEvents = length(branches1)-1
-	c = 0; 
+	coalescenceEvents = length(branches1)-1; c = 0
 	while (length(branches1) != 1)
 		{
 			c = c+1

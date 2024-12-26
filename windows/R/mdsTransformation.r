@@ -8,7 +8,7 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 	if (attr(input,"class") == "phylo") treeFile = TRUE
 	if (textFile == TRUE)
 		{
-			sequencesID = seq(1,dim(input)[1],1); years = rep(0,dim(input)[1]); locations1 = input[,2]; locations2 = input[,1]
+			sequencesID = input[,1]; labels = sequencesID; years = input[,2]; locations1 = input[,4]; locations2 = input[,3]
 			coordinates = cbind(sequencesID, as.numeric(years), as.numeric(locations1), as.numeric(locations2))
 		}
 	if (fastaAlignment == TRUE)
@@ -59,11 +59,11 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 	for (i in 1:length(envVariables)) rasterNames = c(rasterNames, names(envVariables[[i]]))
 	if (pathModel == 3)
 		{
-			if("CS_envVariables"%in%dir(getwd())==FALSE) dir.create(file.path(getwd(), "CS_envVariables"))
+			if("CS_rasters"%in%dir(getwd())==FALSE) dir.create(file.path(getwd(), "CS_rasters"))
 			for (i in 1:length(envVariables))
 				{
-					# name = paste("CS_envVariables/",gsub("_0.","_0,",names(envVariables[[i]])),"_cs.asc",sep="")
-					name = paste("CS_envVariables/",names(envVariables[[i]]),"_cs.asc",sep="")
+					# name = paste("CS_rasters/", gsub("_0.","_0,",names(envVariables[[i]])),"_cs.asc",sep="")
+					name = paste("CS_rasters/", names(envVariables[[i]]),"_cs.asc",sep="")
 					writeRaster(envVariables[[i]], name, overwrite=T)
 				}
 		}
@@ -82,19 +82,13 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 					if (maxEuclDis < d) maxEuclDis = d
 				}
 		}
-	hullRaster = nullRaster
-	hull = chull(coordinates)
-	hull = c(hull,hull[1])
-	p = Polygon(coordinates[hull,])
-	ps = Polygons(list(p),1)
-	sps = SpatialPolygons(list(ps))
+	hullRaster = nullRaster; hull = chull(coordinates); hull = c(hull,hull[1])
+	p = Polygon(coordinates[hull,]); ps = Polygons(list(p),1); sps = SpatialPolygons(list(ps))
 	pointsRaster = rasterize(coordinates, crop(hullRaster, sps, snap="out"))
-	pointsRaster[!is.na(pointsRaster[])] = 0
-	hullRaster = crop(hullRaster, sps, snap="out")
-	bufferRaster = hullRaster
-	hullRaster = mask(hullRaster, sps, snap="out")
+	pointsRaster[!is.na(pointsRaster[])] = 0; hullRaster = crop(hullRaster, sps, snap="out")
+	bufferRaster = hullRaster; hullRaster = mask(hullRaster, sps, snap="out")
 	hullRaster[!is.na(pointsRaster[])] = bufferRaster[!is.na(pointsRaster[])]
-	buffer = list()
+	# buffer = list()
 	# buffer = foreach(i = 1:length(envVariables)) %dopar% {
 	for (i in 1:length(envVariables)) {
 			sequences_to_keep = labels
@@ -140,10 +134,22 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 				}
 			if (pathModel == 3)
 				{
-					method = "RW"				
-					dist = circuitScape1(envVariables[[i]], paste("CS_envVariables/",names(envVariables[[i]]),"_cs",sep=""), 
-										resistances[[i]], avgResistances[[i]], fourCells, coordinates, coordinates, OS, outputName, i)
+					method = "CS"				
+					dist = circuitScape1(envVariables[[i]], paste("CS_rasters/",names(envVariables[[i]]),"_cs",sep=""), 
+										 resistances[[i]], avgResistances[[i]], fourCells, coordinates, coordinates, OS, outputName, i)
 					dist = as.matrix(dist)
+					for (j in 2:dim(dist)[1])
+						{
+							for (k in 1:(j-1))
+								{
+									if ((dist[j,k] == 0)|(is.na(dist[j,k])))
+										{
+											dist[j,k] = circuitScape1(envVariables[[i]], paste("CS_rasters/",names(envVariables[[i]]),"_cs",sep=""), resistances[[i]], avgResistances[[i]], 
+										 						 fourCells, cbind(coordinates[j,1],coordinates[j,2]), cbind(coordinates[k,1],coordinates[k,2]), OS, outputName, i)
+											dist[k,j] = dist[j,k]
+										}
+								}
+						}
 				}
 			dist[!is.finite(dist[])] = NA
 			# To remove lines/columns of NA:
@@ -267,7 +273,7 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 					n = 0
 					for (k in 1:dim(coordsMDS_modList[[j]])[1])
 						{
-							if(is.na(raster::extract(hullRaster,cbind(coordsMDS_modList[[j]][k,1],coordsMDS_modList[[j]][k,2])))) n = n+1
+							if (is.na(raster::extract(hullRaster,cbind(coordsMDS_modList[[j]][k,1],coordsMDS_modList[[j]][k,2])))) n = n+1
 						}
 					numberOfNApoints = c(numberOfNApoints, n)
 				}
@@ -322,7 +328,7 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 			if (textFile == TRUE)
 				{
 					sink(file=paste(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,sep=""),".txt",sep=""))
-					for (j in 1:dim(input)[1])
+					for (j in 1:dim(tab)[1])
 						{
 							cat(paste(tab[j,4],tab[j,3],sep="	")); cat("\n")
 						}
@@ -361,12 +367,12 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 				{
 					tips_to_remove = tree$tip.label[!tree$tip.label%in%sequences_to_keep]
 					new_tree = drop.tip(tree, tips_to_remove, trim.internal=TRUE, subtree=FALSE, rooted=is.rooted(tree))
-					new.labels = c()
+					new_labels = c()
 					for (j in 1:dim(tab)[1])
 						{
-							new.labels = c(new.labels, paste(tab[j,1],tab[j,2],tab[j,4],tab[j,3],sep="_"))
+							new_labels = c(new_labels, paste(tab[j,1],tab[j,2],tab[j,4],tab[j,3],sep="_"))
 						}
-					new_tree$tip.label = new.labels
+					new_tree$tip.label = new_labels
 					write.tree(new_tree, paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""))
 					newickTree = scan(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""), what="", sep="\n", quiet=TRUE)
 					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)

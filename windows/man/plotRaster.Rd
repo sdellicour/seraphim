@@ -1,7 +1,7 @@
 \name{plotRaster}
 \alias{plotRaster}
 \title{
-A function to plot rasters with a simplified layout
+A function to plot a raster with a simplified layout
 }
 \description{
 This function generates a raster plot using a simplified layout.

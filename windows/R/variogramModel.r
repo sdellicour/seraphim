@@ -58,7 +58,7 @@ variogramModel = function(envVariables)	{
 				fmla = as.formula(paste(rast@data@names,"~1",sep=""))
 				observedVariogram = variogram(fmla, data = samples)
 				dev.new(width=5, height =5); par("mar"=c(3.5,3.5,4.5,2)); par(mgp=c(1.6, 0.5, 0))
-				text1 = paste("Observed variogram for ",rast@data@names,"*",sep="")
+				text1 = paste("Observed variogram for ",rast@data@names, "*",sep="")
 				text2 = paste("User-defined variogram for ",rast@data@names,"*",sep="")
 				text3 = paste("Fitted (corrected) variogram for ",rast@data@names,"*",sep="")
 				text4 = paste("* a normal transformation was                 ",sep="")
@@ -70,7 +70,7 @@ variogramModel = function(envVariables)	{
 				happyWithModel = FALSE
 				while(happyWithModel == FALSE)
 					{
-						cat("Setting parameters value for variogram model fitting (", rast@data@names, "):",sep="")
+						cat("Setting parameters value for variogram model fitting (",rast@data@names,"):",sep="")
 						cat ("N.B: call vgm() without a model argument to get available models");
 						model = readline(prompt = "	model (e.g. Exp, Sph, Gau, Mat) = ")
 						sill = readline(prompt = "	sill value = ")

@@ -1,4 +1,4 @@
-cartogramTransformation = function(input, envVariables=list(), resistances=c(T), outputName="")	{
+cartogramTransformation = function(input, envVariables=list(), resistances=c(T), outputName="", cartograms=list())	{
 	
 	input0 = input; showingPlots = FALSE
 	textFile = FALSE; fastaAlignment = FALSE; treeFile = FALSE
@@ -14,7 +14,7 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 	if (attr(input,"class") == "phylo") treeFile = TRUE
 	if (textFile == TRUE)
 		{
-			sequencesID = seq(1,dim(input)[1],1); years = rep(0,dim(input)[1]); locations1 = input[,2]; locations2 = input[,1]
+			sequencesID = input[,1]; years = input[,2]; locations1 = input[,4]; locations2 = input[,3]
 			coordinates = cbind(sequencesID, as.numeric(years), as.numeric(locations1), as.numeric(locations2))
 		}
 	if (fastaAlignment == TRUE)
@@ -55,11 +55,21 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 		}
 	for (i in 1:length(envVariables))
 		{
-			envVariable = rasterToPolygons(envVariables[[i]])
-			names(envVariable) = "envVariable"
 			if (resistances[[i]] == TRUE) resistance = "R"
 			if (resistances[[i]] == FALSE) resistance = "C"
-			cartogram = quick.carto(envVariable, envVariable@data$envVariable, blur=0)
+			if (resistances[[i]] == FALSE) envVariable = 1/envVariable[]
+			envVariable = rasterToPolygons(envVariables[[i]])
+			names(envVariable) = "envVariable"
+			if (length(cartograms) > 0)
+				{
+					cartogram = cartograms[[i]]
+				}	else	{
+					# cartogram = quick.carto(envVariable, envVariable@data$envVariable, blur=0)
+					envVariable_sf = st_transform(st_as_sf(envVariable), 3857)
+					cartogram = cartogram_cont(envVariable_sf, "envVariable", itermax=5)
+					cartogram = st_transform(cartogram, crs(envVariables[[i]]))
+					cartogram = sf::as_Spatial(cartogram)
+				}
 			coords1 = matrix(nrow=dim(coordinates)[1], ncol=2)
 			for (j in 1:dim(coordinates)[1])
 				{
@@ -68,9 +78,9 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 				}
 			if (showingPlots == TRUE)
 				{
-					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(100)[c(1:80)]
 					cols = colorRampPalette(brewer.pal(9,"BuPu"))(100)[c(1:80)]
 					cols = colorRampPalette(brewer.pal(9,"YlGn"))(100)[c(1:80)]
+					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(100)[c(1:80)]
 					pts = list("sp.points", SpatialPoints(coords1), pch=19, cex=0.6, col="black")
 					spplot(envVariable, border=NA, col.regions=cols, col=NA, sp.layout=list(pts))
 				}
@@ -105,9 +115,9 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 				}
 			if (showingPlots == TRUE)
 				{
-					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(100)[c(1:80)]
 					cols = colorRampPalette(brewer.pal(9,"BuPu"))(100)[c(1:80)]
 					cols = colorRampPalette(brewer.pal(9,"YlGn"))(100)[c(1:80)]
+					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(100)[c(1:80)]
 					pts = list("sp.points", SpatialPoints(coords2), pch=19, cex=0.6, col="black")
 					if (resistances[[i]] == FALSE) cols = rev(cols)
 					spplot(cartogram, border=NA, col.regions=cols, col=NA, sp.layout=list(pts))
