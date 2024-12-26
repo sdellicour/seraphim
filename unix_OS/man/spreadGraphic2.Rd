@@ -4,7 +4,7 @@
 A function to generate a collection of polygons representing the credible intervals of internal node positions inferred by a continuous phylogeographic analysis
 }
 \description{
-This function generates a list of spatial polygon dataframes, with one dataframe per considered time slice. Each time slice layer is build by estimating the HPD (highest posterior density) region based on all the ending positions of phylogenetic branches whose ending time falls within the considered time slice.  See also, for instance, the programs SPREAD 4 (Nahata \emph(et al). 2022) and spread.gl (Li \emph(et al). 2024) for a very similar approach.
+This function generates a list of spatial polygon dataframes, with one dataframe per considered time slice. Each time slice layer is build by estimating the HPD (highest posterior density) region based on all the ending positions of phylogenetic branches whose ending time falls within the considered time slice. See also, for instance, the programs SPREAD 4 (Nahata \emph{et al}. 2022) and spread.gl (Li \emph{et al}. 2024) for a very similar approach.
 }
 \usage{
 spreadGraphic2(localTreesDirectory,
@@ -14,7 +14,7 @@ spreadGraphic2(localTreesDirectory,
                precision = 1)
 }
 \arguments{
-  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function).
+  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function). }
   \item{nberOfExtractionFiles}{ number of annotated phylogenetic trees from which spatio-temporal information has been extracted. }
   \item{prob}{ probability corresponding to the HPD (highest posterior density) regions. }
   \item{startDatum}{ number in a decimal format (e.g., 2007.4) defining the beginning of the dispersal history. }

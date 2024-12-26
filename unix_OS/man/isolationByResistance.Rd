@@ -4,7 +4,7 @@
 A function to conduct "isolation-by-resistance" analyses, i.e. to investigate the impact of environmental factors on the isolation-by-distance pattern
 }
 \description{
-This function estimates and tests the correlation between the log-transformed environmental distance(s) and patristic distance associated with each pair of tip nodes in posterior trees inferred through Bayesian continuous phylogeographic inference. While the continuous phylogeographic reconstruction is not used to compute the correlation metric, it is however use to generate a null dispersal model exploited to estimate its statistical support. The function performs three analytical steps: (i) for each environmental factor, the computation of the environmental distances associated with each pair of tip nodes (using the "straight-line path", "least-cost path" or "Circuitscape" model, see the details below), (ii) the estimation of the correlation between the patristic distances and the corresponding log-transformed environmental distances using a linear regression approach, and (iii) an optional randomisation step to estimate the statistical support of the correlation metric (\emph{Q}). To generate null models, several randomisation procedures of the branches position are implemented (see below for further detail). 
+This function estimates and tests the correlation between the log-transformed environmental distance(s) and patristic distance associated with each pair of tip nodes in posterior trees inferred through Bayesian continuous phylogeographic inference. While the continuous phylogeographic reconstruction is not used to compute the correlation metric, it is however use to generate a null dispersal model exploited to estimate its statistical support. The function performs three analytical steps: (i) for each environmental factor, the computation of the environmental distances associated with each pair of tip nodes (using the "straight-line path", "least-cost path" or "Circuitscape path" model, see the details below), (ii) the estimation of the correlation between the patristic distances and the corresponding log-transformed environmental distances using a linear regression approach, and (iii) an optional randomisation step to estimate the statistical support of the correlation metric (\emph{Q}). To generate null models, several randomisation procedures of the branches position are implemented (see below for further detail). 
 }
 \usage{
 isolationByResistance(localTreesDirectory = "",
@@ -23,7 +23,7 @@ isolationByResistance(localTreesDirectory = "",
 					  juliaCSImplementation = FALSE)
 }
 \arguments{
-  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function).
+  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function). }
   \item{nberOfExtractionFiles}{ number of annotated phylogenetic trees from which spatio-temporal information has been extracted. }
   \item{envVariables}{ list of environmental rasters to test. }
   \item{pathModel}{ path model to use for computing environmental distances: "1" (straight-line path model), "2" (least-cost path model, Dijkstra 1959) or "3" (Circuitscape path model, McRae 2006). }
@@ -47,9 +47,7 @@ Three different path models are available to compute the environmental distances
 Regarding the test to estimate the statistical support of the correlation metric \emph{Q}, several randomisation procedures have been implemented to create null models: (i) using already performed tree randomisations (see the "treesRandomisation" function for further detail), (ii) using external RRW simulations corresponding to each tree (see the "simulatorRRW1" function for further detail), (iii) a randomisation of the branches position while maintaining their length, the tree topology and the location of the most ancestral node, (iv) a randomisation of the branches position while maintaining their length and the location of the starting node of each branch, and (v) a randomisation of the branches position while maintaining only their length. The latter procedure can be useful, e.g., when analysing non phylogenetically informed movement data like capture-mark-recapture movement data.
 }
 \note{
-The computation of Circuitscape environmental distances requires the preliminary installation of the program Circuitscape as a Python or Julia package. \cr
-Instructions on how to install this Python package are available on the Circuitscape website: \cr
-\url{https://docs.circuitscape.org/Circuitscape.jl/latest/}
+The computation of Circuitscape environmental distances requires the preliminary installation of the program Circuitscape as a Python or Julia package. Instructions on how to install this Python package are available on the Circuitscape website: \url{https://circuitscape.org/}
 }
 \author{
 Simon Dellicour
@@ -66,5 +64,5 @@ Van Etten J (2012). R package gdistance: distances and routes on geographical gr
 \seealso{
 \url{http://cran.r-project.org/web/packages/gdistance/index.html} \cr
 \url{http://www.circuitscape.org} \cr
-\url{http://ebe.ulb.ac.be/ebe/Software.html}
+\url{https://github.com/Circuitscape/Circuitscape.jl}
 }

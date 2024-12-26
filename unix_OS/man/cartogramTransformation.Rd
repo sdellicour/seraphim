@@ -31,7 +31,3 @@ Simon Dellicour
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
 Dougenik JA, Chrisman NR, Niemeyer DR (1985). An algorithm to construct continuous area cartograms. \emph{The Professional Geographer} 37: 75-81.
 }
-\seealso{
-\url{https://github.com/omegahat/Rcartogram} \cr
-\url{https://github.com/chrisbrunsdon/getcartr}
-}

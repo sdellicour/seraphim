@@ -68,7 +68,7 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 					envVariable_sf = st_transform(st_as_sf(envVariable), 3857)
 					cartogram = cartogram_cont(envVariable_sf, "envVariable", itermax=5)
 					cartogram = st_transform(cartogram, crs(envVariables[[i]]))
-					cartogram = sf:::as_Spatial(cartogram)
+					cartogram = sf::as_Spatial(cartogram)
 				}
 			coords1 = matrix(nrow=dim(coordinates)[1], ncol=2)
 			for (j in 1:dim(coordinates)[1])

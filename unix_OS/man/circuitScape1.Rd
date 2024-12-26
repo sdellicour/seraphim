@@ -1,7 +1,7 @@
 \name{circuitScape1}
 \alias{circuitScape1}
 \title{
-A function to launch Circuitscape analyses
+A function to launch Circuitscape analyses with the related Python package
 }
 \description{
 The function calls the external Python library "circuitscape" to compute the environmental distance associated with each phylogenetic branch of a spatially annotated tree, e.g., inferred by a continuous phylogeographic analysis.
@@ -43,8 +43,7 @@ McRae BH (2006). Isolation by resistance. \emph{Evolution} 60: 1551-1561.
 Simon Dellicour
 }
 \note{
-This function requires the preliminary installation of the program Circuitscape as a Pyhton package. Instructions on how to install this Python package are available on the Circuitscape website: \cr
-\url{https://docs.circuitscape.org/Circuitscape.jl/latest/}. \cr
+This function requires the preliminary installation of the program Circuitscape as a Pyhton package. Instructions on how to install this Python package are available on the Circuitscape website: \url{https://circuitscape.org/}. \cr
 Also note that "fromCoor" and "toCoor" matrices have to display the same dimensions and lines in the same order: coordinates in line \emph{i} in "fromCoor" have to be the coordinates of the starting node connected to the ending node for which geographic coordinates are on line \emph{i} in "toCoor"". \cr
-This function can be used the Python library "circuitscape" to compute (resistance or conductance) environmental distance associated with any movement vector for which start and end locations are respectively specified in the "fromCoor" and "toCoor" arguments.
+This function can be used to compute (resistance or conductance) environmental distance associated with any movement vector for which start and end locations are respectively specified in the "fromCoor" and "toCoor" arguments.
 }

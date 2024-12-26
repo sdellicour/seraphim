@@ -16,7 +16,7 @@ treeExtractions(localTreesDirectory,
 				nberOfCores = 1)
 }
 \arguments{
-  \item{localTreesDirectory}{ name of the (new) directory where the tree extraction matrices will be saved.
+  \item{localTreesDirectory}{ name of the (new) directory where the tree extraction matrices will be saved. }
   \item{allTrees}{ all the trees in a Nexus format (read with the "scan" function). }
   \item{burnIn}{ number of posterior trees to discard as burn-in. }
   \item{randomSampling}{ boolean variable specifying if the trees have to be randomly sampled in the list. If FALSE, the trees will be sampled at a regular interval (at the largest possible interval). }

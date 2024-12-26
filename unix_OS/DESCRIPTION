@@ -1,11 +1,10 @@
 Package: seraphim
 Type: Package
-Title: Studying environmental rasters and phylogenetic informed
-        movements
+Title: Studying environmental rasters and phylogenetic informed movements
 Version: 1.0
 Date: 2014-11-06
 Author: Simon Dellicour, Rebecca Rose, Nuno Faria, Philippe Lemey, Oliver G. Pybus
-Maintainer: Simon Dellicour <simon.dellicour@ulb.ac.be>
+Maintainer: Simon Dellicour <simon.dellicour@ulb.be>
 Depends: ape, doMC, fields, gdistance, HDInterval, ks, phytools, raster, RColorBrewer, R.utils, vegan
 Description: The source code for SERAPHIM is distributed under a GNU Lesser General Public License
 License: GPL-3

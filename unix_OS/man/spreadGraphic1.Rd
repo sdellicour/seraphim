@@ -4,7 +4,7 @@
 A function to generate a raster file, or a collection of raster files, estimating the credible intervals of internal node positions inferred by a continuous phylogeographic analysis
 }
 \description{
-This function generates a raster made by the superimposition of distinct layers corresponding to successive time slices. Each time slice layer is build by estimating the HPD (highest posterior density) region based on all the ending positions of phylogenetic branches whose ending time falls within the considered time slice. See also, for instance, the programs SPREAD 4 (Nahata \emph(et al). 2022) and spread.gl (Li \emph(et al). 2024) for a very similar approach. Alternatively, the present function can also generate a collection (list) of raster files each corresponding to a specific time slice.
+This function generates a raster made by the superimposition of distinct layers corresponding to successive time slices. Each time slice layer is build by estimating the HPD (highest posterior density) region based on all the ending positions of phylogenetic branches whose ending time falls within the considered time slice. See also, for instance, the programs SPREAD 4 (Nahata \emph{et al}. 2022) and spread.gl (Li \emph{et al}. 2024) for a very similar approach. Alternatively, the present function can also generate a collection (list) of raster files each corresponding to a specific time slice.
 }
 \usage{
 spreadGraphic1(localTreesDirectory,

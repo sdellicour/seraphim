@@ -17,7 +17,7 @@ spreadStatistics(localTreesDirectory = ".",
 				 slidingWindow = 1)
 }
 \arguments{
-  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function).
+  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function). }
   \item{nberOfExtractionFiles}{ number of annotated phylogenetic trees from which spatio-temporal information has been extracted. }
   \item{timeSlices}{ number of distinct time slices that will be used to generate the maximal wavefront distance evolution plots. }
   \item{onlyTipBranches}{ boolean variable defining if the statistic estimations have to be performed only while considering the tip branches of the trees. }

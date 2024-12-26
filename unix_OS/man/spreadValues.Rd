@@ -19,7 +19,7 @@ spreadValues(localTreesDirectory = ".",
 			 nberOfCores = 1)
 }
 \arguments{
-  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function).
+  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function). }
   \item{nberOfExtractionFiles}{ number of annotated phylogenetic trees from which spatio-temporal information has been extracted. }
   \item{envVariables}{ list of environmental rasters to analyse. }
   \item{startTime}{ starting time of the plot (x-axis). }

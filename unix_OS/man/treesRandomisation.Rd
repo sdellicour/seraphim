@@ -14,7 +14,7 @@ treesRandomisation(localTreesDirectory = "",
 				   nberOfCores = 1)
 }
 \arguments{
-  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function).
+  \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function). }
   \item{nberOfExtractionFiles}{ number of annotated phylogenetic trees from which spatio-temporal information has been extracted. }
   \item{envVariables}{ list of environmental rasters to consider. These rasters are only use to prevent that randomised node positions fall in non-accessible areas, i.e. raster cells associated with "NA" value (e.g., sea areas). }
   \item{randomProcedure}{ randomisation procedure to use: "3" (randomisations of nodes position while maintaining the branches length, the tree topology and the location of the most ancestral node), "4" (randomisations of nodes position while maintaining the branches length and the location of the starting node of each branch), "5" (randomisations of nodes position while maintaining the branches length and the location of the ending node of each branch), or "6" (randomisations of nodes position while maintaining only the branches length). }

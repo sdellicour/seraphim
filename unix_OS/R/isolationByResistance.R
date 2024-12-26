@@ -1046,9 +1046,9 @@ if (nberOfRandomisations > 0)
 								colNames = c(colNames, paste("BFs_Q_LR_randomisation_",s,sep=""))
 								# colNames = c(colNames, paste("BFs_rP2_randomisation_",s,sep=""))
 							}
-						row.names(deltaRP2RandomisationBFs) = envVariablesNames
-						colnames(deltaRP2RandomisationBFs) = colNames
-						write.table(deltaRP2RandomisationBFs, paste(outputName,"_randomisation_BF_results.txt",sep=""), quote=F, sep="\t")
+						row.names(uniLRdeltaRsquaresRandomisationBFs) = envVariablesNames
+						colnames(uniLRdeltaRsquaresRandomisationBFs) = colNames
+						write.table(uniLRdeltaRsquaresRandomisationBFs, paste(outputName,"_randomisation_BF_results.txt",sep=""), quote=F, sep="\t")
 					}
 			}
 	}

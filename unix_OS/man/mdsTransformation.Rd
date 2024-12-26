@@ -41,4 +41,5 @@ Van Etten J (2012). R package gdistance: distances and routes on geographical gr
 \seealso{
 \url{http://cran.r-project.org/web/packages/gdistance/index.html} \cr
 \url{http://www.circuitscape.org} \cr
+\url{https://github.com/Circuitscape/Circuitscape.jl}
 }

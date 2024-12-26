@@ -31,7 +31,7 @@ raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
   \item{startingYear}{ year (or moment in another time unit) at which the simulation begins from the ancestral node position. }
   \item{samplingWindow}{ vector of time values (in the same time unit as the "startingYear") defining the starting and ending times of the sampling period, i.e. the period during which the sampling rate will be effective. }
   \item{timeSlice}{ time interval (in the same time unit as the "startingYear") at which unsampled lineages perform a new movement on the raster. }
-  \item{timeIntervale}{ time interval (in the same time unit as the "startingYear") at which the plot displaying the simulation is updated (only taken into account when showingPlots=TRUE). }
+  \item{timeIntervale}{ time interval (in the same time unit as the "startingYear") at which the plot displaying the simulation is updated (only taken into account when "showingPlots=TRUE"). }
   \item{showingPlots}{ boolean variable specifying if the different plots have to be displayed or not. }
   \item{extractionOfValuesOnMatrix}{ boolean variable specifying if the raster object as to be preliminary transformed into a matrix object. This operation allows a significantly faster simulation but has to be avoided if possible. Indeed, with this transformation, the raster and the ancestral position are projected on a flat grid and thus lose their initial projection during the whole simulation. This aspect can, in some cases, lead to over-simplistic situations. Note that if this option is selected, coordinates of simulated nodes are re-projected on the initial raster at the end of the simulation. }
 }
@@ -47,7 +47,8 @@ For a given raster cell \eqn{i} with environmental \eqn{v_i}, standard deviation
 \eqn{SDy_i = (v_i/v_{max}) * cell_{height} * scalingValue} \cr
 \cr
 with \eqn{v_{max}} being the highest value recorded in the environmental raster. Note that \eqn{cell_{width}} and \eqn{cell_{height}} are taken from the raster properties/parameters.
-Final note: in order to obtain to simulate trees with a realistic sampling pattern through time, tip branches that have not been sampled at the end of simulation are removed from the simulated tree topology.}
+Final note: in order to obtain to simulate trees with a realistic sampling pattern through time, tip branches that have not been sampled at the end of simulation are removed from the simulated tree topology.
+}
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
 }
