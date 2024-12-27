@@ -1,4 +1,5 @@
-spreadGraphic1 = function(localTreesDirectory, nberOfExtractionFiles, rast, prob=0.95, startDatum, precision=1, timeLayers=FALSE, nberOfCores=1, origin=FALSE, yearLayers=FALSE) {
+spreadGraphic1 = function(localTreesDirectory, nberOfExtractionFiles, rast, prob=0.95, startDatum, precision=1, 
+						  timeLayers=FALSE, nberOfCores=1, origin=FALSE, yearLayers=FALSE) {
 
 	showingPlots = FALSE
 	prob = 1-prob
@@ -150,7 +151,7 @@ spreadGraphic1 = function(localTreesDirectory, nberOfExtractionFiles, rast, prob
 													crs(temp) = crs(rast2)
 													# rast2 = raster::merge(rast2, temp)
 												}	
-										}	else		{
+										}	else	{
 											p = data.frame()
 											p[1,1] = pts[1]; p[1,2] = pts[2]
 											temp = rasterize(p, rast2, i)

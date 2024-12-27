@@ -87,7 +87,6 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 			indices = matrix(nrow=dim(coordinates)[1], ncol=1)
 			for (j in 1:dim(coords1)[1])
 				{
-					# cS = c()
 					found = FALSE
 					c1 = cbind(coords1[j,1],coords1[j,2])
 					while (found == FALSE)
@@ -95,7 +94,6 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 							for (k in 1:length(envVariable@polygons))
 								{
 									c2 = envVariable@polygons[[k]]@Polygons[[1]]@coords
-									# cS = rbind(cS,c)
 									if (point.in.polygon(c1[1,1],c1[1,2],c2[,1],c2[,2]) == 1)
 										{
 											indices[j,1] = k; found = TRUE # print(k)
@@ -171,8 +169,8 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 					newTree = tree
 					newTree$tip.label = new.labels
 					write.tree(newTree, paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".tree",sep=""))
-					newickTree = scan(paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".tree",sep=""), what="", sep="\n", quiet=TRUE)
-					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)
+					newickTree = scan(paste(outputName,"_cartogram_",rasterNames[i],"_",resistance,".tree",sep=""), what="", sep="\n", quiet=T)
+					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=T)
 					xmlBlock = c()
 					for (j in 1:length(IDs))
 						{
@@ -217,8 +215,8 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 	if (treeFile == TRUE)
 		{
 			write.tree(tree, paste(outputName,"_original.tree",sep=""))
-			newickTree = scan(paste(outputName,"_original.tree",sep=""), what="", sep="\n", quiet=TRUE)
-			xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)
+			newickTree = scan(paste(outputName,"_original.tree",sep=""), what="", sep="\n", quiet=T)
+			xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=T)
 			xmlBlock = c()
 			for (j in 1:length(IDs))
 				{
@@ -260,5 +258,3 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 			sink(NULL)
 		}	
 }
-
-	

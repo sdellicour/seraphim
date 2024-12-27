@@ -2,25 +2,24 @@ rasterSimulation = function(rast, variogramModel) {
 	
 	nscore = function(x)
 		{
-			# Function created by Ashton Shortridge (May/June 2008).	
-   			# Takes a vector of values x and calculates their normal scores. Returns a list with the scores
-   			# and an ordered table of original values and scores, which is useful as a back-transform table.
+			# Function created by Ashton Shortridge (May/June 2008): takes a vector of values x and calculates 
+			# their normal scores. Returns a list with the scores and an ordered table of original values and 
+			# scores, which is useful as a back-transform table
   			nscore = qqnorm(x, plot.it = F)$x  # normal score 
    			trn.table = data.frame(x = sort(x), nscore = sort(nscore))
    			return(list(nscore=nscore, trn.table = trn.table))
 		}
 	nscoreBack = function(scores, nscore)
 		{
-			# Function created by Ashton Shortridge (May/June 2008).		
-   			# Given a vector of normal scores and a normal score object (from nscore), the function returns
-   			# a vector of back-transformed values.
+			# Function created by Ashton Shortridge (May/June 2008): given a vector of normal scores and a 
+			# normal score object (from nscore), the function returns a vector of back-transformed values
 			min.x = min(nscore$trn.table$x, na.rm=T)
    			max.x = max(nscore$trn.table$x, na.rm=T)
    			min.sc = min(scores, na.rm=T)
    			max.sc = max(scores, na.rm=T)
    			x = c(min.x, nscore$trn.table$x, max.x)
    			nsc = c(min.sc, nscore$trn.table$nscore, max.sc)
-			back.xf = approxfun(nsc,x) # Develop the back transform function
+			back.xf = approxfun(nsc,x) # develop the back transform function
    			val = back.xf(scores)
 			return(val)
 		}	
@@ -55,4 +54,4 @@ rasterSimulation = function(rast, variogramModel) {
 		}
 	rast[] = simRaster	
 	return(rast)	
-}		
+}

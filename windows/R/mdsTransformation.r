@@ -201,7 +201,6 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 									colIDs = c(colIDs, k)
 								}
 						}
-					# if (length(colIDs) > 0) print(colIDs)
 					if (atLeastOneNA == TRUE)
 						{
 							lines_to_remove = c(lines_to_remove, j)
@@ -279,12 +278,12 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 				}
 			if (showingPlots == TRUE)
 				{	
-					# plotRaser(nullRaster, col="grey90")
-					# lines(coordinates[hull,], lwd=0.5); points(coordinates, pch=19, cex=0.7)
-					# points(coordsMDS_mod1a, col="red", pch=19, cex=0.7); points(coordsMDS_mod1b, col="blue", pch=19, cex=0.7)
-					# points(coordsMDS_mod1c, col="green", pch=19, cex=0.7); points(coordsMDS_mod1d, col="green3", pch=19, cex=0.7)
-					# points(coordsMDS_mod2a, col="yellow", pch=19, cex=0.7); points(coordsMDS_mod2b, col="purple", pch=19, cex=0.7)
-					# points(coordsMDS_mod2c, col="brown", pch=19, cex=0.7); points(coordsMDS_mod2d, col="pink", pch=19, cex=0.7)
+					plotRaser(nullRaster, col="grey90")
+					lines(coordinates[hull,], lwd=0.5); points(coordinates, pch=19, cex=0.7)
+					points(coordsMDS_mod1a, col="red", pch=19, cex=0.7); points(coordsMDS_mod1b, col="blue", pch=19, cex=0.7)
+					points(coordsMDS_mod1c, col="green", pch=19, cex=0.7); points(coordsMDS_mod1d, col="green3", pch=19, cex=0.7)
+					points(coordsMDS_mod2a, col="yellow", pch=19, cex=0.7); points(coordsMDS_mod2b, col="purple", pch=19, cex=0.7)
+					points(coordsMDS_mod2c, col="brown", pch=19, cex=0.7); points(coordsMDS_mod2d, col="pink", pch=19, cex=0.7)
 				}
 			minNumberOfNApoints = numberOfNApoints[1]; coordsMDS_mod = coordsMDS_modList[[1]]	
 			for (j in 2:length(coordsMDS_modList))
@@ -353,8 +352,6 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 									names(fasta)[j] = paste(unlist(strsplit(tab[j,1],"_"))[1],tab[j,2],tab[j,4],tab[j,3],sep="_")
 								}
 						}	
-					# write.table(tab, paste(paste(outputName,"_",rasterNames[i],"_",method,"_",resistance,sep=""),".txt",sep=""), row.names=F, col.names=F, quote=F)
-					# write.dna(fasta, paste(paste(outputName,"_",rasterNames[i],"_",method,"_",resistance,sep=""),".fasta",sep=""), format="fasta")
 					sink(file=paste(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,sep=""),".fasta",sep=""))
 					for (j in 1:length(row.names(fasta)))
 						{
@@ -374,8 +371,8 @@ mdsTransformation = function(input, envVariables=list(), pathModel=2, resistance
 						}
 					new_tree$tip.label = new_labels
 					write.tree(new_tree, paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""))
-					newickTree = scan(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""), what="", sep="\n", quiet=TRUE)
-					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=TRUE)
+					newickTree = scan(paste(outputName,"_MDS_",rasterNames[i],"_",method,"_",resistance,".tree",sep=""), what="", sep="\n", quiet=T)
+					xmlTemplate = scan("Xml_template.xml", what="", sep="\n", quiet=T)
 					xmlBlock = c()
 					for (j in 1:dim(tab)[1])
 						{

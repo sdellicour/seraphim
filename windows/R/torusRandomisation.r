@@ -166,4 +166,4 @@ torusRandomisation = function(rast)	{
 		}
 	rast[,] = mat
 	return(rast)
-}	
+}

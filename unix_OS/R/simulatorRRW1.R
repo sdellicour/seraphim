@@ -96,7 +96,7 @@ simulatorRRW1 = function(tree, rates, sigmas=c(0.1,0.1), cor=0, envVariables=lis
 																	if (is.na(raster::extract(envVariables[[k]],cbind(pt2_rotated[1],pt2_rotated[2]))))
 																		{
 																			onTheArea = FALSE
-																		}	else		{
+																		}	else	{
 																			new_t1 = pt2_rotated[2]
 																			new_t2 = pt2_rotated[1]
 																		}

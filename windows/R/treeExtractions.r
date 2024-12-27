@@ -41,7 +41,7 @@ treeExtractions = function(localTreesDirectory, allTrees, burnIn, randomSampling
 					treeID = gsub(pattern=" ", replacement="", treeID)
 					treeID = unlist(strsplit(treeID, "_"))[2]
 					cat("Exctracting information from sampled tree n°",treeID,"\n",sep="")
-				}	else		{
+				}	else	{
 					treeID = "MCC_tree"
 				}
 			# (1) Creation of "tab", a data frame containing coordinates of each node:

@@ -180,7 +180,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 													if (counter1 == 1)
 														{
 															cat("Randomising tree ",t,"\n",sep="")
-														}	else		{
+														}	else	{
 															cat("Randomising tree ",t,", again","\n",sep="")
 														}
 													fromCoorRand[[t]][,] = NA; toCoorRand[[t]][,] = NA
