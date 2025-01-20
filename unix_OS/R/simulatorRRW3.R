@@ -154,7 +154,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 			startNodeL = startYear-startingYear; endNodeL = endYear-startingYear
 			x1 = cbind(startLon,startLat); x2 = cbind(endLon,endLat)
 			length = endYear-startYear
-			greatCircleDist_km = rdist.earth(x1, x2, miles=FALSE, R=NULL)
+			greatCircleDist_km = rdist.earth(x1, x2, miles=F, R=NULL)
 			treeID = length; treeID[] = -9999
 			csv = rbind(csv, cbind(node1,node2,startLat,startLon,endLat,endLon,endNodeL,startNodeL,startYear,endYear,greatCircleDist_km,treeID))
 		}
@@ -179,7 +179,7 @@ simulatorRRW3 = function(envVariable=raster(matrix(c(runif(600,5,10),runif(1000,
 							csv[j,"endNodeL"] = csv[index,"endNodeL"]
 							csv[j,"endYear"] = csv[index,"endYear"]
 							# x1 = cbind(csv[j,"startLon"],csv[j,"startLat"]); x2 = cbind(csv[j,"endLon"],csv[j,"endLat"])
-							# csv[j,"greatCircleDist_km"] = rdist.earth(x1, x2, miles=FALSE, R=NULL)
+							# csv[j,"greatCircleDist_km"] = rdist.earth(x1, x2, miles=F, R=NULL)
 							csv[j,"greatCircleDist_km"] = NaN
 							branchesToRemove = c(branchesToRemove, index)
 						}

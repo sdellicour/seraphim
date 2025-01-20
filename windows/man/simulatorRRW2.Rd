@@ -8,22 +8,22 @@ This function can be used to conduct forward-in-time joint simulations of both t
 }
 \usage{
 simulatorRRW2(RRW = TRUE,
-			  envVariable =
+              envVariable =
 raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
-			  sigma = 1,
-			  ancestPosition = c(0.4,0.5),
-			  birthRate = 0.2,
-			  samplingRate = 0.2,
-			  startingYear = 0,
-			  samplingWindow = c(10,50),
-			  timeSlice = 0.1,
-			  timeIntervale = 1,
-			  showingPlots = FALSE)
+              sigma = 1,
+              ancestPosition = c(0.4,0.5),
+              birthRate = 0.2,
+              samplingRate = 0.2,
+              startingYear = 0,
+              samplingWindow = c(10,50),
+              timeSlice = 0.1,
+              timeIntervale = 1,
+              showingPlots = FALSE)
 }
 \arguments{
   \item{RRW}{ boolean variable specifying if a Bownian (BRW) or relaxed (RRW) random walk diffusion process should be simulated. }
-  \item{envVariable}{ raster that will determine the environmental heterogeneity (cells with a NA value will be considered as inaccessible). }
-  \item{sigma}{ standard deviation of the normal distribution with mean parameter set to zero in which longitudinal and latitudinal displacement values are randomly picked (if "RRW" is set to "FALSE", i.e. in the case of a BRW simulation), or the value of the scale parameter of the Cauchy distribution with location parameter set to zero in which longitudinal and latitudinal displacement values are randomly picked (if "RRW" is set to "TRUE", i.e. in the case of a RRW simulation (see also the note below).)
+  \item{envVariable}{ raster that will determine the environmental heterogeneity (cells with a "NA" value will be considered as inaccessible). }
+  \item{sigma}{ standard deviation of the normal distribution with mean parameter set to zero in which longitudinal and latitudinal displacement values are randomly picked (if "RRW" is set to "FALSE", i.e. in the case of a BRW simulation), or the value of the scale parameter of the Cauchy distribution with location parameter set to zero in which longitudinal and latitudinal displacement values are randomly picked (if "RRW" is set to "TRUE", i.e. in the case of a RRW simulation (see also the note below). }
   \item{ancestPosition}{ vector of geographic coordinates (longitude, latitude) of the most ancestral node position, i.e. the starting position of the RRW diffusion simulation. }
   \item{birthRate}{ value defining the rate at which lineages are splited in two new lineages (expressed in events per lineage per time unit). }
   \item{samplingRate}{ value defining the rate at which lineage are sampled and thus stopped moving and splitting on the raster (expressed in events per lineage per time unit). }

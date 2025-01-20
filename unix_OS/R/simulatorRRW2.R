@@ -119,7 +119,7 @@ simulatorRRW2 = function(RRW=TRUE, envVariable=raster(matrix(c(runif(600,5,10),r
 			startNodeL = startYear-startingYear; endNodeL = endYear-startingYear
 			x1 = cbind(startLon,startLat); x2 = cbind(endLon,endLat)
 			length = endYear-startYear
-			greatCircleDist_km = rdist.earth(x1, x2, miles=FALSE, R=NULL)
+			greatCircleDist_km = rdist.earth(x1, x2, miles=F, R=NULL)
 			treeID = length; treeID[] = -9999
 			csv = rbind(csv, cbind(node1,node2,startLat,startLon,endLat,endLon,endNodeL,startNodeL,startYear,endYear,greatCircleDist_km,treeID))
 		}

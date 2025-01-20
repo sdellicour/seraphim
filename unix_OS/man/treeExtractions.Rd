@@ -8,12 +8,12 @@ This function extracts the spatio-temporal information contained in the phylogen
 }
 \usage{
 treeExtractions(localTreesDirectory,
-				allTrees, burnIn,
-				randomSampling, 
-				nberOfTreesToSample,
-				mostRecentSamplingDatum, 
-				coordinateAttributeName,
-				nberOfCores = 1)
+                allTrees, burnIn,
+                randomSampling, 
+                nberOfTreesToSample,
+                mostRecentSamplingDatum, 
+                coordinateAttributeName,
+                nberOfCores = 1)
 }
 \arguments{
   \item{localTreesDirectory}{ name of the (new) directory where the tree extraction matrices will be saved. }
@@ -23,7 +23,7 @@ treeExtractions(localTreesDirectory,
   \item{nberOfTreesToSample}{ number of trees to sample. }
   \item{mostRecentSamplingDatum}{ most recent sampling date in a decimal format (e.g., 2007.4). }
   \item{coordinateAttributeName}{ attribute name used to indicate the geographic coordinates within the trees file. }
-  \item{nberOfCores}{ number of available cores to parallelise the extractions. }
+  \item{nberOfCores}{ number of available cores to parallelise the extractions (parallelisation will only work on Unix operating systems). }
 }
 \value{
 The function generates "csv" files (one per phylogenetic tree) containing the spatio-tremporal information extracted from annotated phylogenetic trees.

@@ -4,27 +4,27 @@
 A function to conduct phylogeographic simulations based on a birth-death process and a relaxed random walk (RRW) diffusion process during which the dispersal velocity of lineages is impacted by an environmental raster
 }
 \description{
-This function can be used to conduct forward-in-time joint simulations of both time-scaled phylogenies and the dispersal history of their branches on an underlying geo-referenced grid (raster) whose environmental values impact the dispersal velocity of lineages. At each time step of this RRW simulation, both the longitudinal and latitudinal displacements of evolving lineages are randomly drawn from a Gaussian distribution whose standard deviation is proportional to the underneath raster cell value while preventing lineage dispersal in inaccessible raster cells.
+This function can be used to conduct forward-in-time joint simulations of both time-scaled phylogenies and the dispersal history of their branches on an underlying geo-referenced grid (raster) whose environmental values impact the dispersal velocity of lineages. At each time step of this relaxed random walk (RRW) simulation, both the longitudinal and latitudinal displacements of evolving lineages are randomly drawn from a Gaussian distribution whose standard deviation is proportional to the underneath raster cell value while preventing lineage dispersal in inaccessible raster cells.
 }
 \usage{
 simulatorRRW3(envVariable =
 raster(matrix(c(runif(600,5,10),runif(1000,0,5)),nrow=40,ncol=40)),
-			  resistance = TRUE,
-			  scalingValue = 1,
-			  ancestPosition = c(0.4,0.5),
-			  birthRate = 0.2,
-			  samplingRate = 0.2,
-			  startingYear = 0,
-			  samplingWindow = c(10,50),
-			  timeSlice = 0.1, 
-			  timeIntervale = 1,
-			  showingPlots = FALSE,
-			  extractionOfValuesOnMatrix = FALSE)
+              resistance = TRUE,
+              scalingValue = 1,
+              ancestPosition = c(0.4,0.5),
+              birthRate = 0.2,
+              samplingRate = 0.2,
+              startingYear = 0,
+              samplingWindow = c(10,50),
+              timeSlice = 0.1, 
+              timeIntervale = 1,
+              showingPlots = FALSE,
+              extractionOfValuesOnMatrix = FALSE)
 }
 \arguments{
-  \item{envVariable}{ raster that will determine the environmental heterogeneity impacting the dispersal velocity of evolving lineages (cells with a NA value will be considered as inaccessible). }
+  \item{envVariable}{ raster that will determine the environmental heterogeneity impacting the dispersal velocity of evolving lineages (cells with a "NA" value will be considered as inaccessible). }
   \item{resistance}{ boolean variable specifying if the environmental raster has to be treated as a resistance or conductance factor. If treated as a resistance factor, raster cell values will be inverted (1/x) prior to the simulation. }
-  \item{scalingValue}{ value used to rescale the standard deviation of the two normal distributions with mean = 0 in which longitudinal and latitudinal displacement values are randomly picked (see details below). }
+  \item{scalingValue}{ value used to rescale the standard deviation of the two normal distributions with a mean set to zero in which longitudinal and latitudinal displacement values are randomly picked (see details below). }
   \item{ancestPosition}{ vector of geographic coordinates (longitude, latitude) of the most ancestral node position, i.e. the starting position of the RRW diffusion simulation. }
   \item{birthRate}{ value defining the rate at which lineages are splited in two new lineages (expressed in events per lineage per time unit). }
   \item{samplingRate}{ value defining the rate at which lineage are sampled and thus stopped moving and splitting on the raster (expressed in events per lineage per time unit). }
@@ -51,6 +51,7 @@ Final note: in order to obtain to simulate trees with a realistic sampling patte
 }
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
+Dellicour S, \emph{et al.} (\emph{in prep.}). Peaks and valleys of landscape phylogeography.
 }
 \author{
 Simon Dellicour, Philippe Lemey

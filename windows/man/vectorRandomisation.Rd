@@ -4,7 +4,7 @@
 A function to randomise the end position of a set of movement vectors
 }
 \description{
-This function randomises the position of a set of movement vectors by rotating them around their start location. The randomisation (i.e. rotation) is performed on a template raster and while avoiding that new start and/or new end position fall on a cell with a NODATA ("NA") value. During the randomisation, vectors length (i.e. euclidian distance between start and end locations) is not modified.
+This function randomises the position of a set of movement vectors by rotating them around their start location. The randomisation (i.e. rotation) is performed on a template raster and while avoiding that new start and/or new end position fall on a cell with a "NA" value. During the randomisation, vectors length (i.e. euclidian distance between start and end locations) is not modified.
 }
 \usage{
 vectorRandomisation(rast, fromCoor, toCoor, showingPlots = FALSE)

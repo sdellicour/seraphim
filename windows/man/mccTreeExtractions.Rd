@@ -4,7 +4,7 @@
 A function to extract the spatio-tremporal information embedded in the maximum clade credibility (MCC) tree obtained from a continuous phylogeographic inference conducted with the software package BEAST
 }
 \description{
-This function extracts the spatio-temporal information contained in the MCC phylogenetic trees inferred by the continuous phylogeographic method implemented in BEAST (Lemey \emph{et al}. 2010). To use this function the "latitute-longitude" continuous traits partition should have been named "location" while preparing the input XML file for the continuous phylogeographic analysis conducted with BEAST.
+This function extracts the spatio-temporal information contained in the maximum clade credibility (MCC) phylogenetic trees inferred by the continuous phylogeographic method implemented in BEAST (Lemey \emph{et al}. 2010). To use this function the "latitute-longitude" continuous traits partition should have been named "location" while preparing the input XML file for the continuous phylogeographic analysis conducted with BEAST.
 }
 }
 \usage{

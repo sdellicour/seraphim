@@ -8,15 +8,15 @@ This function will extract, for each considered time slice, environmental values
 }
 \usage{
 spreadValues(localTreesDirectory = ".",
-			 nberOfExtractionFiles = 1,
-			 envVariables = list(),
-			 startTime,
-			 endTime,
-			 timeSlices = 100,
-			 slidingWindow = 1/12,
-			 showingPlots = TRUE, 
-			 outputName = gsub(" ","_",date()),
-			 nberOfCores = 1)
+             nberOfExtractionFiles = 1,
+             envVariables = list(),
+             startTime,
+             endTime,
+             timeSlices = 100,
+             slidingWindow = 1/12,
+             showingPlots = TRUE, 
+             outputName = gsub(" ","_",date()),
+             nberOfCores = 1)
 }
 \arguments{
   \item{localTreesDirectory}{ directory where the tree extraction matrices are saved (see the "treeExtractions" or "postTreeExtractions" function). }
@@ -28,7 +28,7 @@ spreadValues(localTreesDirectory = ".",
   \item{slidingWindow}{ sliding window, in units of time, that will be used to generate the environmental skyline-like plot. }
   \item{showingPlots}{ boolean variable specifying if the different plots have to be displayed or not. }
   \item{outputName}{ name (prefix) to give to the different output files. }
-  \item{nberOfCores}{ number of available cores to parallelise the computations (parallelisation only works on Unix systems). }
+  \item{nberOfCores}{ number of available cores to parallelise the computations (parallelisation will only work on Unix operating systems). }
 }
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr

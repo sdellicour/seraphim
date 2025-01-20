@@ -168,7 +168,7 @@ simulatorRRW1 = function(tree, rates, sigmas=c(0.1,0.1), cor=0, envVariables=lis
 			simulation[i,"endLat"] = y[node_f]
 			simulation[i,"endLon"] = x[node_f]
 			x1 = cbind(x[node_i],y[node_i]); x2 = cbind(x[node_f],y[node_f])
-			simulation[i,"greatCircleDist_km"] = rdist.earth(x1, x2, miles=FALSE, R=NULL)
+			simulation[i,"greatCircleDist_km"] = rdist.earth(x1, x2, miles=F, R=NULL)
 		}	
 	l = length(simulation[,1])
 	ll = matrix(1:l,nrow=l,ncol=l); ll[] = 0

@@ -1,7 +1,7 @@
 \name{postTreeExtractions}
 \alias{postTreeExtractions}
 \title{
-A function to extract the spatio-tremporal information embedded in annotated phylogenetic trees
+A function to extract the spatio-tremporal information embedded in annotated phylogenetic trees sampled from the posterior distribution of a Bayesian continuous phylogeographic inference
 }
 \description{
 This function extracts the spatio-temporal information contained in the annotated phylogenetic trees inferred, e.g., by the continuous phylogeographic method implemented in BEAST (Lemey \emph{et al}. 2010). To use this function the "latitute-longitude" continuous traits partition should have been named "location" while preparing the input XML file for the continuous phylogeographic analysis conducted with BEAST.
@@ -14,7 +14,7 @@ postTreeExtractions(post_tre, mostRecentSamplingDatum)
   \item{mostRecentSamplingDatum}{ most recent sampling date in a decimal format (e.g., 2007.4). }
 }
 \value{
-The function returns an extraction table containing the spatio-tremporal information extracted from the annotated phylogenetic tree.
+The function returns an extraction table containing the spatio-tremporal information extracted from an annotated phylogenetic tree.
 }
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr

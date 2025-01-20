@@ -3,7 +3,7 @@
 \alias{readAnnotatedNexus}
 \title{Read annotated tree files in a Nexus format}
 \description{
-This function reads annotated trees from files in a Nexus format. Except for the annotations, this functions mimic the R package "ape" function "read.nexus". Annotations are ordered by edges, i.e. matching the \code{edge.length} slot of a \code{phylo} object.
+This function reads annotated trees from files in a Nexus format and was previously available in the R package "OutbreakTools" (Jombart \emph{et al.} 2014). Except for the annotations, this functions mimic the R package "ape" function "read.nexus". Annotations are ordered by edges, i.e. matching the \code{edge.length} slot of a \code{phylo} object.
 }
 \usage{
 readAnnotatedNexus(file, tree.names=NULL)

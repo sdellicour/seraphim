@@ -30,13 +30,14 @@ circuitScape1(envVariable,
   \item{OS}{ operating system on which the function is used ("Unix" or "Windows"). }
   \item{prefix}{ a character string that will be used as a prefix to name the temporary folders generated for Circuitscape. }
   \item{ID}{ a number to identify the Circuitscape operation. }
-  \item{nberOfCores_CS}{ a number to identify the Circuitscape operation. }
+  \item{nberOfCores_CS}{ number of available cores to parallelise the computations in Circuitscape (we advise to set this parameter value to one and rather use the "numberOfCores" variable to set a parallelisation process). }
 }
 \value{
 The function returns a vector containing the environmental distance computed for each phylogenetic branch.
 }
 \references{
-Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
+Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016a). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
+Dellicour S, Rose R, Pybus OG (2016b). Explaining the geographic spread of emerging epidemics: a framework for comparing viral phylogenies and environmental landscape data. \emph{BMC Bioinformatics} 17: 82. \cr \cr
 McRae BH (2006). Isolation by resistance. \emph{Evolution} 60: 1551-1561.
 }
 \author{
