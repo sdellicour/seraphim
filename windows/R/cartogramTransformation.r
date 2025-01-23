@@ -78,9 +78,7 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 				}
 			if (showingPlots == TRUE)
 				{
-					cols = colorRampPalette(brewer.pal(9,"BuPu"))(100)[c(1:80)]
-					cols = colorRampPalette(brewer.pal(9,"YlGn"))(100)[c(1:80)]
-					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(100)[c(1:80)]
+					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(101)[c(1:101)]
 					pts = list("sp.points", SpatialPoints(coords1), pch=19, cex=0.6, col="black")
 					spplot(envVariable, border=NA, col.regions=cols, col=NA, sp.layout=list(pts))
 				}
@@ -113,9 +111,7 @@ cartogramTransformation = function(input, envVariables=list(), resistances=c(T),
 				}
 			if (showingPlots == TRUE)
 				{
-					cols = colorRampPalette(brewer.pal(9,"BuPu"))(100)[c(1:80)]
-					cols = colorRampPalette(brewer.pal(9,"YlGn"))(100)[c(1:80)]
-					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(100)[c(1:80)]
+					cols = colorRampPalette(brewer.pal(9,"YlOrBr"))(101)[c(1:101)]
 					pts = list("sp.points", SpatialPoints(coords2), pch=19, cex=0.6, col="black")
 					if (resistances[[i]] == FALSE) cols = rev(cols)
 					spplot(cartogram, border=NA, col.regions=cols, col=NA, sp.layout=list(pts))
