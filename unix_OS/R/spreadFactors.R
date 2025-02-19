@@ -3,7 +3,7 @@ spreadFactors = function(localTreesDirectory="", nberOfExtractionFiles=1, envVar
 						 OS="Unix", juliaCSImplementation=FALSE, simulations=FALSE, randomisations=FALSE, minimumConvexHull=TRUE) {
 
 reportingBothQstats = TRUE; # simulations = FALSE; randomisations = FALSE
-impactOnVelocity = TRUE; impactOnDirection = FALSE
+impactOnVelocity = TRUE; impactOnDirection = FALSE; savingRandomisationFiles = FALSE
 if (pathModel == 0)
 	{
 		impactOnVelocity = FALSE; impactOnDirection = TRUE
@@ -86,7 +86,7 @@ if ((simulations == FALSE)&(randomisations == TRUE))
 	}
 nberOfConnections = rep(NA, nberOfExtractionFiles); totalNberOfConnections = 0
 node1 = list(); node2 = list(); fromCoor = list(); toCoor = list()
-dispersalTime = list(); treeIDs = list()
+dispersalTime = list(); treeIDs = list(); datas = list()
 if (impactOnVelocity == TRUE)
 	{
 		distances = list()
@@ -104,7 +104,7 @@ for (t in 1:nberOfExtractionFiles)
 			}	else	{
 				fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv", sep="")
 			}	
-		data = read.csv(fileName, head=T); nberOfConnections[t] = dim(data)[1]
+		data = read.csv(fileName, head=T); datas[[t]] = data; nberOfConnections[t] = dim(data)[1]
 		node1[[t]] = matrix(nrow=dim(data)[1], ncol=1); node1[[t]][] = data[,"node1"]
 		node2[[t]] = matrix(nrow=dim(data)[1], ncol=1); node2[[t]][] = data[,"node2"]
 		fromCoor[[t]] = matrix(nrow=dim(data)[1], ncol=2); fromCoor[[t]][] = cbind(data[,"startLon"], data[,"startLat"])
@@ -631,6 +631,11 @@ if (nberOfRandomisations > 0)
 												startingNodes = newStartingNodes	
 											}
 									}
+								if (savingRandomisationFiles)
+									{
+										temp = datas[[t]]; temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
+										write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)						
+									}
 							}
 					}
 				if (branchRandomisation2 == TRUE)
@@ -725,6 +730,11 @@ if (nberOfRandomisations > 0)
 												toCoorRand[[t]][i,1] = pt1[1]; toCoorRand[[t]][i,2] = pt1[2]
 												fromCoorRand[[t]][i,1] = pt2[1]; fromCoorRand[[t]][i,2] = pt2[2]
 											}
+									}
+								if (savingRandomisationFiles)
+									{
+										temp = datas[[t]]; temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
+										write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)						
 									}
 							}
 					}			
@@ -867,6 +877,11 @@ if (nberOfRandomisations > 0)
 											}
 										fromCoorRand[[t]][i,1] = pt1[1]; fromCoorRand[[t]][i,2] = pt1[2]
 										toCoorRand[[t]][i,1] = pt2[1]; toCoorRand[[t]][i,2] = pt2[2]
+									}
+								if (savingRandomisationFiles)
+									{
+										temp = datas[[t]]; temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
+										write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)						
 									}
 							}
 					}		

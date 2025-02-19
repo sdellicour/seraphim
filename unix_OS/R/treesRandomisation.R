@@ -442,7 +442,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 												}
 											temp = datas[[t]]
 											temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
-											write.csv(temp, paste0(localTreeDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
 										}
 									t
 								}
@@ -592,7 +592,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 												}
 											temp = datas[[t]]
 											temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
-											write.csv(temp, paste0(localTreeDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
 										}
 									t
 								}
