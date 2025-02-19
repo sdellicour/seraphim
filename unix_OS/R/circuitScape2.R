@@ -53,6 +53,7 @@ circuitScape2 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 	focal_points = paste(folder, "focal_points_temp.txt", sep="/")
 	lines1 = cbind(1:length(fromCoor[,1]), fromCoor)
 	lines2 = cbind((length(fromCoor[,1])+1):(length(fromCoor[,1])+length(toCoor[,1])), toCoor)
+	colnames(lines2) = colnames(lines1) # new line inserted on the 19/02/2025
 	lines = rbind(lines1, lines2)
 	write.table(lines, focal_points, row.names=F, col.names=F)
 	pairs_to_include = paste(folder, "pairs_to_include.txt", sep="/")
