@@ -78,7 +78,7 @@ circuitScape1 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 	sameCoordinates = FALSE
 	if (sum(fromCoor-toCoor) == 0) sameCoordinates = TRUE
 	if (sameCoordinates == FALSE)
-    	{
+    		{
 			for (i in 1:length(fromCoor[,1]))
 				{
 					mat[i] = tab[i,(i+length(fromCoor[,1]))]

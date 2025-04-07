@@ -71,7 +71,7 @@ circuitScape2 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 	sameCoordinates = FALSE
 	if (sum(fromCoor-toCoor) == 0) sameCoordinates = TRUE
 	if (sameCoordinates == FALSE)
-    	{
+  	  	{
 			for (i in 1:length(fromCoor[,1]))
 				{
 					mat[i] = tab[i,(i+length(fromCoor[,1]))]
@@ -88,5 +88,5 @@ circuitScape2 = function(envVariable, envVariableName, resistance=TRUE, avgResis
 		{
 			unlink(folder, recursive=T, force=T)
 		}
-	return(mat)			
+	return(mat)
 }
