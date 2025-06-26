@@ -27,11 +27,11 @@ install_github("sdellicour/seraphim/windows") # (for a Windows OS)
 * Dellicour S, Faria N, Rose R, Lemey P, Pybus OG (_submitted_). SERAPHIM 2.0: an extended toolbox for studying phylogenetically informed movements
 * Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. _Bioinformatics_ 32: 3204-3206
 
-### Estimation of dispersal statistics
+#### Estimation of dispersal statistics
 * Dellicour S, Bastide P, Rocu P, Fargette D, Hardy OJ, Suchard MA, Guindon S, Lemey P (2024). How fast are viruses spreading in the wild? _PLoS Biology_ 22: e3002914
 * Dellicour S, Rose R, Pybus OG (2016). Explaining the geographic spread of emerging epidemics: a framework for comparing viral phylogenies and environmental landscape data. _BMC Bioinformatics_ 17: 82
 
-### Landscape phylogeographic analyses
+#### Landscape phylogeographic analyses
 Investigating the association between lineage diffusion velocity and environmental factors:
 * Dellicour S, Gámbaro F, Jacquot M, Lequime S, Baele G, Gilbert M, Pybus OG, Suchard MA, Lemey P (2025). Comparative performance of viral landscape phylogeography approaches. _Proceedings of the National Academy of Sciences of the USA_, _in press_
 * Dellicour S, Rose R, Faria NR, Vieira LFP, Bourhy H, Gilbert M, Lemey P, Pybus OG (2017). Using viral gene sequences to compare and explain the heterogeneous spatial dynamics of virus epidemics. _Molecular Biology & Evolution_ 34: 2563-2571
@@ -43,15 +43,12 @@ Investigating the association between lineage dispersal locations and environmen
 Investigating the association between lineage dispersal frequency and environmental factors:
 * Dellicour S, Baele G, Dudas G, Faria NR, Pybus OG, Suchard MA, Rambaut A, Lemey P (2018). Phylodynamic assessment of intervention strategies for the West African Ebola virus outbreak. _Nature Communications_ 9: 2222
 
-### Phylogeographic simulators
+#### Phylogeographic simulators
 Simulation of a relaxed random walk (RRW) diffusion process along time-scaled phylogenies:
-* 
-Simulation of a relaxed random walk (RRW) diffusion process along time-scaled phylogenies:
-* 
+* Dellicour S, Baele G, Dudas G, Faria NR, Pybus OG, Suchard MA, Rambaut A, Lemey P (2018). Phylodynamic assessment of intervention strategies for the West African Ebola virus outbreak. _Nature Communications_ 9: 2222
 
+Simulations based on a birthdeath process and a Brownian random walk (BRW) or a relaxed random walk (RRW) diffusion process:
+* Dellicour S, Bastide P, Rocu P, Fargette D, Hardy OJ, Suchard MA, Guindon S, Lemey P (2024). How fast are viruses spreading in the wild? _PLoS Biology_ 22: e3002914
 
-
-
-
-
-* 
+Simulating a relaxed random walk (RRW) diffusion process with a dispersal velocity impacted by an environmental raster:
+* Dellicour S, Gámbaro F, Jacquot M, Lequime S, Baele G, Gilbert M, Pybus OG, Suchard MA, Lemey P (2025). Comparative performance of viral landscape phylogeography approaches. _Proceedings of the National Academy of Sciences of the USA_, _in press_
