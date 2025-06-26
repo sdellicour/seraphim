@@ -23,7 +23,7 @@ install_github("sdellicour/seraphim/windows") # (for a Windows OS)
 ```
 
 ## References
-### Package references
+#### Package references
 * Dellicour S, Faria N, Rose R, Lemey P, Pybus OG (_submitted_). SERAPHIM 2.0: an extended toolbox for studying phylogenetically informed movements
 * Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. _Bioinformatics_ 32: 3204-3206
 
