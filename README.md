@@ -36,8 +36,9 @@ Investigating the association between lineage diffusion velocity and environment
 * Dellicour S, Gámbaro F, Jacquot M, Lequime S, Baele G, Gilbert M, Pybus OG, Suchard MA, Lemey P (2025). Comparative performance of viral landscape phylogeography approaches. _Proceedings of the National Academy of Sciences of the USA_, _in press_
 * Dellicour S, Rose R, Faria NR, Vieira LFP, Bourhy H, Gilbert M, Lemey P, Pybus OG (2017). Using viral gene sequences to compare and explain the heterogeneous spatial dynamics of virus epidemics. _Molecular Biology & Evolution_ 34: 2563-2571
 Investigating the association between lineage dispersal locations and environmental factors:
-* 
-Investigating the association between lineage dispersal frequency and environmental factors
+* Dellicour S, Lequime S, Vrancken B, Gill MS, Bastide P, Gangavarapu K, Matteson NL, Tan Y, du Plessis L, Fisher AA, Nelson MI, Gilbert M, Suchard MA, Andersen KG, Grubaugh ND, Pybus OG, Lemey P (2020). Epidemiological hypothesis testing using a phylogeographic and phylodynamic framework. _Nature Communications_ 11: 5620
+* Dellicour S, Troupin C, Jahanbakhsh F, Salama A, Massoudi S, Moghaddam MK, Baele G, Lemey P, Gholami A, Bourhy H (2019). Using phylogeographic approaches to analyse the dispersal history, velocity, and direction of viral lineages – application to rabies virus spread in Iran. _Molecular Ecology_ 28: 4335-4350
+Investigating the association between lineage dispersal frequency and environmental factors:
 * Dellicour S, Baele G, Dudas G, Faria NR, Pybus OG, Suchard MA, Rambaut A, Lemey P (2018). Phylodynamic assessment of intervention strategies for the West African Ebola virus outbreak. _Nature Communications_ 9: 2222
 
 ### Phylogeographic simulators
