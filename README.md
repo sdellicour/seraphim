@@ -4,7 +4,12 @@
 `seraphim` is a R package for studying phylogenetically informed movements. It can for instance be used to investigate the impact of environmental factors on the dispersal history and dynamics of viral lineages, to estimate lineage dispersal statistics, and to map continuous phylogeographic reconstructions.
 
 ## What's new in "seraphim" 2.0?
-If you want to remain informed about last updates or improvements, just send an e-mail to simon.dellicour[at]ulb[dot]be with "seraphim mailing list" in the object.
+* spatio-temporal information embedded in annotated MCC or posterior trees retrieved from a Bayesian continuous phylogeographic inference can now be extracted using two new functions — `mccTreeExtractions`and `postTreeExtractions` — to generate similar extraction files, on per tree and with each row corresponding to a distinct phylogenetic branch.
+* since the initial 2016 [application note](https://academic.oup.com/bioinformatics/article/32/20/3204/2196575?login=true) of the package, the previous `spreadGraphic1` function has been replaced by the `spreadGraphic2` function that lead to the generation of uncertainty polygons that can be saved as continuous vectorial files (e.g. in a shapefile format) instead of in a raster file (see the related tutorial [here]())/
+* the `spreadStatistics` function has been updated to now also include the estimation of isolation-by-distance (IBD) signal metrics (see our 2024 [study]() as well as the dedicated tutorial for further detail).
+* the `spreadFactors` function now focuses on testing the association between environmental factors on the diffusion - instead of the dispersal - velocity of lineages (see our 2025 [study]() as well as the dedicated tutorial for further detail).
+* the `spreadFactors` function can now also be used to conduct alternative post hoc analyses on the isolation-by-resistance (IBR), i.e. to what extent environmental factors can be associated with a deviation from an IBD pattern (see our 2025 [study]() as well as the dedicated tutorial for further detail).
+* in addition to the two post hoc approaches implemented in the `spreadFactors` function, the package can now also be used to follow prior-informed landscape phylogeographic approaches to 
 
 ## Stay tuned!
 If you want to remain informed about last updates or improvements, just send an e-mail to simon.dellicour[at]ulb[dot]be with "seraphim mailing list" in the object.
@@ -18,6 +23,9 @@ install_github("sdellicour/seraphim/windows") # (for a Windows OS)
 ```
 
 ## Main references
-* Dellicour S, Faria N, Rose R, Lemey P, Pybus OG (submitted). SERAPHIM 2.0: an extended toolbox for studying phylogenetically informed movements
+* Dellicour S, Faria N, Rose R, Lemey P, Pybus OG (_submitted_). SERAPHIM 2.0: an extended toolbox for studying phylogenetically informed movements
 * Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. _Bioinformatics_ 32: 3204-3206
 * Dellicour S, Rose R, Pybus OG (2016). Explaining the geographic spread of emerging epidemics: a framework for comparing viral phylogenies and environmental landscape data. _BMC Bioinformatics_ 17: 82
+
+## Specific references
+* 
