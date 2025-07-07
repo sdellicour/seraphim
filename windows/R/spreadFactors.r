@@ -2,14 +2,21 @@ spreadFactors = function(localTreesDirectory="", nberOfExtractionFiles=1, envVar
 						 fourCells=FALSE, nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE, nberOfCores=1, 
 						 OS="Unix", juliaCSImplementation=FALSE, simulations=FALSE, randomisations=FALSE, minimumConvexHull=TRUE) {
 
-reportingBothQstats = TRUE; # simulations = FALSE; randomisations = FALSE
-impactOnVelocity = TRUE; impactOnDirection = FALSE
+reportingBothQstats = TRUE; savingRandomisationFiles = FALSE; # simulations = FALSE; randomisations = FALSE
+impactOnDiffusionVelocity = FALSE; impactOnDispersalLocation = FALSE; impactOnDispersalPath = FALSE
+if (pathModel > 0)
+	{
+		impactOnDiffusionVelocity = TRUE; impactOnDispersalLocation = FALSE; impactOnDispersalPath = FALSE
+	}
 if (pathModel == 0)
 	{
-		impactOnVelocity = FALSE; impactOnDirection = TRUE
+		impactOnDiffusionVelocity = FALSE; impactOnDispersalLocation = TRUE; impactOnDispersalPath = FALSE
 	}
-# registerDoMC(cores=nberOfCores)
-nberOfCores_CS = 1
+if (pathModel < 0)
+	{
+		impactOnDiffusionVelocity = FALSE; impactOnDispersalLocation = FALSE; impactOnDispersalPath = TRUE
+	}
+# registerDoMC(cores=nberOfCores); nberOfCores_CS = 1
 preLogTransformation = function(x, m)
 	{
 		x = 1+(x-m)
@@ -58,9 +65,9 @@ straightLineDistance = FALSE; leastCostDistance = FALSE; circuitscapeDistance = 
 externalRandomisations = FALSE; externalSimulations = FALSE; branchRandomisation3 = FALSE
 branchRandomisation2 = FALSE; branchRandomisation1 = FALSE
 torusRandomisations = FALSE; rastersSimulations = FALSE
-if (pathModel == 1) straightLineDistance = TRUE
-if (pathModel == 2) leastCostDistance = TRUE
-if (pathModel == 3) circuitscapeDistance = TRUE
+if (abs(pathModel) == 1) straightLineDistance = TRUE
+if (abs(pathModel) == 2) leastCostDistance = TRUE
+if (abs(pathModel) == 3) circuitscapeDistance = TRUE
 if (randomProcedure == 1) externalRandomisations = TRUE
 if (randomProcedure == 2) externalSimulations = TRUE
 if (randomProcedure == 3) branchRandomisation3 = TRUE
@@ -87,12 +94,12 @@ if ((simulations == FALSE)&(randomisations == TRUE))
 	}
 nberOfConnections = rep(NA, nberOfExtractionFiles); totalNberOfConnections = 0
 node1 = list(); node2 = list(); fromCoor = list(); toCoor = list()
-dispersalTime = list(); treeIDs = list()
-if (impactOnVelocity == TRUE)
+dispersalTime = list(); treeIDs = list(); datas = list()
+if (impactOnDiffusionVelocity == TRUE)
 	{
 		distances = list()
 	}
-if (impactOnDirection == TRUE)
+if (impactOnDispersalLocation == TRUE)
 	{
 		meanEnvValues = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 		rateOfPositiveDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
@@ -105,7 +112,7 @@ for (t in 1:nberOfExtractionFiles)
 			}	else	{
 				fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv", sep="")
 			}	
-		data = read.csv(fileName, head=T); nberOfConnections[t] = dim(data)[1]
+		data = read.csv(fileName, head=T); datas[[t]] = data; nberOfConnections[t] = dim(data)[1]
 		node1[[t]] = matrix(nrow=dim(data)[1], ncol=1); node1[[t]][] = data[,"node1"]
 		node2[[t]] = matrix(nrow=dim(data)[1], ncol=1); node2[[t]][] = data[,"node2"]
 		fromCoor[[t]] = matrix(nrow=dim(data)[1], ncol=2); fromCoor[[t]][] = cbind(data[,"startLon"], data[,"startLat"])
@@ -113,7 +120,7 @@ for (t in 1:nberOfExtractionFiles)
 		dispersalTime[[t]] = matrix(nrow=dim(data)[1], ncol=1); colnames(dispersalTime[[t]]) = "dispersalTime"
 		dispersalTime[[t]][] = data[,"endYear"]-data[,"startYear"]
 		totalNberOfConnections = totalNberOfConnections + dim(data)[1]
-		if (impactOnVelocity == TRUE)
+		if (impactOnDiffusionVelocity == TRUE)
 			{
 				distances[[t]] = matrix(nrow=dim(data)[1], ncol=length(envVariables))
 			}
@@ -176,7 +183,7 @@ if (circuitscapeDistance == TRUE)
 
 for (h in 1:length(envVariables))
 	{
-		if (impactOnVelocity == TRUE)
+		if (impactOnDiffusionVelocity == TRUE)
 			{
 				if (straightLineDistance == TRUE) cat("Computing environmental distances (straight-line path model) for ",names(envVariables[[h]])[1],"\n",sep="")
 				if (leastCostDistance == TRUE) cat("Computing environmental distances (least-cost path model) for ",names(envVariables[[h]])[1],"\n",sep="")
@@ -196,7 +203,7 @@ for (h in 1:length(envVariables))
 								trEnvVariableCorr = geoCorrection(trEnvVariable, type="c", multpl=F, scl=T)
 							}
 					}
-				buffer = list()
+				# buffer = list()
 				# buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
 				for (t in 1:nberOfExtractionFiles) {
 						mat = matrix(nrow=nberOfConnections[t], ncol=1)
@@ -246,7 +253,7 @@ for (h in 1:length(envVariables))
 						distances[[t]][,h] = buffer[[t]][]
 					}
 			}
-		if (impactOnDirection == TRUE)
+		if (impactOnDispersalLocation == TRUE)
 			{
 				for (t in 1:nberOfExtractionFiles)
 					{
@@ -260,6 +267,10 @@ for (h in 1:length(envVariables))
 						diffs = raster::extract(envVariables[[h]], fromCoor[[t]])-raster::extract(envVariables[[h]], toCoor[[t]])
 						rateOfPositiveDifferences[t,h] = sum(diffs[!is.na(diffs)] > 0)/length(diffs[!is.na(diffs)])
 					}
+				columnNames = c()
+				for (h in 1:length(envVariables)) columnNames = cbind(columnNames, names(envVariables[[h]]))
+				buffer = meanEnvValues; colnames(buffer) = columnNames
+				write.csv(buffer, paste(outputName,"_mean_evironmental_values_at_node_locations.csv",sep=""), row.names=F, quote=F)
 			}
 	}
 envVariableNames = names(envVariables[[1]])
@@ -267,14 +278,14 @@ for (h in 2:length(envVariables))
 	{
 		envVariableNames = cbind(envVariableNames, names(envVariables[[h]]))
 	}
-if (impactOnVelocity == TRUE)
+if (impactOnDiffusionVelocity == TRUE)
 	{
 		for (t in 1:nberOfExtractionFiles)
 			{
 				colnames(distances[[t]]) = envVariableNames
 			}
 	}
-if ((nberOfExtractionFiles == 1)&(impactOnVelocity == TRUE))
+if ((nberOfExtractionFiles == 1)&(impactOnDiffusionVelocity == TRUE))
 	{
 		mat = cbind(dispersalTime[[1]][], distances[[1]][,1:length(envVariables)])
 		columnNames = "dispersal_times"
@@ -285,7 +296,7 @@ if ((nberOfExtractionFiles == 1)&(impactOnVelocity == TRUE))
 		colnames(mat) = columnNames
 		write.table(mat, file=paste(outputName,"_env_distances.txt",sep=""), row.names=F, quote=F, sep="\t")
 	}
-if ((file.exists(outputName))&(impactOnVelocity == TRUE))
+if ((file.exists(outputName))&(impactOnDiffusionVelocity == TRUE))
 	{	
 		for (t in 1:nberOfExtractionFiles)
 			{
@@ -302,7 +313,7 @@ if ((file.exists(outputName))&(impactOnVelocity == TRUE))
 
 # 2. Linear regressions of dispersal durations vs environmental distances
 
-if (impactOnVelocity == TRUE)
+if (impactOnDiffusionVelocity == TRUE)
 	{
 		realUniLRcoefficients1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 		realUniLRcoefficients2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
@@ -377,19 +388,19 @@ if (impactOnVelocity == TRUE)
 
 if (nberOfRandomisations > 0)
 	{	
-		if (impactOnVelocity == TRUE)
+		if (impactOnDiffusionVelocity == TRUE)
 			{
 				uniLRdeltaRsquaresRandomisationBFs1 = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)	
 				uniLRdeltaRsquaresRandomisationBFs2 = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)	
 			}
-		if (impactOnDirection == TRUE)
+		if (impactOnDispersalLocation == TRUE)
 			{
 				meanEnvValuesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
 				rateOfPositiveDifferencesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
 			}
 		for (s in 1:nberOfRandomisations)
 			{
-				if (impactOnVelocity == TRUE)
+				if (impactOnDiffusionVelocity == TRUE)
 					{
 						uniLRdeltaRsquaresRand = matrix(0, nrow=nberOfExtractionFiles, ncol=nberOfRandomisations)
 						distancesSim = list()
@@ -632,6 +643,11 @@ if (nberOfRandomisations > 0)
 												startingNodes = newStartingNodes	
 											}
 									}
+								if (savingRandomisationFiles)
+									{
+										temp = datas[[t]]; temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
+										write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)						
+									}
 							}
 					}
 				if (branchRandomisation2 == TRUE)
@@ -726,6 +742,11 @@ if (nberOfRandomisations > 0)
 												toCoorRand[[t]][i,1] = pt1[1]; toCoorRand[[t]][i,2] = pt1[2]
 												fromCoorRand[[t]][i,1] = pt2[1]; fromCoorRand[[t]][i,2] = pt2[2]
 											}
+									}
+								if (savingRandomisationFiles)
+									{
+										temp = datas[[t]]; temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
+										write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)						
 									}
 							}
 					}			
@@ -869,9 +890,14 @@ if (nberOfRandomisations > 0)
 										fromCoorRand[[t]][i,1] = pt1[1]; fromCoorRand[[t]][i,2] = pt1[2]
 										toCoorRand[[t]][i,1] = pt2[1]; toCoorRand[[t]][i,2] = pt2[2]
 									}
+								if (savingRandomisationFiles)
+									{
+										temp = datas[[t]]; temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
+										write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)						
+									}
 							}
 					}		
-				if (impactOnVelocity == TRUE)
+				if (impactOnDiffusionVelocity == TRUE)
 					{
 						for (t in 1:nberOfExtractionFiles)
 							{
@@ -895,7 +921,7 @@ if (nberOfRandomisations > 0)
 												simTrEnvVariableCorr = geoCorrection(simTrEnvVariable, type="c", multpl=F, scl=T)
 											}
 									}
-								buffer = list()
+								# buffer = list()
 								# buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
 								for (t in 1:nberOfExtractionFiles) {
 										mat = matrix(nrow=nberOfConnections[t], ncol=1)
@@ -947,7 +973,7 @@ if (nberOfRandomisations > 0)
 									}	
 							}
 					}
-				if (impactOnDirection == TRUE)
+				if (impactOnDispersalLocation == TRUE)
 					{
 						simMeanEnvValues = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 						simRateOfPositiveDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
@@ -966,10 +992,14 @@ if (nberOfRandomisations > 0)
 										simRateOfPositiveDifferences[t,h] = sum(diffs[!is.na(diffs)] > 0)/length(diffs[!is.na(diffs)])
 									}
 							}
+						columnNames = c()
+						for (h in 1:length(envVariables)) columnNames = cbind(columnNames, names(envVariables[[h]]))
+						buffer = simMeanEnvValues; colnames(buffer) = columnNames
+						write.csv(buffer, paste(outputName,"_mean_evironmental_values_at_node_locations_randomisation_",s,".csv",sep=""), row.names=F, quote=F)
 					}
 
 				# 3.2. Linear regressions analyses on randomised datasets
-				if (impactOnVelocity == TRUE)
+				if (impactOnDiffusionVelocity == TRUE)
 					{
 						simUniLRRsquares1 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 						simUniLRRsquares2 = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
@@ -990,11 +1020,11 @@ if (nberOfRandomisations > 0)
 									}
 							}
 					}
-				if (impactOnVelocity == TRUE) H = 2
-				if (impactOnDirection == TRUE) H = 2
+				if (impactOnDiffusionVelocity == TRUE) H = 2
+				if (impactOnDispersalLocation == TRUE) H = 2
 					
 				# 3.3. Computations of the BF values for this randomisation	
-				if (impactOnVelocity == TRUE)
+				if (impactOnDiffusionVelocity == TRUE)
 					{
 						for (h in H:length(envVariables))
 							{
@@ -1014,7 +1044,7 @@ if (nberOfRandomisations > 0)
 								uniLRdeltaRsquaresRandomisationBFs2[h,s] = round(bf, 4)
 							}
 					}
-				if (impactOnDirection == TRUE)
+				if (impactOnDispersalLocation == TRUE)
 					{
 						for (h in H:length(envVariables))
 							{
@@ -1064,7 +1094,7 @@ if (nberOfRandomisations > 0)
 					{
 						envVariablesNames = c(envVariablesNames, names(envVariables[[h]]))
 					}
-				if (impactOnVelocity == TRUE)
+				if (impactOnDiffusionVelocity == TRUE)
 					{
 						colNames1 = c(); colNames2 = c()
 						for (s in 1:nberOfRandomisations)
@@ -1084,7 +1114,7 @@ if (nberOfRandomisations > 0)
 							}
 						write.table(buffer, paste(outputName,"_randomisation_BF_results.txt",sep=""), quote=F, sep="\t")
 					}
-				if (impactOnDirection == TRUE)
+				if (impactOnDispersalLocation == TRUE)
 					{
 						row.names(meanEnvValuesRandomisationBFs) = envVariablesNames
 						colnames(meanEnvValuesRandomisationBFs) = "BF"

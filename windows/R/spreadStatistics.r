@@ -414,7 +414,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			kde = kde(cbind(meanStatistics[,4], meanStatistics[,6]), H=H)
 			text1 = "Kernel density estimates of original diffusion coefficient parameters"; text2 = "(Pybus et al. 2012)"
 			colours = c("#FFFFFF","#D2D3D3","#9D9FA3","#6A6A6D")
-			xLab = "original diffusion coefficient"; yLab="diffusion coefficient variation among branches"
+			xLab = "mean diffusion coefficient"; yLab="diffusion coefficient variation among branches"
 			plot(kde, display="filled.contour2", cont=c(50,75,95), col=colours, axes=F, ann=F)
 			axis(side=1, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.020, col.tick="gray30", col.axis="gray30", col="gray30")
 			axis(side=2, lwd.tick=LWD, cex.axis=0.6, lwd=0, tck=-0.015, col.tick="gray30", col.axis="gray30", col="gray30")

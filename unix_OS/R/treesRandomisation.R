@@ -1,8 +1,8 @@
-treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, envVariables=list(), randomProcedure=3, nberOfCores=1, showingPlots=F) {
+treesRandomisation = function(localTreesDirectory="", randomisationDirectory="", nberOfExtractionFiles=1, envVariable, randomProcedure=3, 
+							  resistance=NULL, overwrite=FALSE, showingPlots=FALSE) {
 
-	nberOfRandomisations = 1
-	registerDoMC(cores=nberOfCores)
-	hull_polygons = list()
+	dir.create(file.path(randomisationDirectory), showWarnings=F)
+	nberOfRandomisations = 1; # registerDoMC(cores=nberOfCores)
 	rotation = function(pt1, pt2, angle)
 		{
 			s = sin(angle); c = cos(angle)
@@ -11,62 +11,36 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 			x_new = x_new+pt1[1]; y_new = y_new+pt1[2]
 			return(c(x_new,y_new))
 		}
-	nullRaster = envVariables[[1]]
-	nullRaster[!is.na(nullRaster)] = 1
-	names(nullRaster) = "null_raster"
-	envVariables0 = envVariables	
-	newEnvVariables = list(nullRaster)
-	for (h in 1:length(envVariables0))
+	branchRandomisation3 = FALSE; branchRandomisation2 = FALSE; branchRandomisation1 = FALSE
+	 # Note: the repulsion/attraction is not implemented for the "randomProcedure" = 5 and 6
+	if (randomProcedure == 3)
 		{
-			newEnvVariables[[h+1]] = envVariables0[[h]]
-			newEnvVariables[[h+1]][newEnvVariables[[h+1]]<0] = NA
+			branchRandomisation3 = TRUE
 		}
-	envVariables = newEnvVariables
-	branchRandomisation3 = FALSE
-	branchRandomisation2 = FALSE
-	branchRandomisation1 = FALSE
-	if (randomProcedure == 3) branchRandomisation3 = TRUE
 	if (randomProcedure == 4)
 		{
 			branchRandomisation2 = TRUE; rotatingEndNodes = TRUE
 		}
 	if (randomProcedure == 5)
 		{
-			branchRandomisation2 = TRUE; rotatingEndNodes = FALSE
+			branchRandomisation2 = TRUE; rotatingEndNodes = FALSE; resistance = NULL
 		}
-	if (randomProcedure == 6) branchRandomisation1 = TRUE
-	nberOfConnections = matrix(nrow=1, ncol=nberOfExtractionFiles)	
-	totalnberOfConnections = 0
-	extractionFileName = "TreeExtractions"
-	if (nchar(localTreesDirectory) == 0)
+	if (randomProcedure == 6)
 		{
-			data = read.csv(paste(extractionFileName,"_1.csv",sep=""), header=T, dec=".")
-		}	else	{
-			data = read.csv(paste(localTreesDirectory,"/",extractionFileName,"_1.csv",sep=""), header=T, dec=".")	
+			branchRandomisation1 = TRUE; resistance = NULL
 		}
-	data = data[with(data, order(startYear,endYear)),]
-	node1 = list()
-	node2 = list()
-	startYear = list()
-	dispersalTime = list()
-	treeIDs = list()
-	dispersalRate = list()
-	fromCoor = list()
-	toCoor = list()
-	datas = list()
+	nullRaster = envVariable; nullRaster[!is.na(nullRaster[])] = 1
+	nberOfConnections = rep(NA, nberOfExtractionFiles); totalNberOfConnections = 0
+	node1 = list(); node2 = list(); fromCoor = list(); toCoor = list(); datas = list()
 	for (t in 1:nberOfExtractionFiles)
 		{
-			if (t != 1)
+			if (nchar(localTreesDirectory) == 0)
 				{
-					if (nchar(localTreesDirectory) == 0)
-						{
-							fileName = paste(extractionFileName,"_",t,".csv",sep="")
-						}	else	{
-							fileName = paste(localTreesDirectory,"/",extractionFileName,"_",t,".csv",sep="")
-						}	
-					data = read.csv(fileName, h = T)
-					data = data[with(data, order(endYear, startYear)),]
-				}
+					fileName = paste("TreeExtractions_",t,".csv",sep="")
+				}	else	{
+					fileName = paste(localTreesDirectory,"/TreeExtractions_",t,".csv",sep="")
+				}	
+			data = read.csv(fileName, head=T)
 			ancestralNodeNAonNullRaster = TRUE
 			while (ancestralNodeNAonNullRaster == TRUE)
 				{
@@ -86,91 +60,58 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 							data = data[-indicesOfBranchesToRemove,]
 						}
 				}
-			nberOfConnections[t] = dim(data)[1]		
-			node1[[t]] = matrix(nrow=nberOfConnections[t], ncol=1)	
-			node1[[t]][] = data[,"node1"]
-			node2[[t]] = matrix(nrow=nberOfConnections[t], ncol=1)	
-			node2[[t]][] = data[,"node2"]
-			startYear[[t]] = matrix(nrow=nberOfConnections[t], ncol=1)	
-			startYear[[t]][] = data[,"startYear"]
-			dispersalTime[[t]] = matrix(nrow=nberOfConnections[t], ncol=1)
-			dispersalTime[[t]][] = (data[,"endYear"]-data[,"startYear"])
-			colnames(dispersalTime[[t]]) = "dispersalTime"
+			datas[[t]] = data; nberOfConnections[t] = dim(data)[1]		
+			node1[[t]] = matrix(nrow=nberOfConnections[t], ncol=1); node1[[t]][] = data[,"node1"]
+			node2[[t]] = matrix(nrow=nberOfConnections[t], ncol=1); node2[[t]][] = data[,"node2"]
 			fromCoor[[t]] = matrix(nrow=nberOfConnections[t], ncol=2)
 			fromCoor[[t]][] = cbind(data[,"startLon"], data[,"startLat"])
 			toCoor[[t]] = matrix(nrow=nberOfConnections[t], ncol=2)
 			toCoor[[t]][] = cbind(data[,"endLon"], data[,"endLat"])
-			totalnberOfConnections = totalnberOfConnections + nberOfConnections[t] 
-			if (("treeID"%in%colnames(data)) == TRUE)
-				{
-					treeIDs[[t]] = data[1,"treeID"]
-				}	else	{
-					treeIDs[[t]] = "noTreeID"
-				}
-			datas[[t]] = data
+			totalNberOfConnections = totalNberOfConnections + nberOfConnections[t]
 		}
-	hullRasters = list()
-	hullRasters[1:length(envVariables)] = envVariables[1:length(envVariables)]
-	points = matrix(nrow=(totalnberOfConnections*2),ncol=2)
-	a = 0
+	hullRaster = envVariable; points = matrix(nrow=(totalNberOfConnections*2),ncol=2); a = 0
 	for (t in 1:nberOfExtractionFiles)
 		{
-			if (t > 1)
-				{
-					a = a + nberOfConnections[t-1]
-				}
+			if (t > 1) a = a + nberOfConnections[t-1]
 			for (i in 1:nberOfConnections[t])
 				{
 					index = (a*2) + ((i-1)*2) + 1
 					points[index,1] = fromCoor[[t]][i,1]
 					points[index,2] = fromCoor[[t]][i,2]
 					points[(index+1),1] = toCoor[[t]][i,1]
-					points[(index+1),2] = toCoor[[t]][i,2]								
+					points[(index+1),2] = toCoor[[t]][i,2]
 				}
 		}
-	points = points[points[,1]>extent(hullRasters[[1]])@xmin,]
-	points = points[points[,1]<extent(hullRasters[[1]])@xmax,]
-	points = points[points[,2]>extent(hullRasters[[1]])@ymin,]
-	points = points[points[,2]<extent(hullRasters[[1]])@ymax,]
-	if (length(hull_polygons) == 0)
-		{		
-			hull = chull(points)
-			hull = c(hull,hull[1])
-			# plot(points); lines(points[hull,])
-			p = Polygon(points[hull,])
-			ps = Polygons(list(p),1)
-			sps = SpatialPolygons(list(ps))
-			# c = mask(envVariables[[2]],sps); plot(c)
-		}
-	if (length(hull_polygons) > 0)
-		{
-			sps = hull_polygons
-		}
-	pointsRaster = rasterize(points, crop(hullRasters[[1]], sps, snap="out"))
+	points = points[points[,1]>extent(hullRaster)@xmin,]
+	points = points[points[,1]<extent(hullRaster)@xmax,]
+	points = points[points[,2]>extent(hullRaster)@ymin,]
+	points = points[points[,2]<extent(hullRaster)@ymax,]
+	hull = chull(points); hull = c(hull,hull[1]); p = Polygon(points[hull,])
+	ps = Polygons(list(p),1); sps = SpatialPolygons(list(ps))
+	pointsRaster = rasterize(points, crop(hullRaster, sps, snap="out"))
 	pointsRaster[!is.na(pointsRaster[])] = 0		
-	for (h in 1:length(envVariables))
-		{
-			# plot(mask(simRasters[[h]],sps))
-			hullRasters[[h]] = crop(hullRasters[[h]], sps, snap="out")
-			bufferRaster = hullRasters[[h]]
-			hullRasters[[h]] = mask(hullRasters[[h]], sps, snap="out")
-			hullRasters[[h]][!is.na(pointsRaster[])] = bufferRaster[!is.na(pointsRaster[])]
-			names(hullRasters[[h]]) = gsub(".asc","",names(envVariables[[h]]))
-			names(hullRasters[[h]]) = gsub(".tif","",names(envVariables[[h]]))
-			names(hullRasters[[h]]) = gsub(".gri","",names(envVariables[[h]]))
-		}
+	hullRaster = crop(hullRaster, sps, snap="out"); bufferRaster = hullRaster
+	hullRaster = mask(hullRaster, sps, snap="out")
+	hullRaster[!is.na(pointsRaster[])] = bufferRaster[!is.na(pointsRaster[])]
+	names(hullRaster) = gsub(".asc","",names(envVariable))
+	names(hullRaster) = gsub(".tif","",names(envVariable))
+	names(hullRaster) = gsub(".gri","",names(envVariable))
 	if (nberOfRandomisations > 0)
 		{	
 			for (s in 1:nberOfRandomisations)
 				{
 					if (branchRandomisation3 == TRUE)
 						{
-							simRasters = list(); simRasters = hullRasters
-							fromCoorRand = fromCoor; toCoorRand = toCoor
-							buffer = list()
-							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
-							# for (t in 1:nberOfExtractionFiles) {
-									if (!file.exists(paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv")))
+							fromCoorRand = fromCoor; toCoorRand = toCoor; buffer = list()
+							# buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
+							for (t in 1:nberOfExtractionFiles) {
+									newRandomisation = TRUE
+									if (file.exists(paste0(randomisationDirectory,"/TreeRandomisation_",t,".csv")))
+										{
+											newRandomisation = FALSE
+											if (overwrite) newRandomisation = TRUE
+										}
+									if (newRandomisation)
 										{
 											counter1 = 0; # print(t)
 											twoPointsOnTheGrid = FALSE
@@ -186,15 +127,11 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 													fromCoorRand[[t]][,] = NA; toCoorRand[[t]][,] = NA
 													if (showingPlots == TRUE)
 														{
-															if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
-															if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=F)
-															lines(points[hull,], lwd=0.5, col="black")
-															text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
-															mtext(text1, col="black", cex=0.7, line=0)
-															# for (i in 1:dim(fromCoor[[t]])[1])
-																# {
-																	# segments(fromCoor[[t]][i,1], fromCoor[[t]][i,2], toCoor[[t]][i,1], toCoor[[t]][i,2], col="black", lwd=0.3)
-																# }
+															if (t == 1) plotRaster(envVariable, addLegend=T, new=T)
+															if (t >= 2) plotRaster(envVariable, addLegend=T, new=F)
+															lines(points[hull,], lwd=1.5, col=rgb(222,67,39,220,maxColorValue=255)) # red
+															text1 = paste("Randomisation of branch positions, sampled tree ",t,sep="")
+															mtext(text1, col="gray30", cex=0.9, line=-1)
 														}
 													ancestralIndex = list(); ancestralNodes = list(); counter = 0
 													for (i in 1:length(node1[[t]]))
@@ -220,7 +157,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 															fromCoorRand[[t]][ancestralIndex[[i]],2] = fromCoor[[t]][ancestralIndex[[i]],2]
 														}
 													ancestralNodes = unique(ancestralNodes)
-													startingNodes = list(); startingNodes = ancestralNodes # startingNodes[[1]] = ancestralNode[1]
+													startingNodes = list(); startingNodes = ancestralNodes
 													while (length(startingNodes) > 0)
 														{
 															newStartingNodes = list(); c = 0
@@ -232,7 +169,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 																			for (j in 1:length(nodes2))
 																				{
 																					c = c+1
-																					newStartingNodes[[c]] = nodes2[j]				
+																					newStartingNodes[[c]] = nodes2[j]
 																					k = which(node2[[t]][,1]==nodes2[j])
 																					pt01 = c(fromCoor[[t]][k,1], fromCoor[[t]][k,2])
 																					pt02 = c(toCoor[[t]][k,1], toCoor[[t]][k,2])
@@ -242,86 +179,80 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 																					pt2 = c(NA,NA)
 																					pt2[1] = pt1[1]+xTranslation
 																					pt2[2] = pt1[2]+yTranslation
-																					pt2NAarea = TRUE
-																					counter2 = 0
-																					while (pt2NAarea == TRUE)
+																					if (is.null(repulsion)) nberOfRotations = 1
+																					if (!is.null(repulsion)) nberOfRotations = 100
+																					pt2_rotated_list = list(); envValues1 = list()
+																					for (g in 1:nberOfRotations)
 																						{
-																							counter2 = counter2+1	
-																							onTheGrid = TRUE
-																							angle = (2*pi)*runif(1)
-																							pt2_rotated = rotation(pt1, pt2, angle)
-																							if (pt2_rotated[1] > extent(hullRasters[[1]])@xmax)
+																							pt2NAarea = TRUE; counter2 = 0
+																							while (pt2NAarea == TRUE)
 																								{
-																									onTheGrid = FALSE
-																								}
-																							if (pt2_rotated[1] < extent(hullRasters[[1]])@xmin)
-																								{
-																									onTheGrid = FALSE
-																								}	
-																							if (pt2_rotated[2] > extent(hullRasters[[1]])@ymax)
-																								{
-																									onTheGrid = FALSE
-																								}
-																							if (pt2_rotated[2] < extent(hullRasters[[1]])@ymin)
-																								{
-																									onTheGrid = FALSE
-																								}
-																							if (onTheGrid == TRUE)
-																								{
-																									NAarea = FALSE
-																									for (h in 1:length(hullRasters))
+																									counter2 = counter2+1; onTheGrid = TRUE
+																									angle = (2*pi)*runif(1); pt2_rotated = rotation(pt1, pt2, angle)
+																									if (pt2_rotated[1] > extent(hullRaster)@xmax) onTheGrid = FALSE
+																									if (pt2_rotated[1] < extent(hullRaster)@xmin) onTheGrid = FALSE
+																									if (pt2_rotated[2] > extent(hullRaster)@ymax) onTheGrid = FALSE
+																									if (pt2_rotated[2] < extent(hullRaster)@ymin) onTheGrid = FALSE
+																									if (onTheGrid == TRUE)
 																										{
-																											if (is.na(raster::extract(hullRasters[[h]],cbind(pt2_rotated[1],pt2_rotated[2]))))
+																											NAarea = FALSE
+																											if (is.na(raster::extract(hullRaster,cbind(pt2_rotated[1],pt2_rotated[2]))))
 																												{
 																													NAarea = TRUE
 																												}
+																											if (NAarea == FALSE) pt2NAarea = FALSE
 																										}
-																									if (NAarea == FALSE)
-																										{	
-																											pt2NAarea = FALSE
-																										}		
-																								}									
-																							if (counter2 > 100)
-																								{
-																									# print("counter2 > 100")
-																									ancestralNodeID = FALSE
-																									for (h in 1:length(ancestralNodes))
+																									if (counter2 > 100)
 																										{
-																											if (ancestralNodes[[h]] == node1[[t]][which(node2[[t]][,1]==nodes2[j]),1])
+																											ancestralNodeID = FALSE
+																											for (h in 1:length(ancestralNodes))
 																												{
-																													ancestralNodeID = TRUE
+																													if (ancestralNodes[[h]] == node1[[t]][which(node2[[t]][,1]==nodes2[j]),1])
+																														{
+																															ancestralNodeID = TRUE
+																														}
+																												}
+																											if (ancestralNodeID == FALSE)
+																												{
+																													if (counter1 <= 10)
+																														{
+																															pt2_rotated = pt1; pt2NAarea = FALSE; twoPointsOnTheGrid = FALSE
+																														}	else	{
+																															pt2_rotated = pt1; pt2NAarea = FALSE; twoPointsOnTheGrid = TRUE
+																														}
+																												}
+																											if (ancestralNodeID == TRUE)
+																												{
+																													pt2_rotated = pt1; pt2NAarea = FALSE; twoPointsOnTheGrid = TRUE
 																												}
 																										}
-																									if (ancestralNodeID == FALSE)
-																										{
-																											if (counter1 <= 10)
-																												{
-																													# print(c(ancestralNodeID,startingNodes[[i]],nodes2[j]))
-																													pt2_rotated = pt1
-																													pt2NAarea = FALSE
-																													twoPointsOnTheGrid = FALSE
-																												}	else	{
-																													# print(c(ancestralNodeID,startingNodes[[i]],nodes2[j]))
-																													pt2_rotated = pt1
-																													pt2NAarea = FALSE
-																													twoPointsOnTheGrid = TRUE
-																												}
-																										}
-																									if (ancestralNodeID == TRUE)
-																										{
-																											# print(c(ancestralNodeID,startingNodes[[i]],nodes2[j]))
-																											pt2_rotated = pt1
-																											pt2NAarea = FALSE
-																											twoPointsOnTheGrid = TRUE
-																										}
-																								}							
+																								}
+																							pt2_rotated_list[[g]] = pt2_rotated
+																							envValues1[[g]] = raster::extract(envVariable, cbind(pt2_rotated[1],pt2_rotated[2]))
 																						}
-																					pt2 = pt2_rotated
+																					if (is.null(repulsion))
+																						{
+																							pt2 = pt2_rotated_list[[1]]
+																						}	else	{
+																							envValues2 = unlist(envValues1)
+																							if (repulsion == TRUE)
+																								{
+																									buffer = envValues2-min(envValues2,na.rm=T)
+																									envValues2 = max(envValues2,na.rm=T)-buffer
+																								}
+																							vS = envValues2-min(envValues2,na.rm=T)
+																							probas = vS/sum(vS,na.rm=T)
+																							probas[which(is.na(probas))] = 0
+																							if (sum(probas) != 0)
+																								{
+																									index = sample(1:length(envValues2), 1, prob=probas)
+																									pt2 = pt2_rotated_list[[index]]
+																								}
+																						}
 																					if (showingPlots == TRUE)
 																						{
-																							points(pt1[1], pt1[2], pch=16, col="black", cex=0.25)
-																							points(pt2[1], pt2[2], pch=16, col="black", cex=0.25)
-																							segments(pt1[1], pt1[2], pt2[1], pt2[2], col="black", lwd=0.3)
+																							segments(pt1[1], pt1[2], pt2[1], pt2[2], col="black", lwd=0.4)
+																							points(pt2[1], pt2[2], pch=16, col="black", cex=0.5)
 																						}
 																					fromCoorRand[[t]][k,1] = pt1[1]; fromCoorRand[[t]][k,2] = pt1[2]
 																					toCoorRand[[t]][k,1] = pt2[1]; toCoorRand[[t]][k,2] = pt2[2]
@@ -334,33 +265,38 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 																				}
 																		}
 																}		
-															startingNodes = newStartingNodes	
+															startingNodes = newStartingNodes
 														}
 												}
 											temp = datas[[t]]
 											temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
-											write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											write.csv(temp, paste0(randomisationDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											if (showingPlots == TRUE) dev.copy2pdf(file=paste0(randomisationDirectory,"/TreeRandomisation_",t,".pdf"))
 										}
 									t
 								}
 						}
 					if (branchRandomisation2 == TRUE)
 						{
-							simRasters = list(); simRasters = hullRasters
-							cat("Analysis of randomised branch positions ",s,"\n",sep="")
-							fromCoorRand = fromCoor; toCoorRand = toCoor
-							buffer = list()
-							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
-							# for (t in 1:nberOfExtractionFiles) {
-									if (!file.exists(paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv")))
+							fromCoorRand = fromCoor; toCoorRand = toCoor; buffer = list()
+							# buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
+							for (t in 1:nberOfExtractionFiles) {
+									newRandomisation = TRUE
+									if (file.exists(paste0(randomisationDirectory,"/TreeRandomisation_",t,".csv")))
 										{
+											newRandomisation = FALSE
+											if (overwrite) newRandomisation = TRUE
+										}
+									if (newRandomisation)
+										{
+											cat("Randomising tree ",t,"\n",sep="")
 											if (showingPlots == TRUE)
 												{
-													if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
-													if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=F)
-													lines(points[hull,], lwd=0.5, col="black")
-													text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
-													mtext(text1, col="black", cex=0.7, line=0)
+													if (t == 1) plotRaster(envVariable, addLegend=T, new=T)
+													if (t >= 2) plotRaster(envVariable, addLegend=T, new=F)
+													lines(points[hull,], lwd=1.5, col=rgb(222,67,39,220,maxColorValue=255)) # red
+													text1 = paste("Randomisation of branch positions, sampled tree ",t,sep="")
+													mtext(text1, col="gray30", cex=0.9, line=-1)
 												}
 											for (i in 1:nberOfConnections[t])
 												{
@@ -372,64 +308,89 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 															pt1 = c(toCoor[[t]][i,1],toCoor[[t]][i,2])
 															pt2 = c(fromCoor[[t]][i,1],fromCoor[[t]][i,2])
 														}
-													twoPointsOnTheGrid = FALSE
-													while (twoPointsOnTheGrid == FALSE)
-														{	
-															pt2NAarea = TRUE
-															counter = 0
-															while (pt2NAarea == TRUE)
-																{
-																	counter = counter+1	
-																	onTheGrid = TRUE
-																	angle = (2*pi)*runif(1)
-																	pt2_rotated = rotation(pt1, pt2, angle)
-																	if (pt2_rotated[1] > extent(hullRasters[[1]])@xmax)
+													if (is.null(repulsion)) nberOfRotations = 1
+													if (!is.null(repulsion)) nberOfRotations = 100
+													pt2_rotated_list = list(); envValues1 = list()
+													for (g in 1:nberOfRotations)
+														{
+															twoPointsOnTheGrid = FALSE
+															while (twoPointsOnTheGrid == FALSE)
+																{	
+																	pt2NAarea = TRUE; counter = 0
+																	while (pt2NAarea == TRUE)
 																		{
-																			onTheGrid = FALSE
-																		}
-																	if (pt2_rotated[1] < extent(hullRasters[[1]])@xmin)
-																		{
-																			onTheGrid = FALSE
-																		}	
-																	if (pt2_rotated[2] > extent(hullRasters[[1]])@ymax)
-																		{
-																			onTheGrid = FALSE
-																		}
-																	if (pt2_rotated[2] < extent(hullRasters[[1]])@ymin)
-																		{
-																			onTheGrid = FALSE
-																		}
-																	if (onTheGrid == TRUE)
-																		{
-																			NAarea = FALSE
-																			for (h in 1:length(hullRasters))
+																			counter = counter+1; onTheGrid = TRUE
+																			angle = (2*pi)*runif(1); pt2_rotated = rotation(pt1, pt2, angle)
+																			if (pt2_rotated[1] > extent(hullRaster)@xmax) onTheGrid = FALSE
+																			if (pt2_rotated[1] < extent(hullRaster)@xmin) onTheGrid = FALSE
+																			if (pt2_rotated[2] > extent(hullRaster)@ymax) onTheGrid = FALSE
+																			if (pt2_rotated[2] < extent(hullRaster)@ymin) onTheGrid = FALSE
+																			if (onTheGrid == TRUE)
 																				{
-																					if (is.na(raster::extract(hullRasters[[h]],cbind(pt2_rotated[1],pt2_rotated[2]))))
+																					NAarea = FALSE
+																					if (is.na(raster::extract(hullRaster,cbind(pt2_rotated[1],pt2_rotated[2]))))
 																						{
-																							NAarea = TRUE
-																							twoPointsOnTheGrid = TRUE
+																							NAarea = TRUE; twoPointsOnTheGrid = TRUE
+																						}
+																					if (NAarea == FALSE)
+																						{
+																							pt2NAarea = FALSE; twoPointsOnTheGrid = TRUE
 																						}
 																				}
-																			if (NAarea == FALSE)
-																				{	
-																					pt2NAarea = FALSE
-																					twoPointsOnTheGrid = TRUE
-																				}		
+																			if (counter >= 100)
+																				{
+																					pt2NAarea = FALSE; twoPointsOnTheGrid = TRUE
+																					pt1 = c(fromCoor[[t]][i,1],fromCoor[[t]][i,2])
+																					pt2 = c(toCoor[[t]][i,1],toCoor[[t]][i,2])
+																				}
 																		}
-																	if (counter > 100)
+																}
+															if (counter < 100)
+																{
+																	pt2_rotated_list[[g]] = pt2_rotated
+																}	else	{
+																	pt2_rotated_list[[g]] = pt2
+																}
+															envValues1[[g]] = raster::extract(envVariable, cbind(pt2_rotated[1],pt2_rotated[2]))
+														}
+													if (is.null(repulsion))
+														{
+															pt2 = pt2_rotated_list[[1]]
+														}	else	{
+															showingOriginalTree = FALSE; showingRotations = FALSE
+															if (showingOriginalTree)
+																{
+																	for (g in 1:dim(fromCoor[[t]])[1])
 																		{
-																			pt2NAarea = FALSE; twoPointsOnTheGrid = TRUE
-																			pt1 = c(fromCoor[[t]][i,1],fromCoor[[t]][i,2])
-																			pt2 = c(toCoor[[t]][i,1],toCoor[[t]][i,2])
-																		}							
+																			segments(fromCoor[[t]][g,1], fromCoor[[t]][g,2], toCoor[[t]][g,1], toCoor[[t]][g,2], col="gray30", lwd=0.4)
+																		}
+																}
+															if (showingRotations)
+																{
+																	for (g in 1:length(pt2_rotated_list))
+																		{
+																			segments(pt1[1], pt1[2], pt2_rotated_list[[g]][1], pt2_rotated_list[[g]][2], col="gray30", lwd=0.2)
+																		}
+																}
+															envValues2 = unlist(envValues1)
+															if (repulsion == TRUE)
+																{
+																	buffer = envValues2-min(envValues2,na.rm=T)
+																	envValues2 = max(envValues2,na.rm=T)-buffer
+																}
+															vS = envValues2-min(envValues2,na.rm=T)
+															probas = vS/sum(vS,na.rm=T)
+															probas[which(is.na(probas))] = 0
+															if (sum(probas) != 0)
+																{
+																	index = sample(1:length(envValues2), 1, prob=probas)
+																	pt2 = pt2_rotated_list[[index]]
 																}
 														}
-													pt2 = pt2_rotated
 													if (showingPlots == TRUE)
 														{
-															points(pt1[1], pt1[2], pch=16, col="black", cex=0.25)
-															points(pt2_rotated[1], pt2_rotated[2], pch=16, col="black", cex=0.25)
-															segments(pt1[1], pt1[2], pt2[1], pt2[2], col="black", lwd=0.3)
+															segments(pt1[1], pt1[2], pt2[1], pt2[2], col="black", lwd=0.4)
+															points(pt2[1], pt2[2], pch=16, col="black", cex=0.5)
 														}
 													if (rotatingEndNodes == TRUE)
 														{
@@ -442,28 +403,33 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 												}
 											temp = datas[[t]]
 											temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
-											write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											write.csv(temp, paste0(randomisationDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											if (showingPlots == TRUE) dev.copy2pdf(file=paste0(randomisationDirectory,"/TreeRandomisation_",t,".pdf"))
 										}
 									t
 								}
 						}			
 					if (branchRandomisation1 == TRUE)
 						{
-							simRasters = list(); simRasters = hullRasters
-							cat("Analysis of randomised branch positions ",s,"\n",sep="")
-							fromCoorRand = fromCoor; toCoorRand = toCoor
-							buffer = list()
-							buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
-							# for (t in 1:nberOfExtractionFiles) {
-									if (!file.exists(paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv")))
+							fromCoorRand = fromCoor; toCoorRand = toCoor; buffer = list()
+							# buffer = foreach(t = 1:nberOfExtractionFiles) %dopar% {
+							for (t in 1:nberOfExtractionFiles) {
+									newRandomisation = TRUE
+									if (file.exists(paste0(randomisationDirectory,"/TreeRandomisation_",t,".csv")))
 										{
+											newRandomisation = FALSE
+											if (overwrite) newRandomisation = TRUE
+										}
+									if (newRandomisation)
+										{
+											cat("Randomising tree ",t,"\n",sep="")
 											if (showingPlots == TRUE)
 												{
-													if (t == 1) plotRaster(envVariables[[1]], addLegend=T, new=T)
-													if (t >= 2) plotRaster(envVariables[[1]], addLegend=T, new=T)
-													plot(sps, lwd=0.5, border="black", add=T)
-													text1 = paste("randomisation of branch positions, sampled tree ",t,sep="")
-													mtext(text1, col="black", cex=0.7, line=0)
+													if (t == 1) plotRaster(envVariable, addLegend=T, new=T)
+													if (t >= 2) plotRaster(envVariable, addLegend=T, new=T)
+													lines(points[hull,], lwd=1.5, col=rgb(222,67,39,220,maxColorValue=255)) # red
+													text1 = paste("Randomisation of branch positions, sampled tree ",t,sep="")
+													mtext(text1, col="gray30", cex=0.9, line=-1)
 												}
 											for (i in 1:nberOfConnections[t])
 												{
@@ -476,26 +442,23 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 															while (pt1NAarea == TRUE)
 																{
 																	pt1_translated = pt1
-																	xTranslation = runif(1)*(extent(hullRasters[[1]])@xmax-extent(hullRasters[[1]])@xmin)
-																	yTranslation = runif(1)*(extent(hullRasters[[1]])@ymax-extent(hullRasters[[1]])@ymin)
+																	xTranslation = runif(1)*(extent(hullRaster)@xmax-extent(hullRaster)@xmin)
+																	yTranslation = runif(1)*(extent(hullRaster)@ymax-extent(hullRaster)@ymin)
 																	pt1_translated[1] = pt1[1]+xTranslation; pt1_translated[2] = pt1[2]+yTranslation
-																	if (pt1_translated[1] > extent(hullRasters[[1]])@xmax)
+																	if (pt1_translated[1] > extent(hullRaster)@xmax)
 																		{
-																			pt1_translated[1] = pt1_translated[1]-(extent(hullRasters[[1]])@xmax-extent(hullRasters[[1]])@xmin)
-																			xTranslation = xTranslation-(extent(hullRasters[[1]])@xmax-extent(hullRasters[[1]])@xmin)
+																			pt1_translated[1] = pt1_translated[1]-(extent(hullRaster)@xmax-extent(hullRaster)@xmin)
+																			xTranslation = xTranslation-(extent(hullRaster)@xmax-extent(hullRaster)@xmin)
 																		}
-																	if (pt1_translated[2] > extent(hullRasters[[1]])@ymax)
+																	if (pt1_translated[2] > extent(hullRaster)@ymax)
 																		{
-																			pt1_translated[2] = pt1_translated[2]-(extent(hullRasters[[1]])@ymax-extent(hullRasters[[1]])@ymin)
-																			yTranslation = yTranslation-(extent(hullRasters[[1]])@ymax-extent(hullRasters[[1]])@ymin)
+																			pt1_translated[2] = pt1_translated[2]-(extent(hullRaster)@ymax-extent(hullRaster)@ymin)
+																			yTranslation = yTranslation-(extent(hullRaster)@ymax-extent(hullRaster)@ymin)
 																		}
 																	NAarea = FALSE	
-																	for (h in 1:length(hullRasters))
+																	if (is.na(raster::extract(hullRaster,cbind(pt1_translated[1],pt1_translated[2]))))
 																		{
-																			if (is.na(raster::extract(hullRasters[[h]],cbind(pt1_translated[1],pt1_translated[2]))))
-																				{
-																					NAarea = TRUE
-																				}
+																			NAarea = TRUE
 																		}
 																	insideAtLeastOneHullPolygon = FALSE
 																	for (h in 1:length(sps))
@@ -513,7 +476,7 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 																			pt1NAarea = FALSE
 																			pt1 = pt1_translated
 																			pt2[1] = pt2[1]+xTranslation; pt2[2] = pt2[2]+yTranslation
-																		}			
+																		}
 																}
 															pol_index = NA
 															for (j in 1:length(sps))
@@ -525,40 +488,21 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 																			pol_index = j
 																		}
 																}
-															pt2NAarea = TRUE
-															counter = 0
+															pt2NAarea = TRUE; counter = 0
 															while (pt2NAarea == TRUE)
 																{
-																	counter = counter+1	
-																	onTheGrid = TRUE
-																	angle = (2*pi)*runif(1)
-																	pt2_rotated = rotation(pt1, pt2, angle)
-																	if (pt2_rotated[1] > extent(hullRasters[[1]])@xmax)
-																		{
-																			onTheGrid = FALSE
-																		}
-																	if (pt2_rotated[1] < extent(hullRasters[[1]])@xmin)
-																		{
-																			onTheGrid = FALSE
-																		}	
-																	if (pt2_rotated[2] > extent(hullRasters[[1]])@ymax)
-																		{
-																			onTheGrid = FALSE
-																		}
-																	if (pt2_rotated[2] < extent(hullRasters[[1]])@ymin)
-																		{
-																			onTheGrid = FALSE
-																		}
+																	counter = counter+1; onTheGrid = TRUE
+																	angle = (2*pi)*runif(1); pt2_rotated = rotation(pt1, pt2, angle)
+																	if (pt2_rotated[1] > extent(hullRaster)@xmax) onTheGrid = FALSE
+																	if (pt2_rotated[1] < extent(hullRaster)@xmin) onTheGrid = FALSE
+																	if (pt2_rotated[2] > extent(hullRaster)@ymax) onTheGrid = FALSE
+																	if (pt2_rotated[2] < extent(hullRaster)@ymin) onTheGrid = FALSE
 																	if (onTheGrid == TRUE)
 																		{
 																			NAarea = FALSE
-																			for (h in 1:length(hullRasters))
+																			if (is.na(raster::extract(hullRaster,cbind(pt2_rotated[1],pt2_rotated[2]))))
 																				{
-																					if (is.na(raster::extract(hullRasters[[h]],cbind(pt2_rotated[1],pt2_rotated[2]))))
-																						{
-																							NAarea = TRUE
-																							twoPointsOnTheGrid = TRUE
-																						}
+																					NAarea = TRUE; twoPointsOnTheGrid = TRUE
 																				}
 																			if (NAarea == FALSE)
 																				{
@@ -566,33 +510,31 @@ treesRandomisation = function(localTreesDirectory="", nberOfExtractionFiles=1, e
 																					pol_y = sps[pol_index]@polygons[[1]]@Polygons[[1]]@coords[,2]
 																					if (point.in.polygon(pt2_rotated[1], pt2_rotated[2], pol_x, pol_y) == 1)
 																						{
-																							pt2NAarea = FALSE
-																							twoPointsOnTheGrid = TRUE
+																							pt2NAarea = FALSE; twoPointsOnTheGrid = TRUE
 																						}
-																				}		
+																				}
 																		}
 																	if (counter > 100)
 																		{
-																			pt2NAarea = FALSE
+																			pt2NAarea = FALSE; twoPointsOnTheGrid = FALSE
 																			pt1 = c(fromCoor[[t]][i,1],fromCoor[[t]][i,2])
 																			pt2 = c(toCoor[[t]][i,1],toCoor[[t]][i,2])
-																			twoPointsOnTheGrid = FALSE
-																		}							
+																		}
 																}
 														}
 													pt2 = pt2_rotated
 													if (showingPlots == TRUE)
 														{
-															points(pt1_translated[1], pt1_translated[2], pch=16, col="black", cex=0.25)
-															points(pt2_rotated[1], pt2_rotated[2], pch=16, col="black", cex=0.25)
-															segments(pt1[1], pt1[2], pt2[1], pt2[2], col="black", lwd=0.3)
+															segments(pt1[1], pt1[2], pt2[1], pt2[2], col="black", lwd=0.4)
+															points(pt2[1], pt2[2], pch=16, col="black", cex=0.5)
 														}
 													fromCoorRand[[t]][i,1] = pt1[1]; fromCoorRand[[t]][i,2] = pt1[2]
 													toCoorRand[[t]][i,1] = pt2[1]; toCoorRand[[t]][i,2] = pt2[2]
 												}
 											temp = datas[[t]]
 											temp[,c("startLon","startLat")] = fromCoorRand[[t]]; temp[,c("endLon","endLat")] = toCoorRand[[t]]
-											write.csv(temp, paste0(localTreesDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											write.csv(temp, paste0(randomisationDirectory,"/TreeRandomisation_",t,".csv"), row.names=F, quote=F)
+											cdev.copy2pdf(file=paste0(randomisationDirectory,"/TreeRandomisation_",t,".pdf"))
 										}
 									t
 								}

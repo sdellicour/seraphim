@@ -34,7 +34,7 @@ Simon Dellicour
 }
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
-Dellicour S, \emph{et al.} (\emph{in prep.}). Peaks and valleys of landscape phylogeography. \cr \cr
+Dellicour S, Gámbaro F, Jacquot M, Lequime S, Baele G, Gilbert M, Pybus OG, Suchard MA, Lemey P (2025). \emph{Comparative performance of viral landscape phylogeography approaches. Proceedings of the National Academy of Sciences of the USA} 122: e2506743122. \cr \cr
 Dijkstra EW (1959). A note on two problems in connexion with graphs. \emph{Numerische Mathematik} 1: 269-271. \cr \cr
 McRae BH (2006). Isolation by resistance. \emph{Evolution} 60: 1551-1561. \cr \cr
 Van Etten J (2012). R package gdistance: distances and routes on geographical grids. R package version 1.1.
