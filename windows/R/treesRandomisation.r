@@ -1,10 +1,6 @@
 treesRandomisation = function(localTreesDirectory="", randomisationDirectory="", nberOfExtractionFiles=1, envVariable, randomProcedure=3, 
-							  resistance=NULL, overwrite=FALSE, showingPlots=FALSE) {
+							  repulsion=NULL, overwrite=FALSE, showingPlots=FALSE) {
 
-	if ((!is.null(repulsion))&(!is.null(resistance)))
-		{
-			stop("Both \"repulsion\" and \"resistance\" parameters are specified as non null - pick one of the two")
-		}
 	dir.create(file.path(randomisationDirectory), showWarnings=F)
 	nberOfRandomisations = 1; # registerDoMC(cores=nberOfCores)
 	rotation = function(pt1, pt2, angle)
@@ -16,17 +12,23 @@ treesRandomisation = function(localTreesDirectory="", randomisationDirectory="",
 			return(c(x_new,y_new))
 		}
 	branchRandomisation3 = FALSE; branchRandomisation2 = FALSE; branchRandomisation1 = FALSE
-		# Note: the repulsion/attraction is not implemented for the "randomProcedure = 1"
-	if (randomProcedure == 3) branchRandomisation3 = TRUE
+	 # Note: the repulsion/attraction is not implemented for the "randomProcedure" = 5 and 6
+	if (randomProcedure == 3)
+		{
+			branchRandomisation3 = TRUE
+		}
 	if (randomProcedure == 4)
 		{
 			branchRandomisation2 = TRUE; rotatingEndNodes = TRUE
 		}
 	if (randomProcedure == 5)
 		{
-			branchRandomisation2 = TRUE; rotatingEndNodes = FALSE
+			branchRandomisation2 = TRUE; rotatingEndNodes = FALSE; repulsion = NULL
 		}
-	if (randomProcedure == 6) branchRandomisation1 = TRUE
+	if (randomProcedure == 6)
+		{
+			branchRandomisation1 = TRUE; repulsion = NULL
+		}
 	nullRaster = envVariable; nullRaster[!is.na(nullRaster[])] = 1
 	nberOfConnections = rep(NA, nberOfExtractionFiles); totalNberOfConnections = 0
 	node1 = list(); node2 = list(); fromCoor = list(); toCoor = list(); datas = list()
@@ -370,9 +372,6 @@ treesRandomisation = function(localTreesDirectory="", randomisationDirectory="",
 																			segments(pt1[1], pt1[2], pt2_rotated_list[[g]][1], pt2_rotated_list[[g]][2], col="gray30", lwd=0.2)
 																		}
 																}
-															envValues2 = unlist(envValues1)
-															
-															
 															envValues2 = unlist(envValues1)
 															if (repulsion == TRUE)
 																{

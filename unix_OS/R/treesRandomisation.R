@@ -1,5 +1,5 @@
 treesRandomisation = function(localTreesDirectory="", randomisationDirectory="", nberOfExtractionFiles=1, envVariable, randomProcedure=3, 
-							  resistance=NULL, overwrite=FALSE, showingPlots=FALSE) {
+							  repulsion=NULL, overwrite=FALSE, showingPlots=FALSE) {
 
 	dir.create(file.path(randomisationDirectory), showWarnings=F)
 	nberOfRandomisations = 1; # registerDoMC(cores=nberOfCores)
@@ -23,11 +23,11 @@ treesRandomisation = function(localTreesDirectory="", randomisationDirectory="",
 		}
 	if (randomProcedure == 5)
 		{
-			branchRandomisation2 = TRUE; rotatingEndNodes = FALSE; resistance = NULL
+			branchRandomisation2 = TRUE; rotatingEndNodes = FALSE; repulsion = NULL
 		}
 	if (randomProcedure == 6)
 		{
-			branchRandomisation1 = TRUE; resistance = NULL
+			branchRandomisation1 = TRUE; repulsion = NULL
 		}
 	nullRaster = envVariable; nullRaster[!is.na(nullRaster[])] = 1
 	nberOfConnections = rep(NA, nberOfExtractionFiles); totalNberOfConnections = 0

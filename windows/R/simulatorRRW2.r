@@ -188,8 +188,7 @@ simulatorRRW2 = function(RRW=TRUE, envVariable=raster(matrix(c(runif(600,5,10),r
 					tipNodes = rbind(tipNodes, c(csv[j,"node2"], csv[j,"startYear"]))
 				}
 		}
-	coalescenceEvents = length(branches1)-1
-	c = 0; 
+	coalescenceEvents = length(branches1)-1; c = 0
 	while (length(branches1) != 1)
 		{
 			c = c+1
