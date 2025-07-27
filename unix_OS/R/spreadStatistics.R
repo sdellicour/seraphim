@@ -636,6 +636,10 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			for (t in 1:nberOfExtractionFiles) colNames = c(colNames, paste0("tree_",t))
 			colnames(buffer) = colNames
 			write.table(buffer, paste(outputName,"_number_of_branches_per_time_slice.txt",sep=""), row.names=F, quote=F, sep="\t")
+			buffer = cbind(tab[,1], t(meanDiffusionCoefficientsValues)); colNames = c("time")
+			for (t in 1:nberOfExtractionFiles) colNames = c(colNames, paste0("tree_",t))
+			colnames(buffer) = colNames
+			write.table(buffer, paste(outputName,"_tree_mean_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
 
 			xLab = "time"; yLab = "mean diffusion coefficient"
 			if (showingPlots) dev.new(width=5, height=5)
@@ -711,6 +715,11 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 			tab = matrix(nrow=length(slicedTimes), ncol=3)
 			tab[,1] = slicedTimes; tab[,2] = lower_l; tab[,3] = upper_l; colnames(tab) = c("time","95%HPD_lower_value","95%HPD_higher_value")	
 			write.table(tab, file=paste(outputName,"_95%HPD_weighted_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
+
+			buffer = cbind(tab[,1], t(weightedDiffusionCoefficientsValues)); colNames = c("time")
+			for (t in 1:nberOfExtractionFiles) colNames = c(colNames, paste0("tree_",t))
+			colnames(buffer) = colNames
+			write.table(buffer, paste(outputName,"_tree_weighted_diffusion_coefficient.txt",sep=""), row.names=F, quote=F, sep="\t")
 
 			xLab = "time"; yLab = "weighted diffusion coefficient"
 			if (showingPlots) dev.new(width=5, height=5)
