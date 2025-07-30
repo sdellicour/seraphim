@@ -287,7 +287,7 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 					data = data[order(data[,"endYear"]),]
 					for (i in 1:diffusionCoefficientSlices)
 						{
-							n = 0; Ds = 0; dS = 0; tS = 0 
+							n = 0; Ds = 0; dS2 = 0; tS4 = 0
 							time = startEndTimes[i,1]
 							startTime = startEndTimes[i,2]
 							endTime = startEndTimes[i,3]
@@ -314,13 +314,15 @@ spreadStatistics = function(localTreesDirectory="", nberOfExtractionFiles=1, tim
 											pointLocation2 = cbind(pointLocation2X, pointLocation2Y)
 											branchDistInInterval = rdist.earth(pointLocation1, pointLocation2, miles=F, R=NULL)				    		 		
 				    						n = n+1; Ds = Ds + ((branchDistInInterval^2)/(4*branchTimeInInterval))
-				    						dS = dS + branchDistInInterval; tS = tS + branchTimeInInterval
+				    						# dS = dS + branchDistInInterval; tS = tS + branchTimeInInterval # not correct (fixed on the 30/07/25)
+				    						dS2 = dS2 + (branchDistInInterval)^2; tS4 = tS4 + 4*(branchTimeInInterval)
 										}
 								}
 							meanDiffusionCoefficients[i,1] = time
 							meanDiffusionCoefficients[i,2] = Ds/n
 							weightedDiffusionCoefficients[i,1] = time
-							weightedDiffusionCoefficients[i,2] = (dS^2)/(4*tS)
+							# weightedDiffusionCoefficients[i,2] = (dS^2)/(4*tS) # not correct (fixed on the 30/07/25)
+							weightedDiffusionCoefficients[i,2] = (dS2)/(tS4)
 							numberOfBranches[i,1] = time
 							numberOfBranches[i,2] = n
 						}
