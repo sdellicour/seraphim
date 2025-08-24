@@ -139,5 +139,5 @@ spreadGraphic1 = function(mcc_tre, mcc_tab, includeRoot=T) {
 	years = rep(NA, length(polygons))
 	for (i in 1:length(polygons)) years[i] = as.numeric(names(polygons[[i]]))
 	polygons = polygons[order(years)]
-	return(poygons)
+	return(polygons)
 }
