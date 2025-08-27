@@ -1,12 +1,10 @@
 \name{spreadGraphic1}
 \alias{spreadGraphic1}
 \title{
-A function to generate a collection of higher posterior density (HPD) regions retrieved for each internal node from an annotated maximum clade credibility (MCC) tree and representing the uncertainty associated with the continuous phylogeographic inference
+A function to generate a collection of higher posterior density (HPD) regions retrieved for each internal node from an annotated maximum clade credibility (MCC) tree and representing the uncertainty associated with the Bayesian continuous phylogeographic inference
 }
 \description{
-This function returns a list of spatial polygon dataframes, with one dataframe per internal node.
-
-See also, for instance, the programs SPREAD 4 (Nahata \emph{et al}. 2022) and spread.gl (Li \emph{et al}. 2024) implementing similar approaches.
+This function returns a list of spatial polygon data frames (SPDFs), with one SPDF per internal node. Specifically, these SPDF correspond to the 80\% HPD uncertainty regions associated with each internal node and are extracted from an annotated MCC tree, which was previously retrieved and annotated with the program TreeAnnotator (https://beast.community/treeannotator). In the resulting list of SPDFs, the name assigned to a SPDF is the time of occurrence of the associated internal node. See also, for instance, the programs SPREAD 4 (Nahata \emph{et al}. 2022) and spread.gl (Li \emph{et al}. 2024) implementing similar approaches.
 }
 \usage{
 spreadGraphic1(mcc_tre,
@@ -14,13 +12,10 @@ spreadGraphic1(mcc_tre,
 }
 \arguments{
   \item{mcc_tre}{ MCC tree read/imported by the "readAnnotatedNexus" function of the same package. }
-  \item{mcc_tab}{ XXXX. }
-}
-\details{
-XXXX.
+  \item{mcc_tab}{ extraction table containing the spatio-tremporal information extracted from the MCC tree using the "readAnnotatedNexus" function of the same package. }
 }
 \value{
-XXXX.
+The function returns a list of SPDFs, with one SPDF per internal node.
 }
 \references{
 Dellicour S, Rose R, Faria N, Lemey P, Pybus OG (2016). SERAPHIM: studying environmental rasters and phylogenetically-informed movements. \emph{Bioinformatics} 32 (20): 3204-3206. \cr \cr
