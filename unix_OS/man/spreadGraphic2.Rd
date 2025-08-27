@@ -1,10 +1,10 @@
 \name{spreadGraphic2}
 \alias{spreadGraphic2}
 \title{
-A function to generate a collection of polygons representing the credible intervals of internal node positions inferred by a continuous phylogeographic analysis
+A function to generate a collection of higher posterior density (HPD) regions computed by defined time slice and representing the uncertainty associated with the Bayesian continuous phylogeographic inference
 }
 \description{
-This function generates a list of spatial polygon dataframes, with one dataframe per considered time slice. Each time slice layer is build by estimating the HPD (highest posterior density) region based on all the ending positions of phylogenetic branches whose ending time falls within the considered time slice. See also, for instance, the programs SPREAD 4 (Nahata \emph{et al}. 2022) and spread.gl (Li \emph{et al}. 2024) for a very similar approach.
+This function generates a list of spatial polygon data frames (SPDFs), with one SPDF per considered time slice. Each time slice layer is build by estimating the HPD (highest posterior density) region based on all the ending positions of phylogenetic branches whose ending time falls within the considered time slice. See also, for instance, the programs SPREAD 4 (Nahata \emph{et al}. 2022) and spread.gl (Li \emph{et al}. 2024) implementing similar approaches.
 }
 \usage{
 spreadGraphic2(localTreesDirectory,
