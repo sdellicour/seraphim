@@ -2,8 +2,9 @@ spreadFactors = function(localTreesDirectory="", nberOfExtractionFiles=1, envVar
 						 fourCells=FALSE, nberOfRandomisations=0, randomProcedure=3, outputName="", showingPlots=FALSE, nberOfCores=1, 
 						 OS="Unix", juliaCSImplementation=FALSE, simulations=FALSE, randomisations=FALSE, minimumConvexHull=TRUE) {
 
-reportingBothQstats = TRUE; savingRandomisationFiles = FALSE; # simulations = FALSE; randomisations = FALSE
+# nberOfCores = 1; OS = "Unix"; juliaCSImplementation = FALSE; simulations = FALSE; randomisations = FALSE; minimumConvexHull = TRUE
 impactOnDiffusionVelocity = FALSE; impactOnDispersalLocation = FALSE; impactOnDispersalPath = FALSE
+reportingBothQstats = TRUE; savingRandomisationFiles = FALSE
 if (pathModel > 0)
 	{
 		impactOnDiffusionVelocity = TRUE; impactOnDispersalLocation = FALSE; impactOnDispersalPath = FALSE
@@ -102,7 +103,9 @@ if (impactOnDiffusionVelocity == TRUE)
 if (impactOnDispersalLocation == TRUE)
 	{
 		meanEnvValues = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+		meanEnvDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 		rateOfPositiveDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+		# rateOfPositiveDifferences corresponds to the previous R statistic presented in 2019
 	}
 for (t in 1:nberOfExtractionFiles)
 	{
@@ -264,12 +267,14 @@ for (h in 1:length(envVariables))
 								envValues = envValues + raster::extract(envVariables[[h]], cbind(fromCoor[[t]][ancestralBranch,1],fromCoor[[t]][ancestralBranch,2]))
 							}
 						meanEnvValues[t,h] = mean(c(envValues,raster::extract(envVariables[[h]], toCoor[[t]])), na.rm=T)
-						diffs = raster::extract(envVariables[[h]], fromCoor[[t]])-raster::extract(envVariables[[h]], toCoor[[t]])
-						rateOfPositiveDifferences[t,h] = sum(diffs[!is.na(diffs)] > 0)/length(diffs[!is.na(diffs)])
+						diffs1 = raster::extract(envVariables[[h]], fromCoor[[t]])-raster::extract(envVariables[[h]], toCoor[[t]])
+						rateOfPositiveDifferences[t,h] = sum(diffs1[!is.na(diffs1)] > 0)/length(diffs1[!is.na(diffs1)])
+						diffs2 = raster::extract(envVariables[[h]], toCoor[[t]])-raster::extract(envVariables[[h]], fromCoor[[t]])
+						meanEnvDifferences[t,h] = mean(diffs2, na.rm=T)
 					}
-				columnNames = c()
-				for (h in 1:length(envVariables)) columnNames = cbind(columnNames, names(envVariables[[h]]))
-				buffer = meanEnvValues; colnames(buffer) = columnNames
+				colNames = c()
+				for (h in 1:length(envVariables)) colNames = cbind(colNames, names(envVariables[[h]]))
+				buffer = meanEnvValues; colnames(buffer) = colNames
 				write.csv(buffer, paste(outputName,"_mean_evironmental_values_at_node_locations.csv",sep=""), row.names=F, quote=F)
 			}
 	}
@@ -396,6 +401,7 @@ if (nberOfRandomisations > 0)
 		if (impactOnDispersalLocation == TRUE)
 			{
 				meanEnvValuesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
+				meanEnvDifferencesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
 				rateOfPositiveDifferencesRandomisationBFs = matrix(nrow=length(envVariables), ncol=nberOfRandomisations)
 			}
 		for (s in 1:nberOfRandomisations)
@@ -976,6 +982,7 @@ if (nberOfRandomisations > 0)
 				if (impactOnDispersalLocation == TRUE)
 					{
 						simMeanEnvValues = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
+						simMeanEnvDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 						simRateOfPositiveDifferences = matrix(nrow=nberOfExtractionFiles, ncol=length(envVariables))
 						for (h in 2:length(envVariables))
 							{
@@ -988,13 +995,15 @@ if (nberOfRandomisations > 0)
 												envValues = envValues + raster::extract(envVariables[[h]], cbind(fromCoorRand[[t]][ancestralBranch,1],fromCoorRand[[t]][ancestralBranch,2]))
 											}
 										simMeanEnvValues[t,h] = mean(c(envValues,raster::extract(envVariables[[h]], cbind(toCoorRand[[t]][,1],toCoorRand[[t]][,2]))), na.rm=T)
-										diffs = raster::extract(envVariables[[h]], fromCoorRand[[t]])-raster::extract(envVariables[[h]], toCoorRand[[t]])
-										simRateOfPositiveDifferences[t,h] = sum(diffs[!is.na(diffs)] > 0)/length(diffs[!is.na(diffs)])
+										diffs1 = raster::extract(envVariables[[h]], fromCoorRand[[t]])-raster::extract(envVariables[[h]], toCoorRand[[t]])
+										simRateOfPositiveDifferences[t,h] = sum(diffs1[!is.na(diffs1)] > 0)/length(diffs1[!is.na(diffs1)])
+										diffs2 = raster::extract(envVariables[[h]], toCoorRand[[t]])-raster::extract(envVariables[[h]], fromCoorRand[[t]])
+										simMeanEnvDifferences[t,h] = mean(diffs2, na.rm=T)
 									}
 							}
-						columnNames = c()
-						for (h in 1:length(envVariables)) columnNames = cbind(columnNames, names(envVariables[[h]]))
-						buffer = simMeanEnvValues; colnames(buffer) = columnNames
+						colNames = c()
+						for (h in 1:length(envVariables)) colNames = cbind(colNames, names(envVariables[[h]]))
+						buffer = simMeanEnvValues; colnames(buffer) = colNames
 						write.csv(buffer, paste(outputName,"_mean_evironmental_values_at_node_locations_randomisation_",s,".csv",sep=""), row.names=F, quote=F)
 					}
 
@@ -1055,9 +1064,9 @@ if (nberOfRandomisations > 0)
 											{
 												if (resistances[h] == TRUE)
 													{
-														if (simMeanEnvValues[t,h] > meanEnvValues[t,h]) c = c+1
+														if (meanEnvValues[t,h] < simMeanEnvValues[t,h]) c = c+1
 													}	else	{
-														if (simMeanEnvValues[t,h] < meanEnvValues[t,h]) c = c+1
+														if (meanEnvValues[t,h] > simMeanEnvValues[t,h]) c = c+1
 													}
 											}	else	{
 												missingValues = missingValues + 1
@@ -1068,13 +1077,30 @@ if (nberOfRandomisations > 0)
 								c = 0; missingValues = 0
 								for (t in 1:nberOfExtractionFiles)
 									{
+										if ((!is.na(simMeanEnvDifferences[t,h]))&(!is.na(meanEnvDifferences[t,h])))
+											{
+												if (resistances[h] == TRUE)
+													{
+														if (meanEnvDifferences[t,h] < simMeanEnvDifferences[t,h]) c = c+1
+													}	else	{
+														if (meanEnvDifferences[t,h] > simMeanEnvDifferences[t,h]) c = c+1
+													}
+											}	else	{
+												missingValues = missingValues + 1
+											}
+									}
+								f = c/(nberOfExtractionFiles-missingValues); bf = f/(1-f)
+								meanEnvDifferencesRandomisationBFs[h,s] = round(bf, 4)				
+								c = 0; missingValues = 0
+								for (t in 1:nberOfExtractionFiles)
+									{
 										if ((!is.na(simRateOfPositiveDifferences[t,h]))&(!is.na(rateOfPositiveDifferences[t,h])))
 											{
 												if (resistances[h] == TRUE)
 													{
-														if (simRateOfPositiveDifferences[t,h] < rateOfPositiveDifferences[t,h]) c = c+1
+														if (rateOfPositiveDifferences[t,h] > simRateOfPositiveDifferences[t,h]) c = c+1
 													}	else	{
-														if (simRateOfPositiveDifferences[t,h] > rateOfPositiveDifferences[t,h]) c = c+1
+														if (rateOfPositiveDifferences[t,h] < simRateOfPositiveDifferences[t,h]) c = c+1
 													}
 											}	else	{
 												missingValues = missingValues + 1
@@ -1120,10 +1146,10 @@ if (nberOfRandomisations > 0)
 						colnames(meanEnvValuesRandomisationBFs) = "BF"
 						fileName = paste(outputName,"_position_E_BF_results.txt",sep="")
 						write.table(meanEnvValuesRandomisationBFs, fileName, quote=F, sep="\t")
-						row.names(rateOfPositiveDifferencesRandomisationBFs) = envVariablesNames
-						colnames(rateOfPositiveDifferencesRandomisationBFs) = "BF"
+						row.names(meanEnvDifferencesRandomisationBFs) = envVariablesNames
+						colnames(meanEnvDifferencesRandomisationBFs) = "BF"
 						fileName = paste(outputName,"_direction_R_BF_results.txt",sep="")
-						write.table(rateOfPositiveDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
+						write.table(meanEnvDifferencesRandomisationBFs, fileName, quote=F, sep="\t")
 					}
 			}
 	}
