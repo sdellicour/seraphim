@@ -1,10 +1,10 @@
 \name{spreadStatistics}
 \alias{spreadStatistics}
 \title{
-A function to compute several lineage dispersal statistics
+A function to estimate several lineage dispersal statistics
 }
 \description{
-This function estimates several lineage dispersal statistics based on a continuous phylogeographic reconstruction
+This function estimates several lineage dispersal statistics based on a continuous phylogeographic reconstruction conducted with the software package BEAST.
 }
 \usage{
 spreadStatistics(localTreesDirectory = ".",
