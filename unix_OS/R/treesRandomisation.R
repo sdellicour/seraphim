@@ -91,7 +91,7 @@ treesRandomisation = function(localTreesDirectory="", randomisationDirectory="",
 	pointsRaster = rasterize(points, crop(hullRaster, sps, snap="out"))
 	pointsRaster[!is.na(pointsRaster[])] = 0		
 	hullRaster = crop(hullRaster, sps, snap="out"); bufferRaster = hullRaster
-	hullRaster = mask(hullRaster, sps, snap="out")
+	hullRaster = raster::mask(hullRaster, sps, snap="out")
 	hullRaster[!is.na(pointsRaster[])] = bufferRaster[!is.na(pointsRaster[])]
 	names(hullRaster) = gsub(".asc","",names(envVariable))
 	names(hullRaster) = gsub(".tif","",names(envVariable))
