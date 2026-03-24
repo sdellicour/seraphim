@@ -1,7 +1,7 @@
 "seraphim" 2.0 <img src="unix_OS/man/logo_seraphim.png" align="right" alt="" width="200" />
 ===============
 
-`seraphim` is a R package for studying phylogenetically informed movements. It can for instance be used to investigate the impact of environmental factors on the dispersal history and dynamics of viral lineages, to estimate lineage dispersal statistics, to map continuous phylogeographic reconstructions, or to conduct continuous phylogeographic simulations. See below for a list of new features and tools implemented in version 2.0, as well as our recent application note in _Bioinformatics_ ([Dellicour *et al*. 2026](https://academic.oup.com/bioinformatics))for a summary of these new features.
+`seraphim` is a R package for studying phylogenetically informed movements. It can for instance be used to investigate the impact of environmental factors on the dispersal history and dynamics of viral lineages, to estimate lineage dispersal statistics, to map continuous phylogeographic reconstructions, or to conduct continuous phylogeographic simulations. See below for a list of new features and tools implemented in version 2.0, as well as our recent application note in _Bioinformatics_ ([Dellicour *et al*. 2026](https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btag093/8496268)) for a summary of these new features.
 
 ## Stay tuned!
 If you want to remain informed about last updates or improvements, just send an e-mail to simon.dellicour[at]ulb[dot]be with "seraphim mailing list" in the object.
